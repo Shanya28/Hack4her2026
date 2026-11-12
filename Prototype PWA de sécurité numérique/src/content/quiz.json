@@ -1,0 +1,44 @@
+[
+  {
+    "q": "Quel détail doit te faire hésiter avant de cliquer ?",
+    "a": [
+      "Un lien dont l’adresse imite un service connu",
+      "Un message envoyé le matin",
+      "Un texte sans image"
+    ],
+    "correct": 0,
+    "why": "Une adresse légèrement modifiée peut cacher une fausse page. Vérifie-la avant d'ouvrir."
+  },
+  {
+    "q": "Quelle habitude protège le mieux tes comptes ?",
+    "a": [
+      "Le même mot de passe partout",
+      "Des mots de passe différents et longs",
+      "Ton prénom et ton année de naissance"
+    ],
+    "correct": 1,
+    "why": "Un mot de passe unique par compte limite les dégâts si un service est compromis."
+  },
+  {
+    "q": "Une personne demande le code reçu par SMS. Que faire ?",
+    "a": ["Le donner si elle semble pressée", "Envoyer seulement la moitié", "Ne jamais le partager"],
+    "correct": 2,
+    "why": "Un code de vérification est secret. Même un proche ou un agent ne devrait pas te le demander."
+  },
+  {
+    "q": "Une image a été envoyée en privé. Peut-on la transférer ?",
+    "a": ["Oui, à une seule amie", "Non, il faut le consentement", "Oui, si elle est déjà en ligne"],
+    "correct": 1,
+    "why": "Le consentement à envoyer une image n'est pas un consentement à la partager."
+  },
+  {
+    "q": "Face à un chantage numérique, quel premier réflexe ?",
+    "a": [
+      "Payer immédiatement",
+      "Conserver les preuves et demander de l’aide",
+      "Tout supprimer sans rien noter"
+    ],
+    "correct": 1,
+    "why": "Ne reste pas seule. Conserve les éléments utiles si tu peux le faire en sécurité."
+  }
+]

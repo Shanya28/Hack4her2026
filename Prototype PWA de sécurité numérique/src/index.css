@@ -2041,3 +2041,46 @@
     transition: none !important;
   }
 }
+
+/* Audio, story outcomes and alert simulation */
+.icon-button.audio-on {
+  background: var(--plum);
+  color: white;
+}
+.toggle-row:disabled,
+.setting-row:disabled {
+  opacity: 0.55;
+}
+.learning-card > p.outcome {
+  color: var(--plum);
+  font-weight: 600;
+}
+.learning-card > p.lesson {
+  background: var(--sand);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.learning-card:not(.protective) > span {
+  background: var(--sand);
+  color: var(--plum);
+}
+button.pulse {
+  border: 0;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.pulse.holding {
+  transform: scale(0.94);
+  background: var(--plum);
+  color: white;
+  transition: 2s linear;
+  box-shadow:
+    0 0 0 22px #49213d33,
+    0 0 0 44px #49213d18;
+}
+.alert-demo .alert-visual + .button {
+  margin-bottom: 18px;
+}

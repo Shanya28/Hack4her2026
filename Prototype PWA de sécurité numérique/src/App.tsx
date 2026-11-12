@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import storyContent from "./content/story.json";
+import quizContent from "./content/quiz.json";
 
 type Screen =
   | "welcome"
@@ -12,6 +14,7 @@ type Screen =
   | "checker"
   | "result"
   | "resources"
+  | "help"
   | "quiz"
   | "quiz-result"
   | "guide"
@@ -273,111 +276,74 @@ function OfflinePill() {
   );
 }
 
-const storySteps = [
-  {
-    chapter: "1 · Une rencontre inattendue",
-    messages: [
-      ["Kevin", "Salut ! Je suis tombé sur ton profil, tu as vraiment un joli sourire."],
-      ["Afi", "Merci haha."],
-      ["Kevin", "Tu as l'air super intéressante. Ça te dit qu'on discute ?"],
-    ],
-    choices: ["Oui, pourquoi pas ?", "On se connaît ?", "Je préfère ne pas répondre"],
-    feedback:
-      "Une approche flatteuse peut être sincère, mais aussi servir à gagner rapidement ta confiance. Prends le temps d'observer.",
-  },
-  {
-    chapter: "2 · Le lien inattendu",
-    messages: [["Kevin", "Au fait, regarde cet album, j'ai trouvé une photo de toi dedans."]],
-    attachment: true,
-    choices: [],
-    feedback: "",
-  },
-  {
-    chapter: "3 · La pression affective",
-    messages: [
-      ["Kevin", "Je pense vraiment qu'on pourrait être proches."],
-      ["Kevin", "Si tu m'aimes bien, envoie-moi une photo privée. Tu peux me faire confiance."],
-    ],
-    choices: ["Accepter", "Refuser", "Demander pourquoi"],
-    feedback:
-      "Ton consentement doit être libre, éclairé et réversible. La confiance ne se prouve jamais par l'envoi d'une image intime.",
-  },
-  {
-    chapter: "4 · La photo qui circule",
-    messages: [
-      ["Mariam · Groupe", "Regardez ce qui circule depuis ce matin !"],
-      ["Mariam · Groupe", "Image masquée · contenu humiliant concernant une jeune fille"],
-    ],
-    choices: ["Transférer l'image", "Réagir seulement", "Refuser et soutenir la victime"],
-    feedback:
-      "Partager une image intime sans consentement contribue à la violence. Même si tu ne l'as pas créée, tu peux choisir de ne pas la faire circuler.",
-  },
-  {
-    chapter: "5 · Le chantage",
-    messages: [
-      ["Kevin", "J'ai toujours tes messages."],
-      ["Kevin", "Si tu ne fais pas ce que je demande, je vais tout publier."],
-      ["Kevin", "Tu as jusqu'à ce soir pour m'envoyer l'argent."],
-    ],
-    choices: ["Payer", "L'insulter", "Garder les preuves et demander de l'aide"],
-    feedback:
-      "Tu n'es pas responsable de la menace. Payer ne garantit pas son arrêt. Conserve les preuves sans te mettre en danger, bloque le compte et cherche du soutien.",
-  },
-];
+type StoryChoice = { label: string; protective: boolean; outcome: string; advice: string };
+type StoryStep = {
+  chapter: string;
+  messages: string[][];
+  attachment?: boolean;
+  choices: StoryChoice[];
+  feedback: string;
+};
 
-const quiz = [
-  {
-    q: "Quel détail doit te faire hésiter avant de cliquer ?",
-    a: [
-      "Un lien dont l’adresse imite un service connu",
-      "Un message envoyé le matin",
-      "Un texte sans image",
-    ],
-    correct: 0,
-    why: "Une adresse légèrement modifiée peut cacher une fausse page. Vérifie-la avant d'ouvrir.",
-  },
-  {
-    q: "Quelle habitude protège le mieux tes comptes ?",
-    a: [
-      "Le même mot de passe partout",
-      "Des mots de passe différents et longs",
-      "Ton prénom et ton année de naissance",
-    ],
-    correct: 1,
-    why: "Un mot de passe unique par compte limite les dégâts si un service est compromis.",
-  },
-  {
-    q: "Une personne demande le code reçu par SMS. Que faire ?",
-    a: ["Le donner si elle semble pressée", "Envoyer seulement la moitié", "Ne jamais le partager"],
-    correct: 2,
-    why: "Un code de vérification est secret. Même un proche ou un agent ne devrait pas te le demander.",
-  },
-  {
-    q: "Une image a été envoyée en privé. Peut-on la transférer ?",
-    a: ["Oui, à une seule amie", "Non, il faut le consentement", "Oui, si elle est déjà en ligne"],
-    correct: 1,
-    why: "Le consentement à envoyer une image n'est pas un consentement à la partager.",
-  },
-  {
-    q: "Face à un chantage numérique, quel premier réflexe ?",
-    a: [
-      "Payer immédiatement",
-      "Conserver les preuves et demander de l’aide",
-      "Tout supprimer sans rien noter",
-    ],
-    correct: 1,
-    why: "Ne reste pas seule. Conserve les éléments utiles si tu peux le faire en sécurité.",
-  },
-];
+// Story and quiz texts live in src/content/*.json so they can be edited
+// without touching the code.
+const storySteps = storyContent as StoryStep[];
+const quiz = quizContent as { q: string; a: string[]; correct: number; why: string }[];
+
+const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
+
+function speak(text: string) {
+  if (!canSpeak || !text) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "fr-FR";
+  utterance.rate = 0.95;
+  const voice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith("fr"));
+  if (voice) utterance.voice = voice;
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  if (canSpeak) window.speechSynthesis.cancel();
+}
+
+/** Reads `text` aloud whenever it changes, while audio is enabled. */
+function useNarration(enabled: boolean, text: string) {
+  useEffect(() => {
+    if (!enabled || !text) return;
+    speak(text);
+    return stopSpeaking;
+  }, [enabled, text]);
+}
 
 function App() {
-  const [screen, setScreen] = useState<Screen>(() =>
-    localStorage.getItem("naya-started") ? "home" : "welcome",
+  const [screen, setScreen] = useState<Screen>(() => {
+    // Opened from the home-screen shortcut (long press on the app icon).
+    if (new URLSearchParams(window.location.search).has("carnet")) return "alert";
+    return localStorage.getItem("naya-started") ? "home" : "welcome";
+  });
+  const [audio, setAudioState] = useState(
+    () => canSpeak && localStorage.getItem("naya-audio") === "yes",
   );
-  const [audio, setAudio] = useState(false);
-  const [person, setPerson] = useState<"afi" | "maya">("afi");
+  const setAudio = (on: boolean) => {
+    const next = on && canSpeak;
+    setAudioState(next);
+    localStorage.setItem("naya-audio", next ? "yes" : "no");
+    if (next) speak("Lecture audio activée.");
+    else stopSpeaking();
+  };
+  const [person, setPersonState] = useState<"afi" | "maya">(() =>
+    localStorage.getItem("naya-person") === "maya" ? "maya" : "afi",
+  );
+  const setPerson = (p: "afi" | "maya") => {
+    setPersonState(p);
+    localStorage.setItem("naya-person", p);
+  };
+  useEffect(() => {
+    if (window.location.search) window.history.replaceState(null, "", window.location.pathname);
+  }, []);
   const [story, setStory] = useState(Number(localStorage.getItem("naya-story") || 0));
-  const [storyChoice, setStoryChoice] = useState<string | null>(null);
+  const [storyChoice, setStoryChoice] = useState<number | null>(null);
   const [message, setMessage] = useState(
     "Si tu ne m'envoies pas l'argent avant ce soir, je publie tes photos.",
   );
@@ -401,7 +367,7 @@ function App() {
     localStorage.setItem("naya-started", "yes");
     go("home");
   };
-  const chooseStory = (choice: string) => setStoryChoice(choice);
+  const chooseStory = (choice: number) => setStoryChoice(choice);
   const nextStory = () => {
     if (story >= 4) {
       localStorage.setItem("naya-story", "5");
@@ -417,7 +383,14 @@ function App() {
   };
   const resetAll = () => {
     localStorage.clear();
+    stopSpeaking();
+    setAudioState(false);
+    setPersonState("afi");
     setStory(0);
+    setStoryChoice(null);
+    setQuizIndex(0);
+    setQuizScore(0);
+    setQuizChoice(null);
     setSaved(false);
     setEraseOpen(false);
     go("welcome");
@@ -457,6 +430,8 @@ function App() {
         next={nextStory}
         go={go}
         person={person}
+        audio={audio}
+        setAudio={setAudio}
       />
     );
   else if (screen === "fake-login")
@@ -464,6 +439,7 @@ function App() {
   else if (screen === "phishing")
     content = (
       <Phishing
+        audio={audio}
         onNext={() => {
           setStory(2);
           localStorage.setItem("naya-story", "2");
@@ -483,11 +459,15 @@ function App() {
         setAiConsent={setAiConsent}
       />
     );
-  else if (screen === "result") content = <Result result={result} message={message} go={go} />;
-  else if (screen === "resources") content = <Resources go={go} />;
+  else if (screen === "result") content = <Result result={result} message={message} go={go} audio={audio} />;
+  else if (screen === "resources")
+    content = <Resources key="resources" go={go} initial={0} active="resources" />;
+  else if (screen === "help")
+    content = <Resources key="help" go={go} initial={2} active="help" />;
   else if (screen === "quiz")
     content = (
       <Quiz
+        audio={audio}
         index={quizIndex}
         score={quizScore}
         choice={quizChoice}
@@ -521,6 +501,7 @@ function App() {
   else if (screen === "guide")
     content = (
       <Guide
+        audio={audio}
         saved={saved}
         onSave={() => {
           setSaved(true);
@@ -548,7 +529,13 @@ function App() {
     content = <AlertDemo onBack={() => go("settings")} notify={notify} />;
   else
     content = (
-      <Settings audio={audio} setAudio={setAudio} go={go} erase={() => setEraseOpen(true)} />
+      <Settings
+        audio={audio}
+        setAudio={setAudio}
+        go={go}
+        erase={() => setEraseOpen(true)}
+        notify={notify}
+      />
     );
 
   return (
@@ -651,10 +638,16 @@ function Language({
           ))}
         </div>
         <h3>Audio</h3>
-        <button className="toggle-row" onClick={() => setAudio(!audio)}>
+        <button className="toggle-row" onClick={() => setAudio(!audio)} disabled={!canSpeak}>
           <span>
             <strong>Lecture audio</strong>
-            <small>{audio ? "Activée" : "Continuer sans audio"}</small>
+            <small>
+              {!canSpeak
+                ? "Non disponible sur ce téléphone"
+                : audio
+                  ? "Activée · les textes sont lus à voix haute"
+                  : "Continuer sans audio"}
+            </small>
           </span>
           <span className={`toggle ${audio ? "on" : ""}`}>
             <i />
@@ -911,7 +904,7 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="shield" />
         <span>Réflexes</span>
       </button>
-      <button className={active === "help" ? "active" : ""} onClick={() => go("resources")}>
+      <button className={active === "help" ? "active" : ""} onClick={() => go("help")}>
         <Icon name="help" />
         <span>Aide</span>
       </button>
@@ -926,19 +919,35 @@ function Story({
   next,
   go,
   person,
+  audio,
+  setAudio,
 }: {
   step: number;
-  choice: string | null;
-  choose: (c: string) => void;
+  choice: number | null;
+  choose: (c: number) => void;
   next: () => void;
   go: (s: Screen) => void;
   person: "afi" | "maya";
+  audio: boolean;
+  setAudio: (v: boolean) => void;
 }) {
   const data = storySteps[step];
+  const me = person === "afi" ? "Afi" : "Maya";
+  const picked = choice !== null ? data.choices[choice] : null;
+  const narration = picked
+    ? `${picked.outcome} ${picked.advice} À retenir. ${data.feedback}`
+    : [
+        data.chapter.replace(/^\d+ · /, ""),
+        ...data.messages.map(([who, text]) => `${who === "moi" ? me : who} : ${text}`),
+        data.attachment
+          ? "Ce lien vient d’arriver. Que veux-tu faire ?"
+          : `Que réponds-tu ? ${data.choices.map((c) => c.label).join(". ")}.`,
+      ].join(". ");
+  useNarration(audio, narration);
   return (
     <section className={`screen story-screen ${step === 4 ? "danger-mode" : ""}`}>
       <header className="chat-header">
-        <button className="icon-button" onClick={() => go("home")}>
+        <button className="icon-button" onClick={() => go("home")} aria-label="Retour à l’accueil">
           <Icon name="back" />
         </button>
         <Portrait person={step === 3 ? "maya" : "kevin"} small />
@@ -946,9 +955,16 @@ function Story({
           <strong>{step === 3 ? "Groupe des amies" : "Kevin"}</strong>
           <small>{step === 4 ? "Messages à conserver" : "en ligne récemment"}</small>
         </div>
-        <button className="icon-button">
-          <Icon name="more" />
-        </button>
+        {canSpeak && (
+          <button
+            className={`icon-button ${audio ? "audio-on" : ""}`}
+            onClick={() => setAudio(!audio)}
+            aria-label={audio ? "Arrêter la lecture audio" : "Écouter l’histoire"}
+            aria-pressed={audio}
+          >
+            <Icon name="play" />
+          </button>
+        )}
       </header>
       <div className="chapter-strip">
         <span>{data.chapter}</span>
@@ -960,12 +976,12 @@ function Story({
       </div>
       <div className="messages">
         {data.messages.map(([who, text], i) => {
-          const mine = who === "Afi";
+          const mine = who === "moi";
           return (
             <div
               key={i}
               className={`message-row ${mine ? "mine" : ""}`}
-              aria-label={`Message de ${mine ? (person === "afi" ? "Afi" : "Maya") : who}`}
+              aria-label={`Message de ${mine ? me : who}`}
             >
               <div className={`bubble ${text.startsWith("Image masquée") ? "masked" : ""}`}>
                 {text.startsWith("Image masquée") && (
@@ -1007,31 +1023,35 @@ function Story({
         </div>
       ) : (
         <div className="choice-panel">
-          {!choice ? (
+          {!picked ? (
             <>
               <p>Que réponds-tu ?</p>
-              {data.choices.map((c) => (
-                <button key={c} className="story-choice" onClick={() => choose(c)}>
-                  {c}
+              {data.choices.map((c, i) => (
+                <button key={c.label} className="story-choice" onClick={() => choose(i)}>
+                  {c.label}
                   <Icon name="arrow" size={17} />
                 </button>
               ))}
             </>
           ) : (
-            <div className="learning-card">
+            <div className={`learning-card ${picked.protective ? "protective" : ""}`}>
               <span>
-                <Icon name={step >= 3 ? "shield" : "spark"} />
+                <Icon name={picked.protective ? "shield" : "spark"} />
               </span>
               <p>
-                <strong>{choice}</strong>
+                <strong>{picked.label}</strong>
               </p>
-              <p>{data.feedback}</p>
+              <p className="outcome">{picked.outcome}</p>
+              <p>{picked.advice}</p>
+              <p className="lesson">
+                <strong>À retenir.</strong> {data.feedback}
+              </p>
               <div className="learning-actions">
                 <Button onClick={next} icon="arrow">
                   {step === 4 ? "Terminer l’histoire" : "Continuer"}
                 </Button>
                 {step === 4 && (
-                  <Button variant="ghost" onClick={() => go("resources")}>
+                  <Button variant="ghost" onClick={() => go("help")}>
                     Trouver de l’aide
                   </Button>
                 )}
@@ -1083,7 +1103,21 @@ function FakeLogin({ onInterrupt, onBack }: { onInterrupt: () => void; onBack: (
   );
 }
 
-function Phishing({ onNext, onChecker }: { onNext: () => void; onChecker: () => void }) {
+function Phishing({
+  onNext,
+  onChecker,
+  audio,
+}: {
+  onNext: () => void;
+  onChecker: () => void;
+  audio: boolean;
+}) {
+  useNarration(
+    audio,
+    "Simulation interrompue. Cette page cherchait tes identifiants. Tu n’as rien envoyé. " +
+      "Trois indices à repérer. Un : un lien inattendu. Deux : une demande de connexion. " +
+      "Trois : une adresse étrange. Bon réflexe : ferme la page, puis ouvre toi-même le service officiel.",
+  );
   return (
     <section className="screen explain-screen">
       <div className="explain-hero">
@@ -1232,58 +1266,190 @@ function Checker({
   );
 }
 
+type Clue = { title: string; text: string; strong?: boolean };
+
+/**
+ * Local, keyword-based check. It looks for combinations (a threat needs both
+ * a "share" verb and a pressure marker) so that an ordinary message that just
+ * mentions a photo or an evening is not flagged.
+ */
 function analyzeMessage(text: string) {
-  const t = text.toLowerCase();
-  const clues: { title: string; text: string }[] = [];
-  if (/publie|diffus|photo|partage.*image/.test(t))
+  const t = text
+    .toLowerCase()
+    .replace(/[’‘`]/g, "'")
+    .replace(/\s+/g, " ");
+  const has = (re: RegExp) => re.test(t);
+  const clues: Clue[] = [];
+
+  const media = "(photos?|images?|vid[ée]os?|captures?|nudes?|messages?|conversations?)";
+  const shareThreat =
+    has(new RegExp(`(publi|diffus|balanc|partag|montr|envo)[a-zé]*.{0,40}${media}`)) ||
+    has(/(tout|les) (publier|montrer|diffuser|envoyer|balancer)/);
+  const pressure = has(
+    /(si tu ne|si tu refuses|sinon|je vais|je publie|je diffuse|tout le monde|ta famille|tes parents|tes amis)/,
+  );
+  const threat = shareThreat && pressure;
+  if (threat)
     clues.push({
       title: "Menace de diffusion",
       text: "Quelqu’un menace de partager un contenu pour te forcer à agir.",
+      strong: true,
     });
-  if (/ce soir|vite|urgent|immédiat|maintenant|24 h/.test(t))
+
+  const intimate =
+    has(
+      new RegExp(
+        `(envoie|envoyer|montre|donne|fais)[^.!?]{0,40}${media}[^.!?]{0,25}(priv|intime|nue|sexy|sans v[êe]tement)`,
+      ),
+    ) || has(/\bnudes?\b/);
+  if (intimate)
     clues.push({
-      title: "Pression temporelle",
-      text: "Le délai cherche à empêcher une décision réfléchie.",
+      title: "Demande d’image intime",
+      text: "On te demande une image privée. Tu as le droit de refuser, sans te justifier.",
+      strong: true,
     });
-  if (/argent|payer|frais|fcfa|virement/.test(t))
+
+  const money = has(
+    /(argent|paye|paie|frais|fcfa|f cfa|virement|mobile money|momo|transfert|\d[\d .]*\s?(f|francs)(\W|$))/,
+  );
+  if (money)
     clues.push({
       title: "Demande d’argent",
       text: "Une somme est demandée sous pression ou avant un service.",
     });
-  if (/code|sms|6 chiffres|vérification/.test(t))
+
+  const code =
+    (has(/\b(code|otp|pin)\b/) &&
+      has(/(sms|chiffres|v[ée]rification|re[çc]u|recevoir|envoie|donne|partage)/)) ||
+    (has(/mot de passe/) && has(/(envoie|donne|partage|communique)/));
+  if (code)
     clues.push({
       title: "Code secret demandé",
-      text: "Un code de vérification peut donner accès à ton compte.",
+      text: "Un code de vérification ou un mot de passe donne accès à ton compte.",
+      strong: true,
     });
-  if (/lien|http|connecte|album|clique/.test(t))
-    clues.push({
-      title: "Lien ou connexion inattendue",
-      text: "Le message pousse vers une page qui peut imiter un service.",
-    });
-  if (/candidature|recrut|emploi|retenue/.test(t))
+
+  const link = has(
+    /(https?:\/\/|www\.|[a-z0-9-]+\.(com|net|org|xyz|top|info|link|ly|app|site|online)(\/|\W|$)|clique|ce lien)/,
+  );
+  const login = has(/(connecte|identifiant|mot de passe|ton compte|votre compte)/);
+  if (link)
+    clues.push(
+      login
+        ? {
+            title: "Lien vers une page de connexion",
+            text: "Le message pousse vers une page qui peut imiter un service pour voler tes identifiants.",
+            strong: true,
+          }
+        : {
+            title: "Lien inattendu",
+            text: "Vérifie l’adresse avant d’ouvrir : elle peut imiter un service connu.",
+          },
+    );
+
+  const offer = has(
+    /(candidature|recrut|emploi|embauche|gagn[ée]|loterie|f[ée]licitations|cadeau|bourse)/,
+  );
+  if (offer)
     clues.push({
       title: "Offre à vérifier",
-      text: "Un recrutement qui demande des frais mérite une vérification indépendante.",
+      text: "Une offre qui demande des frais ou des informations mérite une vérification indépendante.",
     });
-  if (/si tu m'aimes|confiance|privée/.test(t))
+
+  const affective = has(
+    /(si tu m'aimes|si tu tiens [àa] moi|fais[- ]moi confiance|me faire confiance|prouve)/,
+  );
+  if (affective)
     clues.push({
       title: "Pression affective",
-      text: "L’affection est utilisée pour obtenir quelque chose d’intime.",
+      text: "L’affection est utilisée pour obtenir quelque chose de toi.",
     });
-  const level = clues.length >= 3 ? "Élevé" : clues.length >= 1 ? "Modéré" : "Faible";
-  return { level, clues };
+
+  const secret = has(
+    /(ne (le )?dis ([àa]|rien [àa]) personne|reste entre nous|notre secret|supprime (ce|les|nos|tes) message|n'en parle)/,
+  );
+  if (secret)
+    clues.push({
+      title: "Demande de secret",
+      text: "On te demande de te taire : l’isolement facilite la manipulation.",
+    });
+
+  // A deadline only counts when it comes with another clue.
+  const deadline = has(
+    /(avant ce soir|jusqu'[àa] ce soir|tu as jusqu|urgent|vite|imm[ée]diat|tout de suite|dernier d[ée]lai|dans \d+ ?(h|heures?|minutes?)|24 ?h)/,
+  );
+  if (deadline && clues.length)
+    clues.push({
+      title: "Pression temporelle",
+      text: "Le délai cherche à empêcher une décision réfléchie.",
+    });
+
+  const strong = clues.some((c) => c.strong);
+  const level =
+    strong || clues.length >= 3 || (offer && money)
+      ? "Élevé"
+      : clues.length >= 1
+        ? "Modéré"
+        : "Faible";
+
+  const advice = threat
+    ? {
+        title: "Ne cède pas à la menace.",
+        text: "Ne paie pas et n’envoie rien de plus. Garde les preuves si tu peux le faire sans danger, bloque le compte et parles-en à une personne de confiance.",
+      }
+    : intimate
+      ? {
+          title: "Tu as le droit de dire non.",
+          text: "Personne ne peut exiger une image de toi. Si la pression continue, garde les messages et parles-en à une personne de confiance.",
+        }
+      : code
+        ? {
+            title: "Ne partage jamais ce code.",
+            text: "Aucun service ni aucun proche n’en a besoin. S’il a déjà été donné, change ton mot de passe tout de suite.",
+          }
+        : link && login
+          ? {
+              title: "N’ouvre pas ce lien.",
+              text: "Si tu dois vérifier ton compte, ouvre toi-même l’application ou le site officiel.",
+            }
+          : offer || money
+            ? {
+                title: "Vérifie avant de payer.",
+                text: "Un vrai recrutement ou un vrai gain ne demande pas d’argent. Vérifie l’offre par un canal officiel.",
+              }
+            : clues.length
+              ? {
+                  title: "Prends le temps de vérifier.",
+                  text: "Ne réponds pas dans l’urgence. Demande l’avis d’une personne de confiance avant d’agir.",
+                }
+              : {
+                  title: "Reste attentive au contexte.",
+                  text: "Si quelque chose te met mal à l’aise, fais confiance à ton ressenti et demande un avis.",
+                };
+
+  return { level, clues, advice };
 }
 
 function Result({
   result,
   message,
   go,
+  audio,
 }: {
   result: ReturnType<typeof analyzeMessage>;
   message: string;
   go: (s: Screen) => void;
+  audio: boolean;
 }) {
   const tone = result.level === "Élevé" ? "high" : result.level === "Modéré" ? "medium" : "low";
+  useNarration(
+    audio,
+    `Niveau de vigilance : ${result.level}. ` +
+      (result.clues.length
+        ? `Indices repérés : ${result.clues.map((c) => c.title).join(", ")}. `
+        : "Aucun indice évident détecté. ") +
+      `${result.advice.title} ${result.advice.text}`,
+  );
   return (
     <section className="screen result">
       <TopBar title="Résultat de l’analyse" onBack={() => go("checker")} />
@@ -1329,18 +1495,13 @@ function Result({
         )}
         <div className="recommendation">
           <p className="eyebrow">Ce que tu peux faire</p>
-          <h3>
-            {tone === "high" ? "Ne paie pas sous la pression." : "Prends le temps de vérifier."}
-          </h3>
-          <p>
-            Évite de répondre à la menace. Conserve les preuves si tu peux le faire sans danger et
-            contacte une personne de confiance.
-          </p>
+          <h3>{result.advice.title}</h3>
+          <p>{result.advice.text}</p>
         </div>
         <Button onClick={() => go("resources")} icon="shield">
           Voir les conseils
         </Button>
-        <Button variant="secondary" onClick={() => go("resources")}>
+        <Button variant="secondary" onClick={() => go("help")}>
           Trouver de l’aide
         </Button>
         <Button variant="ghost" onClick={() => go("checker")}>
@@ -1355,8 +1516,16 @@ function Result({
   );
 }
 
-function Resources({ go }: { go: (s: Screen) => void }) {
-  const [open, setOpen] = useState(0);
+function Resources({
+  go,
+  initial,
+  active,
+}: {
+  go: (s: Screen) => void;
+  initial: number;
+  active: "resources" | "help";
+}) {
+  const [open, setOpen] = useState(initial);
   const cards = [
     {
       icon: "download" as IconName,
@@ -1451,18 +1620,20 @@ function Resources({ go }: { go: (s: Screen) => void }) {
           Voir mes 6 réflexes
         </Button>
       </div>
-      <BottomNav active="resources" go={go} />
+      <BottomNav active={active} go={go} />
     </section>
   );
 }
 
 function Quiz({
+  audio,
   index,
   choice,
   setChoice,
   onNext,
   onBack,
 }: {
+  audio: boolean;
   index: number;
   score: number;
   choice: number | null;
@@ -1471,6 +1642,14 @@ function Quiz({
   onBack: () => void;
 }) {
   const item = quiz[index];
+  useNarration(
+    audio,
+    choice === null
+      ? `Question ${index + 1}. ${item.q} ${item.a
+          .map((a, i) => `Réponse ${String.fromCharCode(65 + i)} : ${a}`)
+          .join(". ")}.`
+      : `${choice === item.correct ? "Bien vu !" : "À retenir."} ${item.why}`,
+  );
   return (
     <section className="screen quiz">
       <TopBar title="Quiz réflexes" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
@@ -1576,14 +1755,20 @@ const reflexes = [
 ] as [IconName, string, string][];
 
 function Guide({
+  audio,
   saved,
   onSave,
   onBack,
 }: {
+  audio: boolean;
   saved: boolean;
   onSave: () => void;
   onBack: () => void;
 }) {
+  useNarration(
+    audio,
+    `Mes 6 réflexes. ${reflexes.map((r, i) => `${i + 1}. ${r[1]}. ${r[2]}`).join(" ")}`,
+  );
   return (
     <section className="screen guide">
       <TopBar
@@ -1730,11 +1915,13 @@ function Settings({
   setAudio,
   go,
   erase,
+  notify,
 }: {
   audio: boolean;
   setAudio: (v: boolean) => void;
   go: (s: Screen) => void;
   erase: () => void;
+  notify: (s: string) => void;
 }) {
   return (
     <section className="screen settings-page">
@@ -1753,23 +1940,28 @@ function Settings({
           <OfflinePill />
         </div>
         <h3>Préférences</h3>
-        <button className="setting-row">
+        <button
+          className="setting-row"
+          onClick={() => notify("Le fon et le mina sont en préparation")}
+        >
           <span>
             <Icon name="message" />
           </span>
           <div>
             <strong>Langue</strong>
-            <small>Français</small>
+            <small>Français · fon et mina bientôt</small>
           </div>
           <Icon name="chevron" />
         </button>
-        <button className="setting-row" onClick={() => setAudio(!audio)}>
+        <button className="setting-row" onClick={() => setAudio(!audio)} disabled={!canSpeak}>
           <span>
             <Icon name="play" />
           </span>
           <div>
             <strong>Lecture audio</strong>
-            <small>{audio ? "Activée" : "Désactivée"}</small>
+            <small>
+              {!canSpeak ? "Non disponible sur ce téléphone" : audio ? "Activée" : "Désactivée"}
+            </small>
           </div>
           <span className={`toggle ${audio ? "on" : ""}`}>
             <i />
@@ -1792,7 +1984,7 @@ function Settings({
           </span>
           <div>
             <strong>Alerte discrète</strong>
-            <small>Démonstration pédagogique</small>
+            <small>Simulation · aucune alerte envoyée</small>
           </div>
           <Icon name="chevron" />
         </button>
@@ -1889,8 +2081,61 @@ function Privacy({ onBack }: { onBack: () => void }) {
   );
 }
 
+const HOLD_MS = 2000;
+const COUNTDOWN_S = 5;
+
+type AlertPhase = "idle" | "holding" | "countdown" | "done" | "cancelled";
+
 function AlertDemo({ onBack, notify }: { onBack: () => void; notify: (s: string) => void }) {
-  const [armed, setArmed] = useState(false);
+  const [phase, setPhase] = useState<AlertPhase>("idle");
+  const [left, setLeft] = useState(COUNTDOWN_S);
+  const holdTimer = useRef<number | undefined>(undefined);
+
+  const startHold = () => {
+    if (phase === "holding" || phase === "countdown") return;
+    setPhase("holding");
+    holdTimer.current = window.setTimeout(() => {
+      navigator.vibrate?.(200);
+      setLeft(COUNTDOWN_S);
+      setPhase("countdown");
+    }, HOLD_MS);
+  };
+  const endHold = () => {
+    if (phase !== "holding") return;
+    window.clearTimeout(holdTimer.current);
+    setPhase("idle");
+    notify("Maintiens le bouclier 2 secondes");
+  };
+  useEffect(() => () => window.clearTimeout(holdTimer.current), []);
+  useEffect(() => {
+    if (phase !== "countdown") return;
+    if (left === 0) {
+      setPhase("done");
+      return;
+    }
+    const tick = window.setTimeout(() => setLeft(left - 1), 1000);
+    return () => window.clearTimeout(tick);
+  }, [phase, left]);
+
+  const title =
+    phase === "holding"
+      ? "Continue d’appuyer…"
+      : phase === "countdown"
+        ? `Simulation : envoi dans ${left} s`
+        : phase === "done"
+          ? "Simulation terminée"
+          : phase === "cancelled"
+            ? "Alerte annulée"
+            : "Maintiens le bouclier 2 secondes";
+  const text =
+    phase === "countdown"
+      ? "Dans une vraie version, l’alerte partirait à la fin du décompte. Tu peux encore annuler."
+      : phase === "done"
+        ? "Aucune alerte envoyée, aucun contact prévenu. Dans une vraie version, un contact choisi à l’avance aurait reçu un message."
+        : phase === "cancelled"
+          ? "Rien n’a été envoyé. L’utilisatrice garde toujours la main."
+          : "Geste fictif pour montrer comment une alerte discrète pourrait se déclencher.";
+
   return (
     <section className="screen alert-demo">
       <TopBar title="Alerte discrète" onBack={onBack} />
@@ -1898,36 +2143,63 @@ function AlertDemo({ onBack, notify }: { onBack: () => void; notify: (s: string)
         <div className="demo-banner">
           <Icon name="warning" />
           <p>
-            <strong>Démonstration uniquement</strong>
+            <strong>Simulation, aucune alerte envoyée</strong>
             <br />
-            Aucune alerte n’a été envoyée et aucun contact n’a été prévenu.
+            Cet écran ne contacte personne : ni message, ni appel, ni position.
           </p>
         </div>
         <div className="alert-visual">
-          <div className={armed ? "pulse armed" : "pulse"}>
-            <Icon name="shield" size={42} />
-          </div>
-          <h1>{armed ? "Simulation prête" : "Comment cela pourrait fonctionner"}</h1>
-          <p>
-            Dans une future version, un geste discret pourrait préparer une alerte vers un contact
-            choisi à l’avance.
-          </p>
+          <button
+            className={`pulse ${phase === "holding" ? "holding" : ""} ${
+              phase === "countdown" || phase === "done" ? "armed" : ""
+            }`}
+            aria-label="Maintenir pour lancer la simulation d’alerte"
+            onPointerDown={startHold}
+            onPointerUp={endHold}
+            onPointerLeave={endHold}
+            onPointerCancel={endHold}
+            onKeyDown={(e) => {
+              if ((e.key === " " || e.key === "Enter") && !e.repeat) startHold();
+            }}
+            onKeyUp={endHold}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            <Icon name={phase === "done" ? "check" : "shield"} size={42} />
+          </button>
+          <h1 aria-live="polite">{title}</h1>
+          <p>{text}</p>
         </div>
+        {phase === "countdown" && (
+          <Button
+            variant="danger"
+            onClick={() => {
+              setPhase("cancelled");
+              notify("Simulation annulée");
+            }}
+          >
+            Annuler
+          </Button>
+        )}
+        {(phase === "done" || phase === "cancelled") && (
+          <Button variant="secondary" onClick={() => setPhase("idle")}>
+            Recommencer
+          </Button>
+        )}
         <ol className="demo-steps">
           <li>
             <span>1</span>
             <p>
-              <strong>Choisir un geste</strong>
+              <strong>Un geste discret</strong>
               <br />
-              Par exemple, maintenir un bouton.
+              Maintenir un bouton, ou le raccourci « Mon carnet » par appui long sur l’icône.
             </p>
           </li>
           <li>
             <span>2</span>
             <p>
-              <strong>Vérifier discrètement</strong>
+              <strong>Une confirmation silencieuse</strong>
               <br />
-              Une vibration confirmerait la demande.
+              Une vibration confirme la demande.
             </p>
           </li>
           <li>
@@ -1935,19 +2207,10 @@ function AlertDemo({ onBack, notify }: { onBack: () => void; notify: (s: string)
             <p>
               <strong>Garder le contrôle</strong>
               <br />
-              L’utilisatrice pourrait annuler avant l’envoi.
+              Un décompte permet d’annuler avant tout envoi.
             </p>
           </li>
         </ol>
-        <Button
-          onClick={() => {
-            setArmed(!armed);
-            notify(armed ? "Simulation arrêtée" : "Mode démonstration activé");
-          }}
-          icon={armed ? "check" : "shield"}
-        >
-          {armed ? "Arrêter la simulation" : "Tester le geste fictif"}
-        </Button>
         <p className="disclaimer">
           Cette interaction ne déclenche aucun message, appel, partage de position ou contact
           d’urgence.
