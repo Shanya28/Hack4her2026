@@ -392,9 +392,10 @@ function readAlertConfig(): AlertConfig {
 
 const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
 
-function speak(text: string) {
+/** Says `text`. With `queue`, it waits for what is already being said. */
+function speak(text: string, queue = false) {
   if (!canSpeak || !text) return;
-  window.speechSynthesis.cancel();
+  if (!queue) window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "fr-FR";
   utterance.rate = 0.95;
@@ -405,15 +406,6 @@ function speak(text: string) {
 
 function stopSpeaking() {
   if (canSpeak) window.speechSynthesis.cancel();
-}
-
-/** Reads `text` aloud whenever it changes, while audio is enabled. */
-function useNarration(enabled: boolean, text: string) {
-  useEffect(() => {
-    if (!enabled || !text) return;
-    speak(text);
-    return stopSpeaking;
-  }, [enabled, text]);
 }
 
 function App() {
@@ -431,8 +423,7 @@ function App() {
     const next = on && canSpeak;
     setAudioState(next);
     localStorage.setItem("naya-audio", next ? "yes" : "no");
-    if (next) speak("Lecture audio activée.");
-    else stopSpeaking();
+    if (!next) stopSpeaking();
   };
   const [person, setPersonState] = useState<"afi" | "maya">(() =>
     localStorage.getItem("naya-person") === "maya" ? "maya" : "afi",
@@ -663,7 +654,6 @@ function App() {
   else if (screen === "phishing")
     content = (
       <Phishing
-        audio={audio}
         fresh={fresh}
         clue={scenario.steps.find((s) => s.attachment)?.attachment?.clue}
         onNext={() => {
@@ -677,13 +667,12 @@ function App() {
       />
     );
   else if (screen === "resources")
-    content = <Resources key="resources" go={go} initial={0} active="resources" />;
+    content = <Resources go={go} />;
   else if (screen === "help")
-    content = <Resources key="help" go={go} initial={2} active="help" />;
+    content = <Help go={go} />;
   else if (screen === "quiz")
     content = (
       <Quiz
-        audio={audio}
         index={quizIndex}
         score={quizScore}
         choice={quizChoice}
@@ -717,7 +706,6 @@ function App() {
   else if (screen === "guide")
     content = (
       <Guide
-        audio={audio}
         saved={saved}
         unlocked={unlocked}
         onSave={() => {
@@ -888,12 +876,12 @@ function Language({
         <h3>Audio</h3>
         <button className="toggle-row" onClick={() => setAudio(!audio)} disabled={!canSpeak}>
           <span>
-            <strong>Lecture audio</strong>
+            <strong>Voix des messages</strong>
             <small>
               {!canSpeak
                 ? "Non disponible sur ce téléphone"
                 : audio
-                  ? "Activée · les textes sont lus à voix haute"
+                  ? "Activée · tu entends la voix de la personne qui t’écrit"
                   : "Continuer sans audio"}
             </small>
           </span>
@@ -1420,11 +1408,14 @@ function Story({
     const id = window.setTimeout(() => {
       setShown((value) => value + 1);
       if (mine) return;
+      // Audio is the voice of the person writing, nothing else on the screen.
+      if (audio) speak(incoming[1].replace(/^Image masquée · /, ""), true);
       // The threat itself lands harder than an ordinary message.
       vibrate(data.danger && shown === count - 1 ? [70, 50, 110] : 35);
     }, delay);
     return () => window.clearTimeout(id);
   }, [shown]);
+  useEffect(() => stopSpeaking, []);
   useEffect(() => {
     if (!instant) endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [shown, arrived]);
@@ -1436,16 +1427,6 @@ function Story({
   const tension = felt / 100;
   const level = felt >= 65 ? "high" : felt >= 40 ? "medium" : "low";
 
-  const narration = picked
-    ? `${picked.outcome} ${picked.advice} À retenir. ${data.feedback}`
-    : [
-        data.chapter.replace(/^\d+ · /, ""),
-        ...data.messages.map(([who, text]) => `${who === "moi" ? me : who} : ${text}`),
-        data.attachment
-          ? "Ce lien vient d’arriver. Que veux-tu faire ?"
-          : `Que réponds-tu ? ${data.choices.map((c) => c.label).join(". ")}.`,
-      ].join(". ");
-  useNarration(audio, narration);
   return (
     <section
       className={`screen story-screen ${data.danger ? "danger-mode" : ""} ${
@@ -1466,7 +1447,7 @@ function Story({
           <button
             className={`icon-button ${audio ? "audio-on" : ""}`}
             onClick={() => setAudio(!audio)}
-            aria-label={audio ? "Arrêter la lecture audio" : "Écouter l’histoire"}
+            aria-label={audio ? "Couper la voix des messages" : "Écouter la voix des messages"}
             aria-pressed={audio}
           >
             <Icon name="play" />
@@ -1751,21 +1732,13 @@ function FakeLogin({
 
 function Phishing({
   onNext,
-  audio,
   clue,
   fresh,
 }: {
   onNext: () => void;
-  audio: boolean;
   clue?: string;
   fresh: number[];
 }) {
-  useNarration(
-    audio,
-    "Simulation interrompue. Cette page cherchait tes identifiants. Tu n’as rien envoyé. " +
-      "Trois indices à repérer. Un : un lien inattendu. Deux : une demande de connexion. " +
-      "Trois : une adresse étrange. Bon réflexe : ferme la page, puis ouvre toi-même le service officiel.",
-  );
   return (
     <section className="screen explain-screen">
       <div className="explain-hero">
@@ -1819,16 +1792,8 @@ function Phishing({
   );
 }
 
-function Resources({
-  go,
-  initial,
-  active,
-}: {
-  go: (s: Screen) => void;
-  initial: number;
-  active: "resources" | "help";
-}) {
-  const [open, setOpen] = useState(initial);
+function Resources({ go }: { go: (s: Screen) => void }) {
+  const [open, setOpen] = useState(0);
   const cards = [
     {
       icon: "download" as IconName,
@@ -1852,28 +1817,17 @@ function Resources({
         "Vérifie les sessions et paramètres de confidentialité.",
       ],
     },
-    {
-      icon: "help" as IconName,
-      title: "Trouver de l’aide",
-      intro: "Tu n’as pas à gérer ça seule.",
-      items: [
-        "Parle à une personne de confiance.",
-        "Cherche une structure locale dont les contacts sont vérifiés.",
-        "Utilise les outils officiels de signalement de la plateforme.",
-        "En cas de danger immédiat, contacte les services d’urgence de ta zone.",
-      ],
-    },
   ];
   return (
     <section className="screen with-nav resources">
-      <TopBar title="Que faire maintenant ?" onBack={() => go("home")} />
+      <TopBar title="Mes réflexes" onBack={() => go("home")} />
       <div className="page-content">
         <div className="resource-title">
           <span>
             <Icon name="shield" size={30} />
           </span>
-          <h1>Tu n’as pas à gérer ça seule.</h1>
-          <p>Choisis ce dont tu as besoin, maintenant.</p>
+          <h1>Les bons gestes, étape par étape.</h1>
+          <p>Ce que tu peux faire toi-même, dès maintenant.</p>
         </div>
         {cards.map((c, i) => (
           <article className={`resource-card ${open === i ? "open" : ""}`} key={c.title}>
@@ -1901,15 +1855,6 @@ function Resources({
                     preuve. Ta sécurité passe avant tout.
                   </p>
                 )}
-                {i === 2 && (
-                  <p className="empty-contact">
-                    <strong>Contacts locaux vérifiés</strong>
-                    <br />
-                    Aucune coordonnée n’est préchargée dans ce prototype afin de ne pas afficher
-                    d’information non vérifiée. Vérifie toujours la source et les limites de
-                    confidentialité d’un service.
-                  </p>
-                )}
               </div>
             )}
           </article>
@@ -1922,21 +1867,136 @@ function Resources({
         <Button onClick={() => go("guide")} icon="download">
           Voir mes 6 réflexes
         </Button>
+        <Button variant="secondary" onClick={() => go("help")} icon="help">
+          Trouver de l’aide
+        </Button>
       </div>
-      <BottomNav active={active} go={go} />
+      <BottomNav active="resources" go={go} />
+    </section>
+  );
+}
+
+// Who to turn to in Benin. The short numbers come from the official list
+// published by ARCEP Bénin (June 2026); they must be checked again before
+// each release. Ayidote never calls or writes to anyone itself.
+const helpContacts = [
+  {
+    icon: "warning",
+    name: "Police Républicaine",
+    number: "117",
+    when: "Tu es en danger maintenant, ou quelqu’un te menace physiquement.",
+    what: "Numéro d’urgence gratuit, jour et nuit.",
+  },
+  {
+    icon: "shield",
+    name: "Institut National de la Femme (INF)",
+    number: "114",
+    when: "Tu subis un chantage, du harcèlement ou une violence parce que tu es une fille ou une femme, y compris en ligne.",
+    what: "Écoute, orientation et accompagnement pour porter plainte.",
+  },
+  {
+    icon: "user",
+    name: "Brigade des mineurs",
+    number: "160",
+    when: "Tu as moins de 18 ans, ou la victime est mineure.",
+    what: "Protection des enfants et des adolescentes.",
+  },
+  {
+    icon: "lock",
+    name: "Protection des données personnelles (APDP)",
+    number: "150",
+    when: "Tes photos, ton numéro ou tes informations circulent sans ton accord.",
+    what: "Autorité qui fait respecter tes droits sur tes données.",
+  },
+  {
+    icon: "search",
+    name: "Centre National d’Investigations Numériques (CNIN)",
+    number: "",
+    when: "Arnaque en ligne, compte piraté, chantage à la photo ou à la vidéo.",
+    what: "Service d’enquête spécialisé. Le dépôt de plainte est gratuit : passe par un commissariat ou par ses canaux officiels, jamais par un inconnu qui dit le représenter.",
+  },
+] as { icon: IconName; name: string; number: string; when: string; what: string }[];
+
+function Help({ go }: { go: (s: Screen) => void }) {
+  return (
+    <section className="screen with-nav resources">
+      <TopBar title="Trouver de l’aide" onBack={() => go("home")} />
+      <div className="page-content">
+        <div className="resource-title">
+          <span>
+            <Icon name="help" size={30} />
+          </span>
+          <h1>Tu n’as pas à gérer ça seule.</h1>
+          <p>Ces structures existent pour t’écouter et te protéger.</p>
+        </div>
+        <div className="help-first">
+          <Icon name="user" />
+          <p>
+            <strong>D’abord, une personne de confiance.</strong>
+            <br />
+            Une sœur, une amie, une tante, une enseignante. En parler n’est pas une faute, et tu
+            n’as pas à tout raconter pour être aidée.
+          </p>
+        </div>
+        <h2>Les structures compétentes au Bénin</h2>
+        {helpContacts.map((c) => (
+          <article className="help-contact" key={c.name}>
+            <span className="resource-icon">
+              <Icon name={c.icon} />
+            </span>
+            <div>
+              <strong>{c.name}</strong>
+              <p className="help-when">{c.when}</p>
+              <p>{c.what}</p>
+              {c.number && (
+                <a className="help-call" href={`tel:${c.number}`}>
+                  Appeler le {c.number}
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+        <article className="help-contact">
+          <span className="resource-icon">
+            <Icon name="message" />
+          </span>
+          <div>
+            <strong>Signaler sur l’application concernée</strong>
+            <p>
+              Utilise le bouton « Signaler » du compte ou du message, puis bloque. Le signalement
+              reste anonyme pour la personne signalée.
+            </p>
+          </div>
+        </article>
+        <div className="tip">
+          <Icon name="eye" />
+          <p>
+            <strong>Avant d’appeler</strong>
+            <br />
+            Un appel reste visible dans le journal de ton téléphone. Si quelqu’un le surveille,
+            appelle depuis le téléphone d’une personne sûre.
+          </p>
+        </div>
+        <p className="disclaimer">
+          Ayidote n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
+          de l’ARCEP Bénin (juin 2026) : ils peuvent changer.
+        </p>
+        <Button variant="secondary" onClick={() => go("resources")} icon="shield">
+          Voir les gestes à faire toi-même
+        </Button>
+      </div>
+      <BottomNav active="help" go={go} />
     </section>
   );
 }
 
 function Quiz({
-  audio,
   index,
   choice,
   setChoice,
   onNext,
   onBack,
 }: {
-  audio: boolean;
   index: number;
   score: number;
   choice: number | null;
@@ -1945,14 +2005,6 @@ function Quiz({
   onBack: () => void;
 }) {
   const item = quiz[index];
-  useNarration(
-    audio,
-    choice === null
-      ? `Question ${index + 1}. ${item.q} ${item.a
-          .map((a, i) => `Réponse ${String.fromCharCode(65 + i)} : ${a}`)
-          .join(". ")}.`
-      : `${choice === item.correct ? "Bien vu !" : "À retenir."} ${item.why}`,
-  );
   return (
     <section className="screen quiz">
       <TopBar title="Quiz réflexes" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
@@ -2058,22 +2110,16 @@ const reflexes = [
 ] as [IconName, string, string][];
 
 function Guide({
-  audio,
   saved,
   unlocked,
   onSave,
   onBack,
 }: {
-  audio: boolean;
   saved: boolean;
   unlocked: number[];
   onSave: () => void;
   onBack: () => void;
 }) {
-  useNarration(
-    audio,
-    `Mes 6 réflexes. ${reflexes.map((r, i) => `${i + 1}. ${r[1]}. ${r[2]}`).join(" ")}`,
-  );
   return (
     <section className="screen guide">
       <TopBar
@@ -2312,7 +2358,7 @@ function Settings({
             <Icon name="play" />
           </span>
           <div>
-            <strong>Lecture audio</strong>
+            <strong>Voix des messages</strong>
             <small>
               {!canSpeak ? "Non disponible sur ce téléphone" : audio ? "Activée" : "Désactivée"}
             </small>

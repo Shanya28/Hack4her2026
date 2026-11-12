@@ -2867,3 +2867,60 @@ button.pulse {
     position: absolute;
   }
 }
+
+/* ---- Help: people and structures to turn to ---- */
+.help-first {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 11px;
+  background: var(--sage-light);
+  color: #44593f;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 22px;
+}
+.help-first p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.help-contact {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  background: white;
+  border: 1px solid #e4d8cc;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.help-contact strong {
+  font-size: 14px;
+  color: var(--plum);
+}
+.help-contact p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.help-contact p.help-when {
+  color: var(--ink);
+}
+.help-call {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 0 18px;
+  border-radius: 22px;
+  background: var(--plum);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.help-call:focus-visible {
+  outline: 3px solid #d9a34e;
+  outline-offset: 2px;
+}
