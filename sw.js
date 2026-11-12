@@ -1,4 +1,4 @@
-const CACHE = "ayidote-v2";
+const CACHE = "ayidote-v3";
 const SHELL = ["./", "./manifest.webmanifest", "./icon.svg", "./favicon.png"];
 
 const cacheable = (response) => response && (response.ok || response.type === "opaque");
@@ -42,22 +42,31 @@ self.addEventListener("message", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || !event.request.url.startsWith("http")) return;
+  const request = event.request;
+  if (request.method !== "GET" || !request.url.startsWith("http")) return;
+
+  const fromNetwork = () =>
+    fetch(request).then((response) => {
+      if (cacheable(response)) {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(request, copy));
+      }
+      return response;
+    });
+
+  // The page itself: network first, so a new version shows up as soon as the
+  // phone is online; the cached copy is the offline fallback.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fromNetwork().catch(() =>
+        caches.match(request).then((cached) => cached || caches.match("./")),
+      ),
+    );
+    return;
+  }
+
+  // Everything else (hashed scripts, styles, fonts): cache first.
   event.respondWith(
-    caches.match(event.request).then(
-      (cached) =>
-        cached ||
-        fetch(event.request)
-          .then((response) => {
-            if (cacheable(response)) {
-              const copy = response.clone();
-              caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-            }
-            return response;
-          })
-          .catch(() =>
-            event.request.mode === "navigate" ? caches.match("./") : Response.error(),
-          ),
-    ),
+    caches.match(request).then((cached) => cached || fromNetwork().catch(() => Response.error())),
   );
 });
