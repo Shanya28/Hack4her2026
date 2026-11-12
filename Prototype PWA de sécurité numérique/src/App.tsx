@@ -12,6 +12,7 @@ type Screen =
   | "scenarios"
   | "play"
   | "vop"
+  | "mot"
   | "fake-login"
   | "phishing"
   | "resources"
@@ -303,6 +304,15 @@ type StoryStep = {
   choices: StoryChoice[];
   feedback: string;
 };
+/** Theme word of a story, to guess in "Le mot du jour". */
+type DailyWord = {
+  mot: string;
+  lecon: string;
+  indices: string[];
+  /** Words very close to the answer, then loosely related ones. */
+  chaud: string[];
+  tiede: string[];
+};
 type Scenario = {
   id: string;
   order: number;
@@ -311,6 +321,7 @@ type Scenario = {
   summary: string;
   source: "équipe" | "ia";
   relu: boolean;
+  mot?: DailyWord;
   contact: Contact;
   steps: StoryStep[];
 };
@@ -331,11 +342,50 @@ function readDone(): string[] {
   }
 }
 
+/** Number of the current local day; it changes at midnight. */
+function today(): number {
+  const now = new Date();
+  return Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
+}
+
 /** A different story is put forward each day, from the reviewed pool. */
 function dailyScenario(): Scenario {
-  const now = new Date();
-  const day = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
-  return scenarios[day % scenarios.length];
+  return scenarios[today() % scenarios.length];
+}
+
+// "Le mot du jour": the word to find is the theme of the story of the day.
+// Closeness comes from two hand-written lists per word (very close, loosely
+// related), so the game needs no network and no language model.
+type WordGame = { day: number; guesses: string[]; hints: number; found: boolean; revealed: boolean };
+type Heat = "found" | "hot" | "warm" | "cold";
+
+/** "Mots de Passe " -> "motdepasse": case, accents, spaces and plural ignored. */
+function plainWord(word: string): string {
+  const plain = word
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[^a-z]/g, "");
+  return plain.length > 3 ? plain.replace(/[sx]$/, "") : plain;
+}
+
+function heatOf(guess: string, word: DailyWord): Heat {
+  const plain = plainWord(guess);
+  if (plain === plainWord(word.mot)) return "found";
+  if (word.chaud.some((w) => plainWord(w) === plain)) return "hot";
+  if (word.tiede.some((w) => plainWord(w) === plain)) return "warm";
+  return "cold";
+}
+
+function readWordGame(): WordGame {
+  const fresh = { day: today(), guesses: [], hints: 0, found: false, revealed: false };
+  try {
+    const value = JSON.parse(localStorage.getItem("naya-mot") || "null");
+    if (value && value.day === fresh.day && Array.isArray(value.guesses))
+      return { ...fresh, ...value };
+  } catch {
+    // start a new game
+  }
+  return fresh;
 }
 
 const profiles = [...new Set(scenarios.map((s) => s.profile))];
@@ -538,6 +588,11 @@ function App() {
   const total = scenario.steps.length;
   const [story, setStory] = useState(Number(localStorage.getItem("naya-story") || 0));
   const [done, setDone] = useState<string[]>(readDone);
+  const [wordGame, setWordGameState] = useState<WordGame>(readWordGame);
+  const setWordGame = (game: WordGame) => {
+    setWordGameState(game);
+    localStorage.setItem("naya-mot", JSON.stringify(game));
+  };
   const [alertConfig, setAlertConfigState] = useState<AlertConfig>(readAlertConfig);
   const setAlertConfig = (config: AlertConfig) => {
     setAlertConfigState(config);
@@ -644,6 +699,7 @@ function App() {
   const resetAll = () => {
     localStorage.clear();
     stopSpeaking();
+    setWordGameState(readWordGame());
     setAudioState(false);
     setLangState("fr");
     setPersonState("afi");
@@ -698,8 +754,19 @@ function App() {
         go={go}
         openCarnet={openCarnet}
         daily={dailyScenario()}
+        wordOpen={wordGame.found || wordGame.revealed}
         onPick={startScenario}
         unlocked={unlocked.length}
+      />
+    );
+  else if (screen === "mot")
+    content = (
+      <MotDuJour
+        scenario={dailyScenario()}
+        game={wordGame}
+        setGame={setWordGame}
+        onPlay={() => startScenario(dailyScenario().id)}
+        onBack={() => go("home")}
       />
     );
   else if (screen === "play")
@@ -1128,6 +1195,7 @@ function Home({
   go,
   openCarnet,
   daily,
+  wordOpen,
   onPick,
   unlocked,
 }: {
@@ -1137,6 +1205,7 @@ function Home({
   go: (s: Screen) => void;
   openCarnet: () => void;
   daily: Scenario;
+  wordOpen: boolean;
   onPick: (id: string) => void;
   unlocked: number;
 }) {
@@ -1219,16 +1288,32 @@ function Home({
             </button>
           </div>
         </section>
-        <button className="wide-link" onClick={() => onPick(daily.id)}>
-          <span className="link-icon orange">
-            <Icon name="spark" />
-          </span>
-          <span>
-            <strong>L’histoire du jour</strong>
-            <small>{daily.title} · une nouvelle chaque jour</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
+        {daily.mot && !wordOpen ? (
+          <button className="wide-link mot-link" onClick={() => go("mot")}>
+            <span className="link-icon orange">
+              <Icon name="lock" />
+            </span>
+            <span>
+              <strong>Le mot du jour</strong>
+              <small>Trouve-le pour ouvrir l’histoire du jour</small>
+            </span>
+            <Icon name="chevron" />
+          </button>
+        ) : (
+          <button className="wide-link" onClick={() => onPick(daily.id)}>
+            <span className="link-icon orange">
+              <Icon name="spark" />
+            </span>
+            <span>
+              <strong>L’histoire du jour</strong>
+              <small>
+                {daily.mot ? `Mot du jour : ${daily.mot.mot} · ` : ""}
+                {daily.title}
+              </small>
+            </span>
+            <Icon name="chevron" />
+          </button>
+        )}
         <button className="wide-link" onClick={() => go("scenarios")}>
           <span className="link-icon">
             <Icon name="book" />
@@ -1336,6 +1421,174 @@ function Scenarios({
             seulement à trier la liste et reste sur ce téléphone.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+const heatLabels: Record<Heat, string> = {
+  found: "Trouvé",
+  hot: "Brûlant",
+  warm: "Tiède",
+  cold: "Froid",
+};
+const heatRank: Record<Heat, number> = { found: 0, hot: 1, warm: 2, cold: 3 };
+
+function MotDuJour({
+  scenario,
+  game,
+  setGame,
+  onPlay,
+  onBack,
+}: {
+  scenario: Scenario;
+  game: WordGame;
+  setGame: (g: WordGame) => void;
+  onPlay: () => void;
+  onBack: () => void;
+}) {
+  const word = scenario.mot;
+  const [draft, setDraft] = useState("");
+  const [note, setNote] = useState("");
+  if (!word)
+    return (
+      <section className="screen">
+        <TopBar title="Le mot du jour" onBack={onBack} />
+        <div className="page-content">
+          <p className="lead">Pas de mot aujourd’hui : l’histoire du jour est déjà ouverte.</p>
+          <Button onClick={onPlay} icon="arrow">
+            Jouer l’histoire du jour
+          </Button>
+        </div>
+      </section>
+    );
+
+  const over = game.found || game.revealed;
+  const rows = game.guesses
+    .map((guess, order) => ({ guess, order, heat: heatOf(guess, word) }))
+    .sort((a, b) => heatRank[a.heat] - heatRank[b.heat] || b.order - a.order);
+  const submit = () => {
+    const guess = draft.trim();
+    if (!plainWord(guess)) return;
+    if (game.guesses.some((g) => plainWord(g) === plainWord(guess))) {
+      setNote(`Tu as déjà essayé « ${guess} ».`);
+      setDraft("");
+      return;
+    }
+    const heat = heatOf(guess, word);
+    setGame({ ...game, guesses: [...game.guesses, guess], found: heat === "found" });
+    setNote(
+      heat === "found"
+        ? ""
+        : heat === "hot"
+          ? "Brûlant ! Tu es tout près."
+          : heat === "warm"
+            ? "Tiède : tu es dans le bon sujet."
+            : "Froid. Essaie un autre mot, ou prends un indice.",
+    );
+    setDraft("");
+    if (heat === "found") vibrate([40, 40, 90]);
+  };
+
+  return (
+    <section className="screen mot-screen">
+      <TopBar title="Le mot du jour" onBack={onBack} />
+      <div className="page-content">
+        {over ? (
+          <div className="mot-found" role="status">
+            <span>
+              <Icon name={game.found ? "check" : "eye"} size={30} />
+            </span>
+            <p className="eyebrow">{game.found ? "Bravo, tu l’as trouvé" : "Le mot était"}</p>
+            <h1>{word.mot}</h1>
+            {game.found && (
+              <p className="mot-tries">
+                en {game.guesses.length} essai{game.guesses.length > 1 ? "s" : ""}
+                {game.hints ? ` et ${game.hints} indice${game.hints > 1 ? "s" : ""}` : ""}
+              </p>
+            )}
+            <div className="mot-lesson">
+              <strong>La leçon du jour</strong>
+              <p>{word.lecon}</p>
+            </div>
+            <Button onClick={onPlay} icon="arrow">
+              Jouer l’histoire du jour
+            </Button>
+            <p className="microcopy">« {scenario.title} » · un nouveau mot demain</p>
+          </div>
+        ) : (
+          <>
+            <p className="eyebrow">Un mot, une leçon</p>
+            <h1>Quel est le mot du jour ?</h1>
+            <p className="lead">
+              C’est le thème de l’histoire du jour. Propose des mots : plus tu chauffes, plus tu es
+              proche.
+            </p>
+            <form
+              className="mot-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                submit();
+              }}
+            >
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Écris un mot…"
+                aria-label="Ta proposition"
+                autoComplete="off"
+                autoCapitalize="none"
+                maxLength={30}
+              />
+              <button type="submit" disabled={!plainWord(draft)} aria-label="Proposer ce mot">
+                <Icon name="arrow" />
+              </button>
+            </form>
+            {note && (
+              <p className="mot-note" role="status">
+                {note}
+              </p>
+            )}
+            {game.hints > 0 && (
+              <ol className="mot-hints">
+                {word.indices.slice(0, game.hints).map((hint) => (
+                  <li key={hint}>{hint}</li>
+                ))}
+              </ol>
+            )}
+            <div className="mot-actions">
+              <button
+                onClick={() => setGame({ ...game, hints: game.hints + 1 })}
+                disabled={game.hints >= word.indices.length}
+              >
+                {game.hints >= word.indices.length
+                  ? "Plus d’indice"
+                  : `Un indice (${game.hints}/${word.indices.length})`}
+              </button>
+              {game.guesses.length >= 3 && (
+                <button onClick={() => setGame({ ...game, revealed: true })}>Révéler le mot</button>
+              )}
+            </div>
+          </>
+        )}
+        {rows.length > 0 && (
+          <>
+            <h2 className="section-title">
+              Tes essais <small>· {rows.length}</small>
+            </h2>
+            <ul className="mot-guesses">
+              {rows.map((row) => (
+                <li key={row.guess} className={row.heat}>
+                  <strong>{row.guess}</strong>
+                  <i>
+                    <b />
+                  </i>
+                  <em>{heatLabels[row.heat]}</em>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
     </section>
   );
@@ -2350,6 +2603,16 @@ function Play({
           </span>
         </button>
         <h2 className="section-title">Jouer seule</h2>
+        <button className="wide-link" onClick={() => go("mot")}>
+          <span className="link-icon orange">
+            <Icon name="search" />
+          </span>
+          <span>
+            <strong>Le mot du jour</strong>
+            <small>Devine le thème, ouvre l’histoire du jour</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
         <button className="wide-link" onClick={() => go(inStory ? "story" : "scenarios")}>
           <span className="link-icon">
             <Icon name="message" />

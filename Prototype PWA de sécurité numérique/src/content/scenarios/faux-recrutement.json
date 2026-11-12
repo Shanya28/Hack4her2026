@@ -6,13 +6,57 @@
   "summary": "Un cabinet inconnu te promet un poste, puis réclame des frais et tes papiers.",
   "source": "ia",
   "relu": false,
-  "contact": { "name": "Mme Dossou", "status": "Recrutement · compte récent", "portrait": "rh" },
+  "mot": {
+    "mot": "arnaque",
+    "lecon": "Une offre qui promet beaucoup, presse de décider et demande de l'argent d'abord a tout d'une arnaque. Vérifie toujours par toi-même.",
+    "indices": [
+      "C'est une tromperie pour obtenir quelque chose de toi.",
+      "Elle promet beaucoup et demande de payer d'abord.",
+      "Il commence par A et compte 7 lettres."
+    ],
+    "chaud": [
+      "escroquerie",
+      "piège",
+      "tromperie",
+      "fraude",
+      "escroc",
+      "arnaqueur",
+      "mensonge",
+      "duperie",
+      "faux"
+    ],
+    "tiede": [
+      "argent",
+      "emploi",
+      "travail",
+      "frais",
+      "payer",
+      "promesse",
+      "recrutement",
+      "offre",
+      "urgent",
+      "salaire",
+      "vol",
+      "voleur"
+    ]
+  },
+  "contact": {
+    "name": "Mme Dossou",
+    "status": "Recrutement · compte récent",
+    "portrait": "rh"
+  },
   "steps": [
     {
       "chapter": "1 · La bonne nouvelle",
       "messages": [
-        ["Mme Dossou", "Bonjour, votre profil a été retenu pour un poste d'assistante administrative. Salaire : 250 000 F par mois."],
-        ["Mme Dossou", "Aucun entretien n'est nécessaire. Il ne reste qu'une seule place, répondez vite."]
+        [
+          "Mme Dossou",
+          "Bonjour, votre profil a été retenu pour un poste d'assistante administrative. Salaire : 250 000 F par mois."
+        ],
+        [
+          "Mme Dossou",
+          "Aucun entretien n'est nécessaire. Il ne reste qu'une seule place, répondez vite."
+        ]
       ],
       "choices": [
         {
@@ -38,7 +82,12 @@
     },
     {
       "chapter": "2 · Le dossier en ligne",
-      "messages": [["Mme Dossou", "Pour finaliser, remplissez votre dossier de candidature sur ce lien."]],
+      "messages": [
+        [
+          "Mme Dossou",
+          "Pour finaliser, remplissez votre dossier de candidature sur ce lien."
+        ]
+      ],
       "attachment": {
         "label": "Dossier de candidature",
         "url": "soleil-carriere.example-emploi.com",
@@ -54,8 +103,14 @@
     {
       "chapter": "3 · Les frais de dossier",
       "messages": [
-        ["Mme Dossou", "Votre dossier est validé ! Il reste 15 000 F de frais de dossier à envoyer par mobile money."],
-        ["Mme Dossou", "Le paiement doit arriver avant 18 h, sinon la place sera donnée à quelqu'un d'autre."]
+        [
+          "Mme Dossou",
+          "Votre dossier est validé ! Il reste 15 000 F de frais de dossier à envoyer par mobile money."
+        ],
+        [
+          "Mme Dossou",
+          "Le paiement doit arriver avant 18 h, sinon la place sera donnée à quelqu'un d'autre."
+        ]
       ],
       "choices": [
         {
@@ -82,8 +137,14 @@
     {
       "chapter": "4 · Les papiers",
       "messages": [
-        ["Mme Dossou", "Envoyez aussi une photo de votre carte d'identité, recto verso."],
-        ["Mme Dossou", "Et un selfie en tenant la carte, pour vérification."]
+        [
+          "Mme Dossou",
+          "Envoyez aussi une photo de votre carte d'identité, recto verso."
+        ],
+        [
+          "Mme Dossou",
+          "Et un selfie en tenant la carte, pour vérification."
+        ]
       ],
       "choices": [
         {
@@ -109,11 +170,19 @@
     },
     {
       "chapter": "5 · La menace",
-      "header": { "status": "Messages à conserver" },
+      "header": {
+        "status": "Messages à conserver"
+      },
       "danger": true,
       "messages": [
-        ["Mme Dossou", "Nous avons votre CV, votre numéro et votre adresse."],
-        ["Mme Dossou", "Payez les frais aujourd'hui ou votre nom sera inscrit sur la liste noire des employeurs."]
+        [
+          "Mme Dossou",
+          "Nous avons votre CV, votre numéro et votre adresse."
+        ],
+        [
+          "Mme Dossou",
+          "Payez les frais aujourd'hui ou votre nom sera inscrit sur la liste noire des employeurs."
+        ]
       ],
       "choices": [
         {
@@ -131,7 +200,10 @@
         {
           "label": "Garder les preuves, bloquer et en parler",
           "protective": true,
-          "reflexes": [4, 5],
+          "reflexes": [
+            4,
+            5
+          ],
           "outcome": "Tu conserves les messages, tu bloques le numéro et tu en parles à une personne de confiance. La menace reste sans effet.",
           "advice": "C'est le réflexe le plus protecteur : preuves, blocage, soutien."
         }

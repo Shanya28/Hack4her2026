@@ -6,6 +6,41 @@
   "summary": "Un inconnu gagne ta confiance, puis menace de publier tes messages.",
   "source": "équipe",
   "relu": true,
+  "mot": {
+    "mot": "consentement",
+    "lecon": "Ton consentement doit être libre et réversible : dire oui une fois, ce n'est pas dire oui pour toujours, ni dire oui à un partage.",
+    "indices": [
+      "C'est un mot qui parle de ton accord.",
+      "Sans lui, personne n'a le droit de partager une image de toi.",
+      "Il commence par C et compte 12 lettres."
+    ],
+    "chaud": [
+      "accord",
+      "permission",
+      "autorisation",
+      "consentir",
+      "oui",
+      "non",
+      "refus",
+      "accepter",
+      "choix",
+      "volonté"
+    ],
+    "tiede": [
+      "photo",
+      "image",
+      "intime",
+      "privé",
+      "confiance",
+      "respect",
+      "pression",
+      "chantage",
+      "partage",
+      "limite",
+      "droit",
+      "liberté"
+    ]
+  },
   "contact": {
     "name": "Kevin",
     "status": "en ligne récemment",
@@ -92,14 +127,18 @@
         {
           "label": "Refuser",
           "protective": true,
-          "reflexes": [3],
+          "reflexes": [
+            3
+          ],
           "outcome": "Kevin insiste : « Tu ne me fais pas confiance ? », puis devient froid. Sa réaction montre que ta limite le dérange.",
           "advice": "Dire non suffit. Quelqu'un qui te respecte accepte ton refus sans te faire culpabiliser."
         },
         {
           "label": "Demander pourquoi",
           "protective": true,
-          "reflexes": [3],
+          "reflexes": [
+            3
+          ],
           "outcome": "Kevin répond : « Pour me prouver que tu tiens à moi. » Il ne donne aucune vraie raison, seulement de la pression.",
           "advice": "Questionner t'aide à voir la manipulation : l'affection ne se prouve pas par une image intime."
         }
@@ -134,7 +173,9 @@
         {
           "label": "Refuser et soutenir la victime",
           "protective": true,
-          "reflexes": [3],
+          "reflexes": [
+            3
+          ],
           "outcome": "Tu écris dans le groupe que ce partage est une violence, puis tu envoies un message de soutien à la jeune fille. Deux amies suppriment l'image.",
           "advice": "Refuser de partager et soutenir la victime, c'est ce qui freine la diffusion."
         }
@@ -177,7 +218,10 @@
         {
           "label": "Garder les preuves et demander de l'aide",
           "protective": true,
-          "reflexes": [4, 5],
+          "reflexes": [
+            4,
+            5
+          ],
           "outcome": "Tu fais des captures d'écran, tu bloques Kevin et tu en parles à une personne de confiance. Tu n'es plus seule face à lui.",
           "advice": "C'est le réflexe le plus protecteur : preuves, blocage, signalement, soutien."
         }

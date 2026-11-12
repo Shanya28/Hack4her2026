@@ -53,6 +53,18 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
   if (!isText(contact.name) || !isText(contact.status)) fail("« contact » incomplet (name, status)");
   if (!PORTRAITS.includes(contact.portrait)) fail(`portrait inconnu : ${contact.portrait}`);
 
+  // Mot du jour (facultatif) : le thème de l'histoire, à deviner pour l'ouvrir.
+  if (scenario.mot !== undefined) {
+    const mot = scenario.mot;
+    if (!isText(mot.mot) || /\s/.test(mot.mot.trim())) fail("mot du jour : « mot » doit être un seul mot");
+    if (!isText(mot.lecon)) fail("mot du jour : « lecon » manquante");
+    if (!Array.isArray(mot.indices) || mot.indices.length !== 3 || !mot.indices.every(isText))
+      fail("mot du jour : 3 indices attendus");
+    for (const key of ["chaud", "tiede"])
+      if (!Array.isArray(mot[key]) || mot[key].length < 5 || !mot[key].every(isText))
+        fail(`mot du jour : au moins 5 mots dans « ${key} »`);
+  }
+
   const steps = Array.isArray(scenario.steps) ? scenario.steps : [];
   if (steps.length < 3 || steps.length > 7) fail(`il faut 3 à 7 situations (trouvé : ${steps.length})`);
   const withLink = steps.filter((s) => s.attachment);

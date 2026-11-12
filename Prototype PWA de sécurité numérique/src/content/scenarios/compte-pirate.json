@@ -6,13 +6,54 @@
   "summary": "Une « amie » qui a changé de numéro te demande un code reçu par SMS.",
   "source": "ia",
   "relu": false,
-  "contact": { "name": "Chantal", "status": "nouveau numéro · inconnu", "portrait": "chantal" },
+  "mot": {
+    "mot": "code",
+    "lecon": "Un code reçu par SMS est la clé de ton compte. Personne, même une amie, n'a de raison de te le demander.",
+    "indices": [
+      "Tu le reçois souvent par SMS.",
+      "C'est la clé de ton compte : il ne se partage jamais.",
+      "Il commence par C et compte 4 lettres."
+    ],
+    "chaud": [
+      "mot de passe",
+      "secret",
+      "chiffres",
+      "sms",
+      "vérification",
+      "clé",
+      "pin",
+      "otp",
+      "password"
+    ],
+    "tiede": [
+      "compte",
+      "téléphone",
+      "numéro",
+      "pirate",
+      "piratage",
+      "sécurité",
+      "message",
+      "connexion",
+      "amie"
+    ]
+  },
+  "contact": {
+    "name": "Chantal",
+    "status": "nouveau numéro · inconnu",
+    "portrait": "chantal"
+  },
   "steps": [
     {
       "chapter": "1 · Le nouveau numéro",
       "messages": [
-        ["Chantal", "Coucou ma chérie, c'est Chantal ! J'ai changé de numéro, enregistre celui-ci."],
-        ["Chantal", "Tu vas bien ? J'ai besoin d'un petit service."]
+        [
+          "Chantal",
+          "Coucou ma chérie, c'est Chantal ! J'ai changé de numéro, enregistre celui-ci."
+        ],
+        [
+          "Chantal",
+          "Tu vas bien ? J'ai besoin d'un petit service."
+        ]
       ],
       "choices": [
         {
@@ -39,8 +80,14 @@
     {
       "chapter": "2 · Le code reçu par SMS",
       "messages": [
-        ["Chantal", "Je t'ai envoyé un code à 6 chiffres par erreur, c'était pour moi."],
-        ["Chantal", "Renvoie-le-moi vite s'il te plaît, c'est urgent !"]
+        [
+          "Chantal",
+          "Je t'ai envoyé un code à 6 chiffres par erreur, c'était pour moi."
+        ],
+        [
+          "Chantal",
+          "Renvoie-le-moi vite s'il te plaît, c'est urgent !"
+        ]
       ],
       "choices": [
         {
@@ -52,14 +99,18 @@
         {
           "label": "Demander pourquoi le code est arrivé chez moi",
           "protective": true,
-          "reflexes": [1],
+          "reflexes": [
+            1
+          ],
           "outcome": "« C'est une erreur du réseau, envoie vite ! » Aucune explication, seulement de la précipitation.",
           "advice": "Un code arrive sur ton téléphone parce qu'il concerne ton compte, pas celui de quelqu'un d'autre."
         },
         {
           "label": "Garder le code pour moi",
           "protective": true,
-          "reflexes": [1],
+          "reflexes": [
+            1
+          ],
           "outcome": "« Chantal » insiste, puis se fâche. Tu ne cèdes pas et ton compte reste à toi.",
           "advice": "Un code reçu par SMS ne se partage jamais, même avec une personne proche."
         }
@@ -68,7 +119,12 @@
     },
     {
       "chapter": "3 · Le lien de confirmation",
-      "messages": [["Chantal", "Bon, sinon clique ici pour confirmer que c'est bien ton compte."]],
+      "messages": [
+        [
+          "Chantal",
+          "Bon, sinon clique ici pour confirmer que c'est bien ton compte."
+        ]
+      ],
       "attachment": {
         "label": "Confirmer mon compte",
         "url": "verif-compte.example-secure.net",
@@ -83,10 +139,20 @@
     },
     {
       "chapter": "4 · L'alerte dans le groupe",
-      "header": { "name": "Groupe des vendeuses", "status": "12 membres", "portrait": "afi" },
+      "header": {
+        "name": "Groupe des vendeuses",
+        "status": "12 membres",
+        "portrait": "afi"
+      },
       "messages": [
-        ["Awa · Groupe", "Les filles, attention ! Quelqu'un utilise le nom de Chantal pour demander de l'argent."],
-        ["Awa · Groupe", "Trois personnes ont déjà reçu une demande de 20 000 F ce matin."]
+        [
+          "Awa · Groupe",
+          "Les filles, attention ! Quelqu'un utilise le nom de Chantal pour demander de l'argent."
+        ],
+        [
+          "Awa · Groupe",
+          "Trois personnes ont déjà reçu une demande de 20 000 F ce matin."
+        ]
       ],
       "choices": [
         {
@@ -112,11 +178,19 @@
     },
     {
       "chapter": "5 · La menace",
-      "header": { "status": "Messages à conserver" },
+      "header": {
+        "status": "Messages à conserver"
+      },
       "danger": true,
       "messages": [
-        ["Chantal", "Tu parles trop."],
-        ["Chantal", "Si tu continues, j'envoie tes conversations privées à tous tes contacts."]
+        [
+          "Chantal",
+          "Tu parles trop."
+        ],
+        [
+          "Chantal",
+          "Si tu continues, j'envoie tes conversations privées à tous tes contacts."
+        ]
       ],
       "choices": [
         {
@@ -134,7 +208,11 @@
         {
           "label": "Garder les preuves, sécuriser mon compte et demander de l'aide",
           "protective": true,
-          "reflexes": [2, 4, 5],
+          "reflexes": [
+            2,
+            4,
+            5
+          ],
           "outcome": "Tu fais des captures, tu changes ton mot de passe, tu actives la vérification en deux étapes et tu en parles à une personne de confiance.",
           "advice": "C'est le réflexe le plus protecteur : preuves, compte sécurisé, soutien."
         }

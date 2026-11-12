@@ -4148,3 +4148,181 @@ button.pulse {
 .bubble small {
   font-size: 11px;
 }
+
+/* Le mot du jour */
+.mot-form {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+.mot-form input {
+  flex: 1;
+  min-width: 0;
+  height: 54px;
+  border: 2px solid var(--sand);
+  border-radius: 16px;
+  background: var(--white);
+  padding: 0 16px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.mot-form input:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+.mot-form button {
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--navy);
+  color: white;
+  display: grid;
+  place-items: center;
+}
+.mot-form button:disabled {
+  opacity: 0.4;
+}
+.mot-note {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 6px 2px 0;
+}
+.mot-hints {
+  margin: 14px 0 0;
+  padding: 12px 14px 12px 34px;
+  background: var(--sand);
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.mot-hints li + li {
+  margin-top: 5px;
+}
+.mot-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.mot-actions button {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--khaki);
+  border-radius: 14px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.mot-actions button:disabled {
+  opacity: 0.45;
+}
+.mot-guesses {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mot-guesses li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px 62px;
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--navy);
+}
+.mot-guesses strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mot-guesses i {
+  height: 8px;
+  border-radius: 4px;
+  background: #e9e4dc;
+  overflow: hidden;
+}
+.mot-guesses b {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  width: 12%;
+  background: var(--mist);
+}
+.mot-guesses em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+  color: var(--muted);
+}
+.mot-guesses .warm b {
+  width: 50%;
+  background: var(--peach);
+}
+.mot-guesses .hot b {
+  width: 82%;
+  background: var(--coral);
+}
+.mot-guesses .hot em {
+  color: var(--terra);
+}
+.mot-guesses .found b {
+  width: 100%;
+  background: var(--sage);
+}
+.mot-guesses .found em {
+  color: var(--sage);
+}
+.mot-found {
+  text-align: center;
+  padding-top: 8px;
+}
+.mot-found > span {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--sage-light);
+  color: var(--sage);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 12px;
+}
+.mot-found h1 {
+  font-size: 34px;
+  color: var(--navy);
+  margin: 2px 0;
+  text-transform: capitalize;
+}
+.mot-tries {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.mot-lesson {
+  text-align: left;
+  background: var(--sand);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin: 14px 0 18px;
+}
+.mot-lesson strong {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--terra);
+}
+.mot-lesson p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 4px 0 0;
+}
