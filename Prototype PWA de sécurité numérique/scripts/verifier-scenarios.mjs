@@ -88,6 +88,15 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
       for (const key of ["label", "outcome", "advice"])
         if (!isText(choice[key])) fail(`${where} : choix sans « ${key} »`);
       if (typeof choice.protective !== "boolean") fail(`${where} : « protective » doit valoir true ou false`);
+      // Facultatif : les cartes de la fiche « Mes 6 réflexes » (0 à 5) que ce choix débloque.
+      if (choice.reflexes !== undefined) {
+        const valid =
+          Array.isArray(choice.reflexes) &&
+          choice.reflexes.every((n) => Number.isInteger(n) && n >= 0 && n <= 5);
+        if (!valid) fail(`${where} : « reflexes » doit être une liste de nombres de 0 à 5`);
+        else if (choice.protective !== true)
+          fail(`${where} : seul un choix protecteur peut débloquer un réflexe`);
+      }
     }
     if (!choices.some((c) => c.protective === true)) fail(`${where} : aucun choix protecteur`);
     if (!choices.some((c) => c.protective === false)) fail(`${where} : aucun choix risqué`);

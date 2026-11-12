@@ -52,12 +52,14 @@
         {
           "label": "Demander pourquoi le code est arrivé chez moi",
           "protective": true,
+          "reflexes": [1],
           "outcome": "« C'est une erreur du réseau, envoie vite ! » Aucune explication, seulement de la précipitation.",
           "advice": "Un code arrive sur ton téléphone parce qu'il concerne ton compte, pas celui de quelqu'un d'autre."
         },
         {
           "label": "Garder le code pour moi",
           "protective": true,
+          "reflexes": [1],
           "outcome": "« Chantal » insiste, puis se fâche. Tu ne cèdes pas et ton compte reste à toi.",
           "advice": "Un code reçu par SMS ne se partage jamais, même avec une personne proche."
         }
@@ -132,6 +134,7 @@
         {
           "label": "Garder les preuves, sécuriser mon compte et demander de l'aide",
           "protective": true,
+          "reflexes": [2, 4, 5],
           "outcome": "Tu fais des captures, tu changes ton mot de passe, tu actives la vérification en deux étapes et tu en parles à une personne de confiance.",
           "advice": "C'est le réflexe le plus protecteur : preuves, compte sécurisé, soutien."
         }

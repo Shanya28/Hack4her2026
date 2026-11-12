@@ -131,6 +131,7 @@
         {
           "label": "Garder les preuves, bloquer et en parler",
           "protective": true,
+          "reflexes": [4, 5],
           "outcome": "Tu conserves les messages, tu bloques le numéro et tu en parles à une personne de confiance. La menace reste sans effet.",
           "advice": "C'est le réflexe le plus protecteur : preuves, blocage, soutien."
         }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
 
 type Screen =
@@ -11,8 +11,6 @@ type Screen =
   | "scenarios"
   | "fake-login"
   | "phishing"
-  | "checker"
-  | "result"
   | "resources"
   | "help"
   | "quiz"
@@ -275,7 +273,14 @@ function OfflinePill() {
   );
 }
 
-type StoryChoice = { label: string; protective: boolean; outcome: string; advice: string };
+type StoryChoice = {
+  label: string;
+  protective: boolean;
+  outcome: string;
+  advice: string;
+  /** Reflex cards (indexes in `reflexes`) this protective choice unlocks. */
+  reflexes?: number[];
+};
 type Contact = { name: string; status: string; portrait: string };
 type Attachment = {
   label: string;
@@ -320,6 +325,38 @@ function readDone(): string[] {
     return Array.isArray(value) ? value : [];
   } catch {
     return [];
+  }
+}
+
+/** A different story is put forward each day, from the reviewed pool. */
+function dailyScenario(): Scenario {
+  const now = new Date();
+  const day = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
+  return scenarios[day % scenarios.length];
+}
+
+const profiles = [...new Set(scenarios.map((s) => s.profile))];
+
+const START_PRESSURE = 30;
+const clampPressure = (value: number) => Math.min(100, Math.max(5, value));
+
+function readUnlocked(): number[] {
+  try {
+    const value = JSON.parse(localStorage.getItem("naya-reflexes") || "[]");
+    return Array.isArray(value) ? value.filter((n) => Number.isInteger(n) && n >= 0 && n < 6) : [];
+  } catch {
+    return [];
+  }
+}
+
+const reducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function vibrate(pattern: number | number[]) {
+  try {
+    navigator.vibrate?.(pattern);
+  } catch {
+    // Vibration is a bonus; some browsers refuse it.
   }
 }
 
@@ -424,16 +461,43 @@ function App() {
     go(alertConfig.contacts.length ? "carnet" : "alert");
   };
   const [storyChoice, setStoryChoice] = useState<number | null>(null);
-  const [message, setMessage] = useState(
-    "Si tu ne m'envoies pas l'argent avant ce soir, je publie tes photos.",
+  // How much hold the manipulator has in the current story. It measures his
+  // pressure, never the player's mistakes.
+  const [pressure, setPressureState] = useState(() =>
+    clampPressure(Number(localStorage.getItem("naya-pressure") ?? START_PRESSURE)),
   );
+  const setPressure = (value: number) => {
+    const next = clampPressure(value);
+    setPressureState(next);
+    localStorage.setItem("naya-pressure", String(next));
+  };
+  const [unlocked, setUnlocked] = useState<number[]>(readUnlocked);
+  // Reflexes unlocked by the latest action, to animate them once.
+  const [fresh, setFresh] = useState<number[]>([]);
+  const unlock = (ids: number[]) => {
+    const found = ids.filter((id) => !unlocked.includes(id));
+    setFresh(found);
+    if (!found.length) return;
+    const next = [...unlocked, ...found];
+    setUnlocked(next);
+    localStorage.setItem("naya-reflexes", JSON.stringify(next));
+  };
+  const [timer, setTimerState] = useState(() => localStorage.getItem("naya-timer") !== "no");
+  const setTimer = (on: boolean) => {
+    setTimerState(on);
+    localStorage.setItem("naya-timer", on ? "yes" : "no");
+  };
+  const [profile, setProfileState] = useState(() => localStorage.getItem("naya-profile") || "");
+  const setProfile = (value: string) => {
+    setProfileState(value);
+    localStorage.setItem("naya-profile", value);
+  };
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [quizChoice, setQuizChoice] = useState<number | null>(null);
   const [saved, setSaved] = useState(localStorage.getItem("naya-guide") === "yes");
   const [toast, setToast] = useState("");
   const [eraseOpen, setEraseOpen] = useState(false);
-  const [aiConsent, setAiConsent] = useState(false);
 
   const go = (next: Screen) => {
     setScreen(next);
@@ -447,7 +511,14 @@ function App() {
     localStorage.setItem("naya-started", "yes");
     go("home");
   };
-  const chooseStory = (choice: number) => setStoryChoice(choice);
+  const chooseStory = (choice: number) => {
+    const step = scenario.steps[Math.min(story, total - 1)];
+    const picked = step.choices[choice];
+    setStoryChoice(choice);
+    if (picked.protective) setPressure(pressure - (step.danger ? 40 : 20));
+    else setPressure(pressure + 25);
+    unlock(picked.protective ? (picked.reflexes ?? []) : []);
+  };
   const nextStory = () => {
     if (story >= total - 1) {
       localStorage.setItem("naya-story", String(total));
@@ -464,16 +535,22 @@ function App() {
       setStory(n);
       localStorage.setItem("naya-story", String(n));
       setStoryChoice(null);
+      setFresh([]);
     }
+  };
+  const restartStory = () => {
+    setStory(0);
+    localStorage.setItem("naya-story", "0");
+    setStoryChoice(null);
+    setPressure(START_PRESSURE);
+    setFresh([]);
   };
   const startScenario = (id: string) => {
     // Picking the story already in progress resumes it; another one starts over.
     if (id !== scenario.id || story >= total) {
       setScenarioId(id);
       localStorage.setItem("naya-scenario", id);
-      setStory(0);
-      localStorage.setItem("naya-story", "0");
-      setStoryChoice(null);
+      restartStory();
     }
     go("story");
   };
@@ -487,6 +564,11 @@ function App() {
     setAlertConfigState({ contacts: [], message: 0 });
     setStory(0);
     setStoryChoice(null);
+    setPressureState(START_PRESSURE);
+    setUnlocked([]);
+    setFresh([]);
+    setTimerState(true);
+    setProfileState("");
     setQuizIndex(0);
     setQuizScore(0);
     setQuizChoice(null);
@@ -495,7 +577,6 @@ function App() {
     go("welcome");
     notify("Données locales effacées");
   };
-  const result = useMemo(() => analyzeMessage(message), [message]);
 
   let content: React.ReactNode;
   if (screen === "welcome") content = <Welcome onNext={() => go("language")} />;
@@ -520,7 +601,16 @@ function App() {
       />
     );
   else if (screen === "home") content = (
-      <Home person={person} story={story} scenario={scenario} go={go} openCarnet={openCarnet} />
+      <Home
+        person={person}
+        story={story}
+        scenario={scenario}
+        go={go}
+        openCarnet={openCarnet}
+        daily={dailyScenario()}
+        onPick={startScenario}
+        unlocked={unlocked.length}
+      />
     );
   else if (screen === "scenarios")
     content = (
@@ -530,11 +620,23 @@ function App() {
         done={done}
         onPick={startScenario}
         onBack={() => go("home")}
+        profile={profile}
+        setProfile={setProfile}
+        daily={dailyScenario().id}
       />
     );
   else if (screen === "story")
     content = (
       <Story
+        key={`${scenario.id}-${Math.min(story, total - 1)}`}
+        pressure={pressure}
+        fresh={fresh}
+        timer={timer}
+        openLink={(careful) => {
+          // Rushing to open the link gives the sender a little more hold.
+          if (!careful) setPressure(pressure + 15);
+          go("fake-login");
+        }}
         scenario={scenario}
         step={Math.min(story, total - 1)}
         choice={storyChoice}
@@ -550,7 +652,11 @@ function App() {
     content = (
       <FakeLogin
         attachment={scenario.steps.find((s) => s.attachment)?.attachment}
-        onInterrupt={() => go("phishing")}
+        onDone={() => {
+          unlock([0]);
+          setPressure(pressure - 15);
+          go("phishing");
+        }}
         onBack={() => go("story")}
       />
     );
@@ -558,29 +664,18 @@ function App() {
     content = (
       <Phishing
         audio={audio}
+        fresh={fresh}
         clue={scenario.steps.find((s) => s.attachment)?.attachment?.clue}
         onNext={() => {
           // Resume right after the step that carried the link.
           const after = scenario.steps.findIndex((s) => s.attachment) + 1;
           setStory(after);
           localStorage.setItem("naya-story", String(after));
+          setFresh([]);
           go("story");
         }}
-        onChecker={() => go("checker")}
       />
     );
-  else if (screen === "checker")
-    content = (
-      <Checker
-        message={message}
-        setMessage={setMessage}
-        onAnalyze={() => go("result")}
-        onBack={() => go("home")}
-        aiConsent={aiConsent}
-        setAiConsent={setAiConsent}
-      />
-    );
-  else if (screen === "result") content = <Result result={result} message={message} go={go} audio={audio} />;
   else if (screen === "resources")
     content = <Resources key="resources" go={go} initial={0} active="resources" />;
   else if (screen === "help")
@@ -624,6 +719,7 @@ function App() {
       <Guide
         audio={audio}
         saved={saved}
+        unlocked={unlocked}
         onSave={() => {
           setSaved(true);
           localStorage.setItem("naya-guide", "yes");
@@ -635,16 +731,12 @@ function App() {
   else if (screen === "progress")
     content = (
       <Progress
-        story={story}
-        total={total}
         title={scenario.title}
+        unlocked={unlocked}
         onOther={() => go("scenarios")}
-        saved={saved}
         go={go}
         replay={() => {
-          setStory(0);
-          localStorage.setItem("naya-story", "0");
-          setStoryChoice(null);
+          restartStory();
           go("story");
         }}
       />
@@ -686,6 +778,8 @@ function App() {
       <Settings
         audio={audio}
         setAudio={setAudio}
+        timer={timer}
+        setTimer={setTimer}
         go={go}
         erase={() => setEraseOpen(true)}
         notify={notify}
@@ -931,12 +1025,18 @@ function Home({
   scenario,
   go,
   openCarnet,
+  daily,
+  onPick,
+  unlocked,
 }: {
   person: "afi" | "maya";
   story: number;
   scenario: Scenario;
   go: (s: Screen) => void;
   openCarnet: () => void;
+  daily: Scenario;
+  onPick: (id: string) => void;
+  unlocked: number;
 }) {
   const total = scenario.steps.length;
   const finished = story >= total;
@@ -1016,11 +1116,11 @@ function Home({
             onClick={() => go("story")}
           />
           <ActionCard
-            icon="search"
+            icon="spark"
             tone="sage"
-            title="Vérifier un message"
-            text="Repérer des signes suspects, localement."
-            onClick={() => go("checker")}
+            title="L’histoire du jour"
+            text={`${daily.title} · une nouvelle chaque jour.`}
+            onClick={() => onPick(daily.id)}
           />
           <ActionCard
             icon="shield"
@@ -1037,7 +1137,9 @@ function Home({
           </span>
           <span>
             <strong>Mes 6 réflexes</strong>
-            <small>Une fiche disponible hors ligne</small>
+            <small>
+              {unlocked}/6 débloqués · fiche disponible hors ligne
+            </small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -1063,28 +1165,55 @@ function Scenarios({
   done,
   onPick,
   onBack,
+  profile,
+  setProfile,
+  daily,
 }: {
   current: string;
   story: number;
   done: string[];
   onPick: (id: string) => void;
   onBack: () => void;
+  profile: string;
+  setProfile: (p: string) => void;
+  daily: string;
 }) {
+  // Stories written for the chosen profile come first.
+  const ordered = [...scenarios].sort(
+    (a, b) => Number(b.profile === profile) - Number(a.profile === profile),
+  );
   return (
     <section className="screen">
       <TopBar title="Les histoires" onBack={onBack} />
       <div className="page-content">
         <h1>Quelle situation veux-tu explorer ?</h1>
         <p className="lead">Chaque histoire est fictive. Choisis celle qui te ressemble le plus.</p>
+        <div className="profile-picker" role="group" aria-label="Ton profil">
+          <span>Ton profil</span>
+          {profiles.map((p) => (
+            <button
+              key={p}
+              className={p === profile ? "active" : ""}
+              aria-pressed={p === profile}
+              onClick={() => setProfile(p === profile ? "" : p)}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
         <div className="scenario-list">
-          {scenarios.map((s) => {
+          {ordered.map((s) => {
             const finished = done.includes(s.id);
             const started = s.id === current && story > 0 && story < s.steps.length;
             return (
               <button key={s.id} className="scenario-card" onClick={() => onPick(s.id)}>
                 <Portrait person={s.contact.portrait} small />
                 <span className="scenario-text">
-                  <small className="scenario-profile">{s.profile}</small>
+                  <small className="scenario-profile">
+                    {s.profile}
+                    {s.profile === profile && <em>Pour toi</em>}
+                    {s.id === daily && <em className="daily">Histoire du jour</em>}
+                  </small>
                   <strong>{s.title}</strong>
                   <span>{s.summary}</span>
                   <small className="scenario-state">
@@ -1107,7 +1236,8 @@ function Scenarios({
             <strong>De nouvelles histoires, sans risque.</strong>
             <br />
             Certaines histoires sont rédigées avec l’aide d’une IA, puis relues par l’équipe avant
-            d’être ajoutées. Aucune n’est générée à partir de tes données.
+            d’être ajoutées. Aucune n’est générée à partir de tes données : ton profil sert
+            seulement à trier la liste et reste sur ce téléphone.
           </p>
         </div>
       </div>
@@ -1165,6 +1295,79 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
   );
 }
 
+/** One reflex card. `flip` turns it over once, from its hidden side. */
+function ReflexTile({ index, open, flip = false }: { index: number; open: boolean; flip?: boolean }) {
+  const [icon, title] = reflexes[index];
+  if (!open)
+    return (
+      <div className="reflex-tile locked">
+        <span>?</span>
+        <small>À trouver</small>
+      </div>
+    );
+  return (
+    <div className={`reflex-tile ${flip ? "flip" : ""}`}>
+      <div className="reflex-tile-inner">
+        <div className="reflex-tile-front">
+          <span>
+            <Icon name={icon} size={18} />
+          </span>
+          <small>{title}</small>
+        </div>
+        <div className="reflex-tile-back" aria-hidden>
+          ?
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Shown right after an action that unlocked one or more reflex cards. */
+function ReflexUnlock({ fresh }: { fresh: number[] }) {
+  if (!fresh.length) return null;
+  return (
+    <div className="reflex-unlock" role="status">
+      <p>
+        <Icon name="spark" size={15} />
+        {fresh.length > 1 ? "Réflexes débloqués" : "Réflexe débloqué"}
+      </p>
+      <div>
+        {fresh.map((id) => (
+          <ReflexTile key={id} index={id} open flip />
+        ))}
+      </div>
+      <small>Ajouté à ta fiche « Mes 6 réflexes ».</small>
+    </div>
+  );
+}
+
+/** A bar that empties. Running out never costs anything. */
+function Countdown({ seconds, onEnd }: { seconds: number; onEnd: () => void }) {
+  const [left, setLeft] = useState(seconds);
+  useEffect(() => {
+    if (left <= 0) {
+      onEnd();
+      return;
+    }
+    const id = window.setTimeout(() => setLeft((value) => value - 0.5), 500);
+    return () => window.clearTimeout(id);
+  }, [left]);
+  return (
+    <div
+      className="countdown"
+      role="progressbar"
+      aria-label="Temps laissé par le maître chanteur"
+      aria-valuemin={0}
+      aria-valuemax={seconds}
+      aria-valuenow={Math.ceil(left)}
+    >
+      <i style={{ width: `${(left / seconds) * 100}%` }} />
+    </div>
+  );
+}
+
+const COUNTDOWN_S = 15;
+
 function Story({
   scenario,
   step,
@@ -1175,6 +1378,10 @@ function Story({
   person,
   audio,
   setAudio,
+  pressure,
+  fresh,
+  timer,
+  openLink,
 }: {
   scenario: Scenario;
   step: number;
@@ -1185,12 +1392,50 @@ function Story({
   person: "afi" | "maya";
   audio: boolean;
   setAudio: (v: boolean) => void;
+  pressure: number;
+  fresh: number[];
+  timer: boolean;
+  openLink: (careful: boolean) => void;
 }) {
   const data = scenario.steps[step];
   const last = step === scenario.steps.length - 1;
   const header = { ...scenario.contact, ...data.header };
   const me = person === "afi" ? "Afi" : "Maya";
   const picked = choice !== null ? data.choices[choice] : null;
+  const count = data.messages.length;
+
+  // Messages arrive one by one, like a real conversation. They are all there
+  // at once when the step was already answered or motion is reduced.
+  const [instant] = useState(() => choice !== null || reducedMotion());
+  const [shown, setShown] = useState(instant ? count : 0);
+  const arrived = shown >= count;
+  const incoming = arrived ? null : data.messages[shown];
+  const [expired, setExpired] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!incoming) return;
+    const mine = incoming[0] === "moi";
+    const delay = mine ? 550 : 800 + Math.min(incoming[1].length * 16, 1100);
+    const id = window.setTimeout(() => {
+      setShown((value) => value + 1);
+      if (mine) return;
+      // The threat itself lands harder than an ordinary message.
+      vibrate(data.danger && shown === count - 1 ? [70, 50, 110] : 35);
+    }, delay);
+    return () => window.clearTimeout(id);
+  }, [shown]);
+  useEffect(() => {
+    if (!instant) endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [shown, arrived]);
+
+  // The mood follows the story: the room darkens as the pressure rises and
+  // clears up again after a protective answer.
+  // A threat is pressure at its highest, whatever happened before.
+  const felt = Math.max(pressure, data.danger && !picked ? 85 : 0);
+  const tension = felt / 100;
+  const level = felt >= 65 ? "high" : felt >= 40 ? "medium" : "low";
+
   const narration = picked
     ? `${picked.outcome} ${picked.advice} À retenir. ${data.feedback}`
     : [
@@ -1202,7 +1447,12 @@ function Story({
       ].join(". ");
   useNarration(audio, narration);
   return (
-    <section className={`screen story-screen ${data.danger ? "danger-mode" : ""}`}>
+    <section
+      className={`screen story-screen ${data.danger ? "danger-mode" : ""} ${
+        data.danger && arrived && !instant ? "threat-shake" : ""
+      }`}
+      style={{ "--tension": tension } as React.CSSProperties}
+    >
       <header className="chat-header">
         <button className="icon-button" onClick={() => go("home")} aria-label="Retour à l’accueil">
           <Icon name="back" />
@@ -1210,7 +1460,7 @@ function Story({
         <Portrait person={header.portrait} small />
         <div>
           <strong>{header.name}</strong>
-          <small>{header.status}</small>
+          <small>{incoming && incoming[0] !== "moi" ? "écrit…" : header.status}</small>
         </div>
         {canSpeak && (
           <button
@@ -1225,19 +1475,39 @@ function Story({
       </header>
       <div className="chapter-strip">
         <span>{data.chapter}</span>
-        <div>
+        <ol className="episode-path" aria-label={`Épisode ${step + 1} sur ${scenario.steps.length}`}>
           {scenario.steps.map((_, i) => (
-            <i key={i} className={i <= step ? "done" : ""} />
+            <li key={i} className={i < step ? "done" : i === step ? "current" : "locked"}>
+              {i < step ? (
+                <Icon name="check" size={12} />
+              ) : i === step ? (
+                i + 1
+              ) : (
+                <Icon name="lock" size={11} />
+              )}
+            </li>
           ))}
+        </ol>
+      </div>
+      <div className={`pressure ${level}`}>
+        <span>Pression de {scenario.contact.name}</span>
+        <div
+          role="meter"
+          aria-label={`Pression de ${scenario.contact.name}`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={felt}
+        >
+          <i style={{ width: `${felt}%` }} />
         </div>
       </div>
-      <div className="messages">
-        {data.messages.map(([who, text], i) => {
+      <div className="messages" onClick={() => setShown(count)}>
+        {data.messages.slice(0, shown).map(([who, text], i) => {
           const mine = who === "moi";
           return (
             <div
               key={i}
-              className={`message-row ${mine ? "mine" : ""}`}
+              className={`message-row ${mine ? "mine" : ""} ${instant ? "" : "arriving"}`}
               aria-label={`Message de ${mine ? me : who}`}
             >
               <div className={`bubble ${text.startsWith("Image masquée") ? "masked" : ""}`}>
@@ -1255,8 +1525,26 @@ function Story({
             </div>
           );
         })}
-        {data.attachment && (
-          <button className="album-card" onClick={() => go("fake-login")}>
+        {incoming && incoming[0] !== "moi" && (
+          <div className="message-row" role="status">
+            <div className="bubble typing">
+              <small>{incoming[0]} écrit…</small>
+              <span>
+                <i />
+                <i />
+                <i />
+              </span>
+            </div>
+          </div>
+        )}
+        {arrived && data.attachment && (
+          <button
+            className="album-card"
+            onClick={(event) => {
+              event.stopPropagation();
+              openLink(false);
+            }}
+          >
             <span className="album-visual">
               <Icon name="eye" size={28} />
             </span>
@@ -1267,21 +1555,41 @@ function Story({
             <Icon name="chevron" />
           </button>
         )}
+        <div ref={endRef} />
       </div>
-      {data.attachment ? (
+      {!arrived ? (
+        <div className="choice-panel waiting">
+          <p>Touche la conversation pour tout afficher</p>
+        </div>
+      ) : data.attachment ? (
         <div className="choice-panel">
           <p>Ce lien vient d’arriver. Que veux-tu faire ?</p>
-          <Button onClick={() => go("fake-login")} icon="arrow">
+          <Button onClick={() => openLink(false)} icon="arrow">
             {data.attachment.cta}
           </Button>
-          <Button variant="ghost" onClick={() => go("checker")}>
-            Vérifier le message
+          <Button variant="ghost" onClick={() => openLink(true)}>
+            Examiner le lien sans rien saisir
           </Button>
         </div>
       ) : (
         <div className="choice-panel">
           {!picked ? (
             <>
+              {data.danger && timer && !expired && (
+                <>
+                  <p className="countdown-label">{scenario.contact.name} te presse de répondre</p>
+                  <Countdown seconds={COUNTDOWN_S} onEnd={() => setExpired(true)} />
+                </>
+              )}
+              {expired && (
+                <div className="countdown-over" role="status">
+                  <Icon name="shield" size={18} />
+                  <p>
+                    <strong>Le temps est écoulé, et rien ne s’est passé.</strong> Te presser est la
+                    technique du maître chanteur. Prends tout le temps qu’il te faut.
+                  </p>
+                </div>
+              )}
               <p>Que réponds-tu ?</p>
               {data.choices.map((c, i) => (
                 <button key={c.label} className="story-choice" onClick={() => choose(i)}>
@@ -1300,6 +1608,7 @@ function Story({
               </p>
               <p className="outcome">{picked.outcome}</p>
               <p>{picked.advice}</p>
+              <ReflexUnlock fresh={fresh} />
               <p className="lesson">
                 <strong>À retenir.</strong> {data.feedback}
               </p>
@@ -1321,24 +1630,51 @@ function Story({
   );
 }
 
+/** The trap page. The player finds the three clues herself by touching them. */
 function FakeLogin({
   attachment,
-  onInterrupt,
+  onDone,
   onBack,
 }: {
   attachment?: Attachment;
-  onInterrupt: () => void;
+  onDone: () => void;
   onBack: () => void;
 }) {
+  const clues = [
+    ["Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
+    ["Un lien inattendu", attachment?.clue ?? "Tu n’attendais pas ce lien."],
+    ["Une demande de connexion", "Le contenu promis est caché derrière un formulaire."],
+  ];
+  const [found, setFound] = useState<number[]>([]);
+  const [last, setLast] = useState<number | null>(null);
+  const tap = (index: number) => {
+    setLast(index);
+    if (found.includes(index)) return;
+    setFound([...found, index]);
+    vibrate(30);
+  };
+  const mark = (index: number) => (found.includes(index) ? "hotspot found" : "hotspot");
+  const complete = found.length === clues.length;
   return (
     <section className="screen fake-page">
+      <div className="hunt-banner">
+        <div>
+          <strong>Chasse aux indices</strong>
+          <small>Touche les 3 détails qui trahissent le piège.</small>
+        </div>
+        <span aria-label={`${found.length} indices trouvés sur 3`}>
+          {clues.map((_, i) => (
+            <i key={i} className={i < found.length ? "on" : ""} />
+          ))}
+        </span>
+      </div>
       <div className="browser-bar">
-        <button onClick={onBack}>
+        <button onClick={onBack} aria-label="Revenir à la conversation">
           <Icon name="back" />
         </button>
-        <span>
+        <button className={`browser-url ${mark(0)}`} onClick={() => tap(0)}>
           <Icon name="lock" size={13} /> {attachment?.pageUrl ?? "connexion-login.net"}
-        </span>
+        </button>
         <Icon name="more" />
       </div>
       <div className="fake-content">
@@ -1346,23 +1682,68 @@ function FakeLogin({
           <span />
           <span />
         </div>
-        <h1>{attachment?.pageTitle ?? "Connecte-toi"}</h1>
-        <p>{attachment?.pageText ?? "Connecte-toi pour continuer."}</p>
-        <label>
-          Adresse e-mail
-          <input onFocus={onInterrupt} onClick={onInterrupt} placeholder="tonadresse@email.com" />
-        </label>
-        <label>
-          Mot de passe
-          <input
-            onFocus={onInterrupt}
-            onClick={onInterrupt}
-            type="password"
-            placeholder="••••••••"
-          />
-        </label>
-        <Button onClick={onInterrupt}>Se connecter</Button>
-        <small>Page fictive créée pour cet exercice. Ne saisis aucune information.</small>
+        <button className={`fake-promise ${mark(1)}`} onClick={() => tap(1)}>
+          <h1>{attachment?.pageTitle ?? "Connecte-toi"}</h1>
+          <p>{attachment?.pageText ?? "Connecte-toi pour continuer."}</p>
+        </button>
+        <div className={`fake-form ${mark(2)}`}>
+          <label>
+            Adresse e-mail
+            <input
+              readOnly
+              onFocus={() => tap(2)}
+              onClick={() => tap(2)}
+              placeholder="tonadresse@email.com"
+            />
+          </label>
+          <label>
+            Mot de passe
+            <input
+              readOnly
+              onFocus={() => tap(2)}
+              onClick={() => tap(2)}
+              type="password"
+              placeholder="••••••••"
+            />
+          </label>
+          <Button onClick={() => tap(2)}>Se connecter</Button>
+        </div>
+        <small>Page fictive créée pour cet exercice. Aucune information n’est saisie.</small>
+      </div>
+      <div className="hunt-panel" aria-live="polite">
+        {last !== null ? (
+          <p>
+            <strong>
+              Indice {found.indexOf(last) + 1} · {clues[last][0]}
+            </strong>
+            {clues[last][1]}
+          </p>
+        ) : complete ? (
+          <p>
+            <strong>Les 3 indices sont entourés.</strong>
+            Touche-les pour comprendre ce qui devait t’alerter.
+          </p>
+        ) : (
+          <p>
+            <strong>Regarde bien cette page.</strong>
+            Qu’est-ce qui devrait t’alerter ? Touche-le.
+          </p>
+        )}
+        {complete ? (
+          <Button onClick={onDone} icon="arrow">
+            Voir ce que j’ai trouvé
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setFound([0, 1, 2]);
+              setLast(null);
+            }}
+          >
+            Montre-moi les indices
+          </Button>
+        )}
       </div>
     </section>
   );
@@ -1370,14 +1751,14 @@ function FakeLogin({
 
 function Phishing({
   onNext,
-  onChecker,
   audio,
   clue,
+  fresh,
 }: {
   onNext: () => void;
-  onChecker: () => void;
   audio: boolean;
   clue?: string;
+  fresh: number[];
 }) {
   useNarration(
     audio,
@@ -1399,7 +1780,7 @@ function Phishing({
         </p>
       </div>
       <div className="page-content">
-        <h2>Les 3 indices à repérer</h2>
+        <h2>Les 3 indices que tu as repérés</h2>
         {[
           ["message", "Un lien inattendu", clue ?? "Tu n’attendais pas ce lien."],
           [
@@ -1427,357 +1808,12 @@ function Phishing({
             chose.
           </p>
         </div>
+        <ReflexUnlock fresh={fresh} />
       </div>
       <div className="sticky-action">
         <Button onClick={onNext} icon="arrow">
           Comprendre et continuer
         </Button>
-        <Button variant="ghost" onClick={onChecker}>
-          Analyser ce message
-        </Button>
-      </div>
-    </section>
-  );
-}
-
-function Checker({
-  message,
-  setMessage,
-  onAnalyze,
-  onBack,
-  aiConsent,
-  setAiConsent,
-}: {
-  message: string;
-  setMessage: (s: string) => void;
-  onAnalyze: () => void;
-  onBack: () => void;
-  aiConsent: boolean;
-  setAiConsent: (v: boolean) => void;
-}) {
-  const examples = [
-    "Votre candidature est retenue. Payez 15 000 F pour confirmer l'entretien.",
-    "Envoie-moi le code à 6 chiffres que tu viens de recevoir.",
-    "Salut Afi, on se retrouve devant la bibliothèque à 16 h ?",
-  ];
-  return (
-    <section className="screen checker">
-      <TopBar
-        title="Est-ce un piège ?"
-        onBack={onBack}
-        action={
-          <span className="local-badge">
-            <Icon name="lock" size={13} />
-            Local
-          </span>
-        }
-      />
-      <div className="page-content">
-        <span className="checker-icon">
-          <Icon name="search" size={32} />
-        </span>
-        <h1>Un message te semble bizarre ?</h1>
-        <p className="lead">
-          Copie son contenu ici. Nous t’aiderons à repérer les signes qui méritent ton attention.
-        </p>
-        <label className="textarea-label">
-          Message à analyser
-          <textarea
-            maxLength={600}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Colle le message ici…"
-          />
-          <span>{message.length}/600</span>
-        </label>
-        <p className="support-note">
-          <Icon name="warning" size={15} /> Les images ne sont pas prises en charge.
-        </p>
-        <Button onClick={onAnalyze} disabled={!message.trim()} icon="search">
-          Analyser sur ce téléphone
-        </Button>
-        <div className="privacy-note">
-          <Icon name="lock" />
-          <p>
-            <strong>Ton message reste ici.</strong>
-            <br />
-            Cette simulation analyse des mots et expressions connus, sans connexion à un serveur.
-          </p>
-        </div>
-        <h3>Essayer un exemple</h3>
-        <div className="example-chips">
-          {examples.map((e, i) => (
-            <button key={e} onClick={() => setMessage(e)}>
-              {["Faux recrutement", "Code de vérification", "Message ordinaire"][i]}
-            </button>
-          ))}
-        </div>
-        <details className="ai-option">
-          <summary>Analyse en ligne par IA · facultative</summary>
-          <p>
-            Fonction de démonstration uniquement. Elle nécessiterait d’envoyer le texte à un service
-            externe et pourrait se tromper.
-          </p>
-          <label>
-            <input
-              type="checkbox"
-              checked={aiConsent}
-              onChange={(e) => setAiConsent(e.target.checked)}
-            />{" "}
-            Je comprends et je donnerais mon accord avant tout envoi.
-          </label>
-          <small>Aucune IA réelle n’est activée dans ce prototype.</small>
-        </details>
-      </div>
-    </section>
-  );
-}
-
-type Clue = { title: string; text: string; strong?: boolean };
-
-/**
- * Local, keyword-based check. It looks for combinations (a threat needs both
- * a "share" verb and a pressure marker) so that an ordinary message that just
- * mentions a photo or an evening is not flagged.
- */
-function analyzeMessage(text: string) {
-  const t = text
-    .toLowerCase()
-    .replace(/[’‘`]/g, "'")
-    .replace(/\s+/g, " ");
-  const has = (re: RegExp) => re.test(t);
-  const clues: Clue[] = [];
-
-  const media = "(photos?|images?|vid[ée]os?|captures?|nudes?|messages?|conversations?)";
-  const shareThreat =
-    has(new RegExp(`(publi|diffus|balanc|partag|montr|envo)[a-zé]*.{0,40}${media}`)) ||
-    has(/(tout|les) (publier|montrer|diffuser|envoyer|balancer)/);
-  const pressure = has(
-    /(si tu ne|si tu refuses|sinon|je vais|je publie|je diffuse|tout le monde|ta famille|tes parents|tes amis)/,
-  );
-  const threat = shareThreat && pressure;
-  if (threat)
-    clues.push({
-      title: "Menace de diffusion",
-      text: "Quelqu’un menace de partager un contenu pour te forcer à agir.",
-      strong: true,
-    });
-
-  const intimate =
-    has(
-      new RegExp(
-        `(envoie|envoyer|montre|donne|fais)[^.!?]{0,40}${media}[^.!?]{0,25}(priv|intime|nue|sexy|sans v[êe]tement)`,
-      ),
-    ) || has(/\bnudes?\b/);
-  if (intimate)
-    clues.push({
-      title: "Demande d’image intime",
-      text: "On te demande une image privée. Tu as le droit de refuser, sans te justifier.",
-      strong: true,
-    });
-
-  const money = has(
-    /(argent|paye|paie|frais|fcfa|f cfa|virement|mobile money|momo|transfert|\d[\d .]*\s?(f|francs)(\W|$))/,
-  );
-  if (money)
-    clues.push({
-      title: "Demande d’argent",
-      text: "Une somme est demandée sous pression ou avant un service.",
-    });
-
-  const code =
-    (has(/\b(code|otp|pin)\b/) &&
-      has(/(sms|chiffres|v[ée]rification|re[çc]u|recevoir|envoie|donne|partage)/)) ||
-    (has(/mot de passe/) && has(/(envoie|donne|partage|communique)/));
-  if (code)
-    clues.push({
-      title: "Code secret demandé",
-      text: "Un code de vérification ou un mot de passe donne accès à ton compte.",
-      strong: true,
-    });
-
-  const link = has(
-    /(https?:\/\/|www\.|[a-z0-9-]+\.(com|net|org|xyz|top|info|link|ly|app|site|online)(\/|\W|$)|clique|ce lien)/,
-  );
-  const login = has(/(connecte|identifiant|mot de passe|ton compte|votre compte)/);
-  if (link)
-    clues.push(
-      login
-        ? {
-            title: "Lien vers une page de connexion",
-            text: "Le message pousse vers une page qui peut imiter un service pour voler tes identifiants.",
-            strong: true,
-          }
-        : {
-            title: "Lien inattendu",
-            text: "Vérifie l’adresse avant d’ouvrir : elle peut imiter un service connu.",
-          },
-    );
-
-  const offer = has(
-    /(candidature|recrut|emploi|embauche|gagn[ée]|loterie|f[ée]licitations|cadeau|bourse)/,
-  );
-  if (offer)
-    clues.push({
-      title: "Offre à vérifier",
-      text: "Une offre qui demande des frais ou des informations mérite une vérification indépendante.",
-    });
-
-  const affective = has(
-    /(si tu m'aimes|si tu tiens [àa] moi|fais[- ]moi confiance|me faire confiance|prouve)/,
-  );
-  if (affective)
-    clues.push({
-      title: "Pression affective",
-      text: "L’affection est utilisée pour obtenir quelque chose de toi.",
-    });
-
-  const secret = has(
-    /(ne (le )?dis ([àa]|rien [àa]) personne|reste entre nous|notre secret|supprime (ce|les|nos|tes) message|n'en parle)/,
-  );
-  if (secret)
-    clues.push({
-      title: "Demande de secret",
-      text: "On te demande de te taire : l’isolement facilite la manipulation.",
-    });
-
-  // A deadline only counts when it comes with another clue.
-  const deadline = has(
-    /(avant ce soir|jusqu'[àa] ce soir|tu as jusqu|urgent|vite|imm[ée]diat|tout de suite|dernier d[ée]lai|dans \d+ ?(h|heures?|minutes?)|24 ?h)/,
-  );
-  if (deadline && clues.length)
-    clues.push({
-      title: "Pression temporelle",
-      text: "Le délai cherche à empêcher une décision réfléchie.",
-    });
-
-  const strong = clues.some((c) => c.strong);
-  const level =
-    strong || clues.length >= 3 || (offer && money)
-      ? "Élevé"
-      : clues.length >= 1
-        ? "Modéré"
-        : "Faible";
-
-  const advice = threat
-    ? {
-        title: "Ne cède pas à la menace.",
-        text: "Ne paie pas et n’envoie rien de plus. Garde les preuves si tu peux le faire sans danger, bloque le compte et parles-en à une personne de confiance.",
-      }
-    : intimate
-      ? {
-          title: "Tu as le droit de dire non.",
-          text: "Personne ne peut exiger une image de toi. Si la pression continue, garde les messages et parles-en à une personne de confiance.",
-        }
-      : code
-        ? {
-            title: "Ne partage jamais ce code.",
-            text: "Aucun service ni aucun proche n’en a besoin. S’il a déjà été donné, change ton mot de passe tout de suite.",
-          }
-        : link && login
-          ? {
-              title: "N’ouvre pas ce lien.",
-              text: "Si tu dois vérifier ton compte, ouvre toi-même l’application ou le site officiel.",
-            }
-          : offer || money
-            ? {
-                title: "Vérifie avant de payer.",
-                text: "Un vrai recrutement ou un vrai gain ne demande pas d’argent. Vérifie l’offre par un canal officiel.",
-              }
-            : clues.length
-              ? {
-                  title: "Prends le temps de vérifier.",
-                  text: "Ne réponds pas dans l’urgence. Demande l’avis d’une personne de confiance avant d’agir.",
-                }
-              : {
-                  title: "Reste attentive au contexte.",
-                  text: "Si quelque chose te met mal à l’aise, fais confiance à ton ressenti et demande un avis.",
-                };
-
-  return { level, clues, advice };
-}
-
-function Result({
-  result,
-  message,
-  go,
-  audio,
-}: {
-  result: ReturnType<typeof analyzeMessage>;
-  message: string;
-  go: (s: Screen) => void;
-  audio: boolean;
-}) {
-  const tone = result.level === "Élevé" ? "high" : result.level === "Modéré" ? "medium" : "low";
-  useNarration(
-    audio,
-    `Niveau de vigilance : ${result.level}. ` +
-      (result.clues.length
-        ? `Indices repérés : ${result.clues.map((c) => c.title).join(", ")}. `
-        : "Aucun indice évident détecté. ") +
-      `${result.advice.title} ${result.advice.text}`,
-  );
-  return (
-    <section className="screen result">
-      <TopBar title="Résultat de l’analyse" onBack={() => go("checker")} />
-      <div className="page-content">
-        <div className={`risk-card ${tone}`}>
-          <div className="risk-ring">
-            <Icon name={tone === "low" ? "eye" : "warning"} size={28} />
-          </div>
-          <p>Niveau de vigilance</p>
-          <h1>{result.level}</h1>
-          <span>Analyse locale simulée</span>
-        </div>
-        <div className="quoted">
-          <small>MESSAGE ANALYSÉ</small>
-          <p>« {message} »</p>
-        </div>
-        <h2>
-          {result.clues.length
-            ? `${result.clues.length} indice${result.clues.length > 1 ? "s" : ""} détecté${result.clues.length > 1 ? "s" : ""}`
-            : "Aucun indice évident détecté"}
-        </h2>
-        {result.clues.length ? (
-          result.clues.map((c) => (
-            <div className="detected" key={c.title}>
-              <span>
-                <Icon name="warning" size={17} />
-              </span>
-              <div>
-                <strong>{c.title}</strong>
-                <p>{c.text}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="tip">
-            <Icon name="eye" />
-            <p>
-              <strong>Reste attentive au contexte.</strong>
-              <br />
-              L’absence d’indice ne signifie pas que le message est sûr.
-            </p>
-          </div>
-        )}
-        <div className="recommendation">
-          <p className="eyebrow">Ce que tu peux faire</p>
-          <h3>{result.advice.title}</h3>
-          <p>{result.advice.text}</p>
-        </div>
-        <Button onClick={() => go("resources")} icon="shield">
-          Voir les conseils
-        </Button>
-        <Button variant="secondary" onClick={() => go("help")}>
-          Trouver de l’aide
-        </Button>
-        <Button variant="ghost" onClick={() => go("checker")}>
-          Vérifier un autre message
-        </Button>
-        <p className="disclaimer">
-          Cette analyse repose sur des indices connus. Elle peut se tromper et ne garantit pas la
-          détection de toutes les situations dangereuses.
-        </p>
       </div>
     </section>
   );
@@ -2024,11 +2060,13 @@ const reflexes = [
 function Guide({
   audio,
   saved,
+  unlocked,
   onSave,
   onBack,
 }: {
   audio: boolean;
   saved: boolean;
+  unlocked: number[];
   onSave: () => void;
   onBack: () => void;
 }) {
@@ -2059,20 +2097,32 @@ function Guide({
           </div>
           <p className="eyebrow">Ayidote · à garder près de toi</p>
           <h1>Mes 6 réflexes pour naviguer plus sereinement</h1>
+          <p className="guide-count">
+            {unlocked.length === reflexes.length
+              ? "Tu les as tous débloqués."
+              : `${unlocked.length} sur 6 débloqués · les autres se gagnent dans les histoires.`}
+          </p>
         </div>
         <div className="reflex-list">
-          {reflexes.map((r, i) => (
-            <div key={r[1]}>
-              <span className="reflex-number">0{i + 1}</span>
-              <span className="reflex-icon">
-                <Icon name={r[0]} />
-              </span>
-              <p>
-                <strong>{r[1]}</strong>
-                <small>{r[2]}</small>
-              </p>
-            </div>
-          ))}
+          {reflexes.map((r, i) => {
+            const open = unlocked.includes(i);
+            return (
+              <div
+                key={r[1]}
+                className={open ? "unlocked" : "to-find"}
+                style={{ animationDelay: `${i * 90}ms` }}
+              >
+                <span className="reflex-number">0{i + 1}</span>
+                <span className="reflex-icon">
+                  <Icon name={open ? r[0] : "lock"} />
+                </span>
+                <p>
+                  <strong>{r[1]}</strong>
+                  <small>{open ? r[2] : "À débloquer en jouant une histoire."}</small>
+                </p>
+              </div>
+            );
+          })}
         </div>
         <p className="guide-footer">
           <Icon name="offline" size={15} /> Cette fiche reste disponible hors ligne sur ce
@@ -2091,20 +2141,59 @@ function Guide({
   );
 }
 
+// The rank follows the reflexes found so far, across all stories.
+const ranks = [
+  [0, "Éclaireuse", "Tu as ouvert l’œil. Chaque histoire t’en apprend un peu plus."],
+  [2, "Vigilante", "Tu repères déjà ce qui mérite ton attention."],
+  [4, "Gardienne", "Tes réflexes te protègent, toi et celles qui t’entourent."],
+  [6, "Sentinelle", "Tu connais les six réflexes. Tu peux les transmettre."],
+] as [number, string, string][];
+
+/** A medallion whose six petals light up with the reflexes found. */
+function RankArt({ lit }: { lit: number }) {
+  return (
+    <svg className="rank-art" viewBox="0 0 160 160" role="img" aria-label={`${lit} réflexes sur 6`}>
+      <circle cx="80" cy="80" r="76" fill="var(--sand)" />
+      <circle cx="80" cy="80" r="60" fill="none" stroke="var(--terra)" strokeWidth="1.5" strokeDasharray="3 6" />
+      {reflexes.map((_, i) => {
+        const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+        return (
+          <circle
+            key={i}
+            className={i < lit ? "petal lit" : "petal"}
+            style={{ animationDelay: `${300 + i * 120}ms` }}
+            cx={80 + Math.cos(angle) * 60}
+            cy={80 + Math.sin(angle) * 60}
+            r="11"
+          />
+        );
+      })}
+      <path
+        d="M80 42 108 53v24c0 19-11 33-28 41-17-8-28-22-28-41V53Z"
+        fill="var(--plum)"
+      />
+      <path
+        d="m67 80 9 9 18-19"
+        fill="none"
+        stroke="var(--cream)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function Progress({
-  story,
-  total,
   title,
+  unlocked,
   onOther,
-  saved,
   go,
   replay,
 }: {
-  story: number;
-  total: number;
   title: string;
+  unlocked: number[];
   onOther: () => void;
-  saved: boolean;
   go: (s: Screen) => void;
   replay: () => void;
 }) {
@@ -2121,49 +2210,34 @@ function Progress({
         "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
       );
   };
-  const achievements = [
-    ["book", title, story >= total ? "Terminée" : "En cours"],
-    ["eye", "Situations découvertes", `${Math.min(story, total)}/${total}`],
-    ["spark", "Quiz", localStorage.getItem("naya-quiz") ? "Réalisé" : "À faire"],
-    ["download", "Fiche", saved ? "Enregistrée" : "À enregistrer"],
-  ] as [IconName, string, string][];
+  const count = unlocked.length;
+  const rank = [...ranks].reverse().find((r) => count >= r[0]) ?? ranks[0];
   return (
     <section className="screen progress-screen">
       <TopBar title="Ma progression" onBack={() => go("home")} />
       <div className="page-content">
-        <div className="progress-hero">
-          <span>
-            <Icon name="check" size={34} />
-          </span>
-          <p className="eyebrow">Parcours complété</p>
-          <h1>Tu sais mieux repérer ce qui mérite ton attention.</h1>
-          <p>Les bons réflexes se construisent un choix après l’autre.</p>
+        <div className="rank-hero">
+          <RankArt lit={count} />
+          <p className="eyebrow">« {title} » terminée · ton rang</p>
+          <h1>{rank[1]}</h1>
+          <p>{rank[2]}</p>
         </div>
-        <div className="achievement-grid">
-          {achievements.map((a) => (
-            <div key={a[1]}>
-              <Icon name={a[0]} />
-              <small>{a[1]}</small>
-              <strong>{a[2]}</strong>
-            </div>
+        <h2>
+          {count} réflexe{count > 1 ? "s" : ""} sur 6 débloqué{count > 1 ? "s" : ""}
+        </h2>
+        <p className="lead">
+          {count === 6
+            ? "Ta fiche est complète."
+            : "Rejoue ou essaie une autre histoire pour trouver les autres."}
+        </p>
+        <div className="reflex-grid">
+          {reflexes.map((_, i) => (
+            <ReflexTile key={i} index={i} open={unlocked.includes(i)} />
           ))}
         </div>
-        <h2>Badges acquis</h2>
-        <div className="badges">
-          {[
-            "Détectrice de pièges",
-            "Gardienne de ses données",
-            "Alliée numérique",
-            "Défenseuse du consentement",
-          ].map((b, i) => (
-            <div key={b} className={i >= Math.floor((Math.min(story, total) / total) * 4) ? "locked" : ""}>
-              <span>
-                <Icon name={i === 0 ? "search" : i === 1 ? "lock" : i === 2 ? "help" : "shield"} />
-              </span>
-              <p>{b}</p>
-            </div>
-          ))}
-        </div>
+        <Button variant="secondary" onClick={() => go("guide")} icon="download">
+          Ouvrir ma fiche
+        </Button>
         <div className="replay-card">
           <p className="eyebrow">Et maintenant ?</p>
           <h2>Et si tu essayais un autre chemin ?</h2>
@@ -2189,12 +2263,16 @@ function Progress({
 function Settings({
   audio,
   setAudio,
+  timer,
+  setTimer,
   go,
   erase,
   notify,
 }: {
   audio: boolean;
   setAudio: (v: boolean) => void;
+  timer: boolean;
+  setTimer: (v: boolean) => void;
   go: (s: Screen) => void;
   erase: () => void;
   notify: (s: string) => void;
@@ -2240,6 +2318,20 @@ function Settings({
             </small>
           </div>
           <span className={`toggle ${audio ? "on" : ""}`}>
+            <i />
+          </span>
+        </button>
+        <button className="setting-row" onClick={() => setTimer(!timer)} aria-pressed={timer}>
+          <span>
+            <Icon name="spark" />
+          </span>
+          <div>
+            <strong>Compte à rebours</strong>
+            <small>
+              {timer ? "Activé pendant le chantage · sans pénalité" : "Désactivé · je lis à mon rythme"}
+            </small>
+          </div>
+          <span className={`toggle ${timer ? "on" : ""}`}>
             <i />
           </span>
         </button>
@@ -2294,7 +2386,7 @@ function Privacy({ onBack }: { onBack: () => void }) {
     ["offline", "Minimisation", "Aucune collecte de messages personnels."],
     ["download", "Stockage local", "La progression reste sur le téléphone."],
     ["warning", "Contrôle utilisatrice", "“Tout effacer” reste accessible."],
-    ["check", "Consentement", "Accord explicite avant toute analyse en ligne."],
+    ["check", "Consentement", "Rien n’est envoyé en ligne sans ton accord."],
     ["eye", "Transparence", "Aucune détection parfaite n’est promise."],
     ["shield", "Protection des mineures", "Aucune nudité ni collecte d’images intimes."],
   ] as [IconName, string, string][];
@@ -2334,8 +2426,8 @@ function Privacy({ onBack }: { onBack: () => void }) {
           </div>
           <div>
             <span>Fuite de message</span>
-            <span>Analyse locale simulée</span>
-            <span>Copier un texte reste un choix</span>
+            <span>Aucun message personnel n’est demandé</span>
+            <span>Les histoires restent fictives</span>
           </div>
           <div>
             <span>Mauvais conseil</span>

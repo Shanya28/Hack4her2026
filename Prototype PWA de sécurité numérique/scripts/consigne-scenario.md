@@ -73,5 +73,11 @@ Réponds uniquement avec un objet JSON de cette forme :
 }
 ```
 
+Un choix protecteur peut débloquer des cartes de la fiche « Mes 6 réflexes » avec le champ
+facultatif `"reflexes"`, une liste de numéros : 0 vérifier les liens (débloqué automatiquement
+par la chasse aux indices du lien piégé), 1 garder ses codes secrets, 2 protéger ses mots de
+passe, 3 respecter le consentement, 4 conserver les preuves, 5 demander de l'aide.
+Exemple : `"reflexes": [4, 5]`.
+
 Valeurs possibles pour `portrait` : `kevin`, `rh`, `chantal`, `afi`, `maya`. Les messages
 écrits par l'utilisatrice ont pour auteur `"moi"`.
