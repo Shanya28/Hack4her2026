@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "oxfmt",
-    "verifier:scenarios": "node scripts/verifier-scenarios.mjs"
+    "verifier:scenarios": "node scripts/verifier-scenarios.mjs",
+    "audio:liste": "node scripts/liste-audio.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
