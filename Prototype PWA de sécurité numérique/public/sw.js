@@ -1,4 +1,4 @@
-const CACHE = "naya-v1";
+const CACHE = "ayidote-v1";
 const SHELL = ["./", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

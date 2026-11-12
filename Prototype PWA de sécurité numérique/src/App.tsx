@@ -596,7 +596,7 @@ function Welcome({ onNext }: { onNext: () => void }) {
       </div>
       <div className="welcome-copy">
         <p className="eyebrow">Mon espace</p>
-        <h1>Naya</h1>
+        <h1>Ayidote</h1>
         <p>Un endroit calme pour faire le point, à ton rythme.</p>
       </div>
       <div>
@@ -1605,7 +1605,7 @@ function Guide({
             <span />
             <span />
           </div>
-          <p className="eyebrow">Naya · à garder près de toi</p>
+          <p className="eyebrow">Ayidote · à garder près de toi</p>
           <h1>Mes 6 réflexes pour naviguer plus sereinement</h1>
         </div>
         <div className="reflex-list">
@@ -1654,13 +1654,13 @@ function Progress({
     if (navigator.share)
       navigator
         .share({
-          title: "Naya",
-          text: "Découvre Naya, une expérience pour renforcer tes réflexes numériques.",
+          title: "Ayidote",
+          text: "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
         })
         .catch(() => undefined);
     else
       navigator.clipboard?.writeText(
-        "Découvre Naya, une expérience pour renforcer tes réflexes numériques.",
+        "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
       );
   };
   const achievements = [
@@ -1747,7 +1747,7 @@ function Settings({
             <span />
           </div>
           <div>
-            <strong>Naya</strong>
+            <strong>Ayidote</strong>
             <small>Mon espace discret</small>
           </div>
           <OfflinePill />
@@ -1814,7 +1814,7 @@ function Settings({
             Ta progression et tes préférences restent sur ce téléphone.
           </p>
         </div>
-        <p className="version">Naya · Prototype 1.0</p>
+        <p className="version">Ayidote · Prototype 1.0</p>
       </div>
     </section>
   );
