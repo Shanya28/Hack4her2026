@@ -1,0 +1,18 @@
+{
+  "name": "Naya — Mon espace",
+  "short_name": "Naya",
+  "description": "Une expérience pédagogique pour développer ses réflexes numériques.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fbf6ed",
+  "theme_color": "#49213d",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
