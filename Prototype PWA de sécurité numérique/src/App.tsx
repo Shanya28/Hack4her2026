@@ -21,7 +21,9 @@ type Screen =
   | "progress"
   | "privacy"
   | "settings"
-  | "alert";
+  | "alert"
+  | "carnet"
+  | "alert-result";
 
 type IconName =
   | "arrow"
@@ -323,6 +325,34 @@ function readDone(): string[] {
 
 const quiz = quizContent as { q: string; a: string[]; correct: number; why: string }[];
 
+// Discreet alert. Everything here is fictional on purpose: preset contacts,
+// preset messages and a made-up location. Nothing is ever sent.
+const alertContacts = [
+  { id: "rose", name: "Rose", role: "ta sœur", portrait: "chantal" },
+  { id: "mariam", name: "Mariam", role: "ton amie", portrait: "afi" },
+  { id: "ida", name: "Tante Ida", role: "ta tante", portrait: "rh" },
+];
+const alertMessages = [
+  "J’ai besoin d’aide. Voici où je suis.",
+  "Appelle-moi tout de suite, s’il te plaît.",
+  "Viens me chercher. Voici où je suis.",
+];
+type AlertConfig = { contacts: string[]; message: number };
+
+function readAlertConfig(): AlertConfig {
+  try {
+    const value = JSON.parse(localStorage.getItem("naya-alert") || "null");
+    if (value && Array.isArray(value.contacts) && Number.isInteger(value.message))
+      return {
+        contacts: value.contacts.filter((id: string) => alertContacts.some((c) => c.id === id)),
+        message: Math.min(Math.max(value.message, 0), alertMessages.length - 1),
+      };
+  } catch {
+    // fall through to the empty configuration
+  }
+  return { contacts: [], message: 0 };
+}
+
 const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
 
 function speak(text: string) {
@@ -352,7 +382,9 @@ function useNarration(enabled: boolean, text: string) {
 function App() {
   const [screen, setScreen] = useState<Screen>(() => {
     // Opened from the home-screen shortcut (long press on the app icon).
-    if (new URLSearchParams(window.location.search).has("carnet")) return "alert";
+    // One tap on it starts the alert if it is set up, otherwise opens the setup.
+    if (new URLSearchParams(window.location.search).has("carnet"))
+      return readAlertConfig().contacts.length ? "carnet" : "alert";
     return localStorage.getItem("naya-started") ? "home" : "welcome";
   });
   const [audio, setAudioState] = useState(
@@ -382,6 +414,15 @@ function App() {
   const total = scenario.steps.length;
   const [story, setStory] = useState(Number(localStorage.getItem("naya-story") || 0));
   const [done, setDone] = useState<string[]>(readDone);
+  const [alertConfig, setAlertConfigState] = useState<AlertConfig>(readAlertConfig);
+  const setAlertConfig = (config: AlertConfig) => {
+    setAlertConfigState(config);
+    localStorage.setItem("naya-alert", JSON.stringify(config));
+  };
+  const openCarnet = () => {
+    stopSpeaking();
+    go(alertConfig.contacts.length ? "carnet" : "alert");
+  };
   const [storyChoice, setStoryChoice] = useState<number | null>(null);
   const [message, setMessage] = useState(
     "Si tu ne m'envoies pas l'argent avant ce soir, je publie tes photos.",
@@ -443,6 +484,7 @@ function App() {
     setPersonState("afi");
     setScenarioId(scenarios[0].id);
     setDone([]);
+    setAlertConfigState({ contacts: [], message: 0 });
     setStory(0);
     setStoryChoice(null);
     setQuizIndex(0);
@@ -477,7 +519,9 @@ function App() {
         onBack={() => go("intro")}
       />
     );
-  else if (screen === "home") content = <Home person={person} story={story} scenario={scenario} go={go} />;
+  else if (screen === "home") content = (
+      <Home person={person} story={story} scenario={scenario} go={go} openCarnet={openCarnet} />
+    );
   else if (screen === "scenarios")
     content = (
       <Scenarios
@@ -607,7 +651,36 @@ function App() {
     );
   else if (screen === "privacy") content = <Privacy onBack={() => go("settings")} />;
   else if (screen === "alert")
-    content = <AlertDemo onBack={() => go("settings")} notify={notify} />;
+    content = (
+      <AlertSetup
+        config={alertConfig}
+        setConfig={setAlertConfig}
+        onTry={() => go("carnet")}
+        onBack={() => go("settings")}
+      />
+    );
+  else if (screen === "carnet")
+    content = (
+      <Carnet
+        contact={alertContacts.find((c) => alertConfig.contacts.includes(c.id)) ?? alertContacts[0]}
+        onCancel={() => {
+          notify("Note fermée");
+          go("home");
+        }}
+        onClose={() => go("home")}
+        onReveal={() => go("alert-result")}
+      />
+    );
+  else if (screen === "alert-result")
+    content = (
+      <AlertResult
+        config={alertConfig}
+        sender={person === "afi" ? "Afi" : "Maya"}
+        onRetry={() => go("carnet")}
+        onSetup={() => go("alert")}
+        onHome={() => go("home")}
+      />
+    );
   else
     content = (
       <Settings
@@ -857,11 +930,13 @@ function Home({
   story,
   scenario,
   go,
+  openCarnet,
 }: {
   person: "afi" | "maya";
   story: number;
   scenario: Scenario;
   go: (s: Screen) => void;
+  openCarnet: () => void;
 }) {
   const total = scenario.steps.length;
   const finished = story >= total;
@@ -872,9 +947,14 @@ function Home({
           <p>Bonjour, {person === "afi" ? "Afi" : "Maya"}</p>
           <h1>Avance à ton rythme.</h1>
         </div>
-        <button onClick={() => go("settings")} aria-label="Paramètres">
-          <Portrait person={person} small />
-        </button>
+        <div className="home-actions">
+          <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
+            <Icon name="book" size={18} />
+          </button>
+          <button onClick={() => go("settings")} aria-label="Paramètres">
+            <Portrait person={person} small />
+          </button>
+        </div>
       </div>
       <div className="page-content home-content">
         <div className="progress-line">
@@ -2277,61 +2357,27 @@ function Privacy({ onBack }: { onBack: () => void }) {
   );
 }
 
-const HOLD_MS = 2000;
-const COUNTDOWN_S = 5;
+const ALERT_DELAY_S = 3;
 
-type AlertPhase = "idle" | "holding" | "countdown" | "done" | "cancelled";
-
-function AlertDemo({ onBack, notify }: { onBack: () => void; notify: (s: string) => void }) {
-  const [phase, setPhase] = useState<AlertPhase>("idle");
-  const [left, setLeft] = useState(COUNTDOWN_S);
-  const holdTimer = useRef<number | undefined>(undefined);
-
-  const startHold = () => {
-    if (phase === "holding" || phase === "countdown") return;
-    setPhase("holding");
-    holdTimer.current = window.setTimeout(() => {
-      navigator.vibrate?.(200);
-      setLeft(COUNTDOWN_S);
-      setPhase("countdown");
-    }, HOLD_MS);
-  };
-  const endHold = () => {
-    if (phase !== "holding") return;
-    window.clearTimeout(holdTimer.current);
-    setPhase("idle");
-    notify("Maintiens le bouclier 2 secondes");
-  };
-  useEffect(() => () => window.clearTimeout(holdTimer.current), []);
-  useEffect(() => {
-    if (phase !== "countdown") return;
-    if (left === 0) {
-      setPhase("done");
-      return;
-    }
-    const tick = window.setTimeout(() => setLeft(left - 1), 1000);
-    return () => window.clearTimeout(tick);
-  }, [phase, left]);
-
-  const title =
-    phase === "holding"
-      ? "Continue d’appuyer…"
-      : phase === "countdown"
-        ? `Simulation : envoi dans ${left} s`
-        : phase === "done"
-          ? "Simulation terminée"
-          : phase === "cancelled"
-            ? "Alerte annulée"
-            : "Maintiens le bouclier 2 secondes";
-  const text =
-    phase === "countdown"
-      ? "Dans une vraie version, l’alerte partirait à la fin du décompte. Tu peux encore annuler."
-      : phase === "done"
-        ? "Aucune alerte envoyée, aucun contact prévenu. Dans une vraie version, un contact choisi à l’avance aurait reçu un message."
-        : phase === "cancelled"
-          ? "Rien n’a été envoyé. L’utilisatrice garde toujours la main."
-          : "Geste fictif pour montrer comment une alerte discrète pourrait se déclencher.";
-
+function AlertSetup({
+  config,
+  setConfig,
+  onTry,
+  onBack,
+}: {
+  config: AlertConfig;
+  setConfig: (c: AlertConfig) => void;
+  onTry: () => void;
+  onBack: () => void;
+}) {
+  const ready = config.contacts.length > 0;
+  const toggle = (id: string) =>
+    setConfig({
+      ...config,
+      contacts: config.contacts.includes(id)
+        ? config.contacts.filter((c) => c !== id)
+        : [...config.contacts, id],
+    });
   return (
     <section className="screen alert-demo">
       <TopBar title="Alerte discrète" onBack={onBack} />
@@ -2341,76 +2387,249 @@ function AlertDemo({ onBack, notify }: { onBack: () => void; notify: (s: string)
           <p>
             <strong>Simulation, aucune alerte envoyée</strong>
             <br />
-            Cet écran ne contacte personne : ni message, ni appel, ni position.
+            Les proches, le message et la position sont fictifs. Rien ne quitte ce téléphone.
           </p>
         </div>
-        <div className="alert-visual">
-          <button
-            className={`pulse ${phase === "holding" ? "holding" : ""} ${
-              phase === "countdown" || phase === "done" ? "armed" : ""
-            }`}
-            aria-label="Maintenir pour lancer la simulation d’alerte"
-            onPointerDown={startHold}
-            onPointerUp={endHold}
-            onPointerLeave={endHold}
-            onPointerCancel={endHold}
-            onKeyDown={(e) => {
-              if ((e.key === " " || e.key === "Enter") && !e.repeat) startHold();
-            }}
-            onKeyUp={endHold}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <Icon name={phase === "done" ? "check" : "shield"} size={42} />
-          </button>
-          <h1 aria-live="polite">{title}</h1>
-          <p>{text}</p>
+
+        <h2 className="alert-step">
+          <span>1</span>Qui prévenir ?
+        </h2>
+        <p className="alert-help">Choisis une ou plusieurs personnes de confiance (fictives).</p>
+        <div className="option-list">
+          {alertContacts.map((c) => {
+            const on = config.contacts.includes(c.id);
+            return (
+              <button
+                key={c.id}
+                className={`select-row contact-row ${on ? "selected" : ""}`}
+                onClick={() => toggle(c.id)}
+                aria-pressed={on}
+              >
+                <Portrait person={c.portrait} small />
+                <span>
+                  <strong>{c.name}</strong>
+                  <small>{c.role}</small>
+                </span>
+                {on && (
+                  <span className="radio">
+                    <Icon name="check" size={14} />
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
-        {phase === "countdown" && (
-          <Button
-            variant="danger"
-            onClick={() => {
-              setPhase("cancelled");
-              notify("Simulation annulée");
-            }}
-          >
-            Annuler
-          </Button>
-        )}
-        {(phase === "done" || phase === "cancelled") && (
-          <Button variant="secondary" onClick={() => setPhase("idle")}>
-            Recommencer
-          </Button>
-        )}
+
+        <h2 className="alert-step">
+          <span>2</span>Quel message ?
+        </h2>
+        <div className="option-list">
+          {alertMessages.map((m, i) => (
+            <button
+              key={m}
+              className={`select-row ${config.message === i ? "selected" : ""}`}
+              onClick={() => setConfig({ ...config, message: i })}
+              aria-pressed={config.message === i}
+            >
+              <span>
+                <strong>{m}</strong>
+              </span>
+              {config.message === i && (
+                <span className="radio">
+                  <Icon name="check" size={14} />
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <h2 className="alert-step">
+          <span>3</span>Un seul geste
+        </h2>
+        <ol className="demo-steps">
+          <li>
+            <span>
+              <Icon name="book" size={15} />
+            </span>
+            <p>
+              <strong>Touche « Mon carnet »</strong>
+              <br />
+              L’icône du carnet en haut de l’accueil, ou le raccourci « Mon carnet » (appui long sur
+              l’icône d’Ayidote, à glisser sur l’écran du téléphone).
+            </p>
+          </li>
+          <li>
+            <span>
+              <Icon name="eye" size={15} />
+            </span>
+            <p>
+              <strong>Une simple page de notes s’ouvre</strong>
+              <br />
+              Le téléphone vibre. Tu as {ALERT_DELAY_S} secondes pour toucher « Fermer » si c’est une
+              erreur.
+            </p>
+          </li>
+          <li>
+            <span>
+              <Icon name="message" size={15} />
+            </span>
+            <p>
+              <strong>Tes proches sont prévenus</strong>
+              <br />
+              Ici, c’est simulé : tu verras ce qu’ils auraient reçu.
+            </p>
+          </li>
+        </ol>
+
+        <Button onClick={onTry} disabled={!ready} icon="play">
+          {ready ? "Essayer l’alerte" : "Choisis d’abord une personne"}
+        </Button>
+        <p className="disclaimer">
+          Dans une vraie version, l’alerte préviendrait tes proches, pas les secours, et aurait
+          besoin de réseau. Ce prototype ne déclenche aucun message, appel ou partage de position.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * What an onlooker sees: an ordinary notes page. Opening it starts a silent
+ * countdown; "Fermer" cancels it. Nothing on screen mentions an alert.
+ */
+function Carnet({
+  contact,
+  onCancel,
+  onClose,
+  onReveal,
+}: {
+  contact: { name: string };
+  onCancel: () => void;
+  onClose: () => void;
+  onReveal: () => void;
+}) {
+  const [sent, setSent] = useState(false);
+  useEffect(() => {
+    navigator.vibrate?.(150);
+    const timer = window.setTimeout(() => {
+      navigator.vibrate?.([80, 80, 80]);
+      setSent(true);
+    }, ALERT_DELAY_S * 1000);
+    return () => window.clearTimeout(timer);
+  }, []);
+  return (
+    <section className="screen carnet">
+      <header className="carnet-bar">
+        <strong>Mon carnet</strong>
+        <button onClick={sent ? onClose : onCancel}>Fermer</button>
+      </header>
+      <div className="carnet-page">
+        <h1>
+          Courses de la semaine
+          {sent && <i className="carnet-dot" aria-label="Enregistré" />}
+        </h1>
+        <ul>
+          <li>Riz, 2 kg</li>
+          <li>Tomates et oignons</li>
+          <li>Savon</li>
+          <li>Huile</li>
+          <li>Crédit téléphone</li>
+          <li>Passer chez la couturière samedi</li>
+        </ul>
+      </div>
+      {!sent && <div className="carnet-timer" style={{ animationDuration: `${ALERT_DELAY_S}s` }} />}
+      {sent && (
+        <button className="carnet-reveal" onClick={onReveal}>
+          Démo · voir ce que reçoit {contact.name}
+        </button>
+      )}
+    </section>
+  );
+}
+
+function AlertResult({
+  config,
+  sender,
+  onRetry,
+  onSetup,
+  onHome,
+}: {
+  config: AlertConfig;
+  sender: string;
+  onRetry: () => void;
+  onSetup: () => void;
+  onHome: () => void;
+}) {
+  const contacts = alertContacts.filter((c) => config.contacts.includes(c.id));
+  const first = contacts[0] ?? alertContacts[0];
+  return (
+    <section className="screen alert-demo">
+      <TopBar title="Ce qui se serait passé" onBack={onHome} />
+      <div className="page-content">
+        <div className="demo-banner">
+          <Icon name="warning" />
+          <p>
+            <strong>Simulation, aucune alerte envoyée</strong>
+            <br />
+            Aucun message n’est parti et aucun contact n’a été prévenu.
+          </p>
+        </div>
+        <p className="alert-help">
+          Sur le téléphone de {contacts.map((c) => c.name).join(" et ") || first.name}, quelques
+          secondes après ton geste :
+        </p>
+        <div className="contact-phone">
+          <div className="contact-phone-head">
+            <Portrait person={sender === "Maya" ? "maya" : "afi"} small />
+            <span>
+              <strong>{sender}</strong>
+              <small>à l’instant</small>
+            </span>
+          </div>
+          <div className="bubble">
+            <p>{alertMessages[config.message]}</p>
+          </div>
+          <div className="fake-map">
+            <i />
+            <span>Position fictive · quartier Exemple</span>
+          </div>
+        </div>
+        <h2 className="alert-step">Dans la vraie vie</h2>
         <ol className="demo-steps">
           <li>
             <span>1</span>
             <p>
-              <strong>Un geste discret</strong>
+              <strong>{first.name} t’appelle ou vient te chercher</strong>
               <br />
-              Maintenir un bouton, ou le raccourci « Mon carnet » par appui long sur l’icône.
+              L’alerte fait venir un proche. Elle ne contacte pas les secours.
             </p>
           </li>
           <li>
             <span>2</span>
             <p>
-              <strong>Une confirmation silencieuse</strong>
+              <strong>Il faut du réseau</strong>
               <br />
-              Une vibration confirme la demande.
+              Sans connexion ni crédit, le message ne partirait pas.
             </p>
           </li>
           <li>
             <span>3</span>
             <p>
-              <strong>Garder le contrôle</strong>
+              <strong>Préviens tes proches à l’avance</strong>
               <br />
-              Un décompte permet d’annuler avant tout envoi.
+              Ils doivent savoir quoi faire s’ils reçoivent ce message.
             </p>
           </li>
         </ol>
-        <p className="disclaimer">
-          Cette interaction ne déclenche aucun message, appel, partage de position ou contact
-          d’urgence.
-        </p>
+        <Button onClick={onRetry} icon="play">
+          Recommencer
+        </Button>
+        <Button variant="secondary" onClick={onSetup}>
+          Modifier mes réglages
+        </Button>
+        <Button variant="ghost" onClick={onHome}>
+          Retour à l’accueil
+        </Button>
       </div>
     </section>
   );
