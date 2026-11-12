@@ -1,0 +1,141 @@
+{
+  "id": "faux-recrutement",
+  "order": 2,
+  "title": "L’offre trop belle",
+  "profile": "Chercheuse d’emploi",
+  "summary": "Un cabinet inconnu te promet un poste, puis réclame des frais et tes papiers.",
+  "source": "ia",
+  "relu": false,
+  "contact": { "name": "Mme Dossou", "status": "Recrutement · compte récent", "portrait": "rh" },
+  "steps": [
+    {
+      "chapter": "1 · La bonne nouvelle",
+      "messages": [
+        ["Mme Dossou", "Bonjour, votre profil a été retenu pour un poste d'assistante administrative. Salaire : 250 000 F par mois."],
+        ["Mme Dossou", "Aucun entretien n'est nécessaire. Il ne reste qu'une seule place, répondez vite."]
+      ],
+      "choices": [
+        {
+          "label": "Super, je suis intéressée !",
+          "protective": false,
+          "outcome": "Mme Dossou te félicite aussitôt et demande ton nom complet, ton adresse et ta date de naissance.",
+          "advice": "Avoir envie de ce poste est normal. Remarque simplement qu'on te demande déjà des informations sans t'avoir rien prouvé."
+        },
+        {
+          "label": "Où avez-vous eu mon numéro ?",
+          "protective": true,
+          "outcome": "Elle répond : « Par notre base de données. » Aucun nom de site, aucune annonce à laquelle tu aurais répondu.",
+          "advice": "Bonne question : un vrai recruteur sait dire où tu as postulé."
+        },
+        {
+          "label": "Je vérifie d'abord si ce cabinet existe",
+          "protective": true,
+          "outcome": "Tu cherches le nom du cabinet : pas d'adresse, pas de site officiel, seulement d'autres personnes qui se plaignent.",
+          "advice": "Vérifier par toi-même, en dehors de la conversation, est le meilleur réflexe."
+        }
+      ],
+      "feedback": "Un salaire élevé, aucun entretien et une seule place : ces trois promesses réunies servent à te faire décider vite."
+    },
+    {
+      "chapter": "2 · Le dossier en ligne",
+      "messages": [["Mme Dossou", "Pour finaliser, remplissez votre dossier de candidature sur ce lien."]],
+      "attachment": {
+        "label": "Dossier de candidature",
+        "url": "soleil-carriere.example-emploi.com",
+        "cta": "Remplir le dossier",
+        "pageUrl": "dossier-emploi-login.net",
+        "pageTitle": "Finalise ton dossier",
+        "pageText": "Connecte-toi avec ton adresse e-mail pour envoyer ta candidature.",
+        "clue": "Tu n'avais postulé à aucune offre de ce cabinet."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "3 · Les frais de dossier",
+      "messages": [
+        ["Mme Dossou", "Votre dossier est validé ! Il reste 15 000 F de frais de dossier à envoyer par mobile money."],
+        ["Mme Dossou", "Le paiement doit arriver avant 18 h, sinon la place sera donnée à quelqu'un d'autre."]
+      ],
+      "choices": [
+        {
+          "label": "Payer les frais",
+          "protective": false,
+          "outcome": "Tu envoies l'argent. Le lendemain, on te réclame 10 000 F de « frais de badge ». Puis le numéro ne répond plus.",
+          "advice": "Si cela t'arrive, ce n'est pas ta faute : ces arnaques sont faites pour paraître sérieuses. Garde les reçus et les messages, ils serviront de preuves."
+        },
+        {
+          "label": "Proposer de payer sur place, le jour de l'embauche",
+          "protective": true,
+          "outcome": "Elle refuse : « Impossible, le paiement se fait uniquement à distance et aujourd'hui. » Elle ne veut pas te rencontrer.",
+          "advice": "Proposer une autre façon de faire révèle le piège : un vrai employeur accepte de te recevoir."
+        },
+        {
+          "label": "Refuser : un vrai emploi ne se paie pas",
+          "protective": true,
+          "outcome": "Le ton change : « Vous ratez la chance de votre vie. » Puis plus rien. Tu as gardé ton argent.",
+          "advice": "Dire non suffit. Tu n'as pas à te justifier auprès de quelqu'un qui te presse de payer."
+        }
+      ],
+      "feedback": "Un recrutement sérieux ne demande pas d'argent pour un dossier, une formation ou un badge. Le délai sert à t'empêcher de demander conseil."
+    },
+    {
+      "chapter": "4 · Les papiers",
+      "messages": [
+        ["Mme Dossou", "Envoyez aussi une photo de votre carte d'identité, recto verso."],
+        ["Mme Dossou", "Et un selfie en tenant la carte, pour vérification."]
+      ],
+      "choices": [
+        {
+          "label": "Envoyer la carte et le selfie",
+          "protective": false,
+          "outcome": "Tes papiers sont maintenant chez un inconnu. Ils peuvent servir à ouvrir des comptes ou à tromper d'autres personnes en ton nom.",
+          "advice": "Si c'est déjà fait, préviens ton entourage, garde la conversation comme preuve et parles-en à une personne de confiance."
+        },
+        {
+          "label": "Demander l'adresse du bureau pour déposer le dossier",
+          "protective": true,
+          "outcome": "On te répond que « tout se fait en ligne ». Aucune adresse, aucun nom que tu puisses vérifier.",
+          "advice": "Demander un lieu et un nom vérifiables est un très bon test."
+        },
+        {
+          "label": "Ne rien envoyer et bloquer le numéro",
+          "protective": true,
+          "outcome": "Tu fais des captures de la conversation, tu bloques le numéro et tu préviens une amie qui cherche aussi du travail.",
+          "advice": "Garder les preuves puis bloquer te protège, et prévenir une amie la protège aussi."
+        }
+      ],
+      "feedback": "Une pièce d'identité et un selfie suffisent pour se faire passer pour toi. Ne les envoie qu'à un organisme que tu as vérifié toi-même."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": { "status": "Messages à conserver" },
+      "danger": true,
+      "messages": [
+        ["Mme Dossou", "Nous avons votre CV, votre numéro et votre adresse."],
+        ["Mme Dossou", "Payez les frais aujourd'hui ou votre nom sera inscrit sur la liste noire des employeurs."]
+      ],
+      "choices": [
+        {
+          "label": "Payer pour être tranquille",
+          "protective": false,
+          "outcome": "Après le paiement, une nouvelle somme est réclamée. La menace revient, plus forte.",
+          "advice": "Payer n'arrête pas la pression. Tu peux arrêter à tout moment, garder les preuves et demander de l'aide."
+        },
+        {
+          "label": "Répondre pour se justifier",
+          "protective": false,
+          "outcome": "Chaque réponse relance la discussion et les menaces. On cherche à te fatiguer jusqu'à ce que tu paies.",
+          "advice": "Tu ne leur dois aucune explication. Le plus protecteur est de ne plus répondre."
+        },
+        {
+          "label": "Garder les preuves, bloquer et en parler",
+          "protective": true,
+          "outcome": "Tu conserves les messages, tu bloques le numéro et tu en parles à une personne de confiance. La menace reste sans effet.",
+          "advice": "C'est le réflexe le plus protecteur : preuves, blocage, soutien."
+        }
+      ],
+      "feedback": "Cette « liste noire » est une invention pour te faire payer. Tu n'as rien fait de mal en cherchant du travail."
+    }
+  ]
+}

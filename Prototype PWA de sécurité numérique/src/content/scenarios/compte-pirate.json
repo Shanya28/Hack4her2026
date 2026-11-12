@@ -1,0 +1,142 @@
+{
+  "id": "compte-pirate",
+  "order": 3,
+  "title": "Le code de trop",
+  "profile": "Commerçante",
+  "summary": "Une « amie » qui a changé de numéro te demande un code reçu par SMS.",
+  "source": "ia",
+  "relu": false,
+  "contact": { "name": "Chantal", "status": "nouveau numéro · inconnu", "portrait": "chantal" },
+  "steps": [
+    {
+      "chapter": "1 · Le nouveau numéro",
+      "messages": [
+        ["Chantal", "Coucou ma chérie, c'est Chantal ! J'ai changé de numéro, enregistre celui-ci."],
+        ["Chantal", "Tu vas bien ? J'ai besoin d'un petit service."]
+      ],
+      "choices": [
+        {
+          "label": "Bien sûr, dis-moi !",
+          "protective": false,
+          "outcome": "« Chantal » te remercie chaleureusement et enchaîne tout de suite sur sa demande, sans prendre de tes nouvelles.",
+          "advice": "Vouloir aider une amie est une qualité. Remarque simplement que rien ne prouve encore que c'est elle."
+        },
+        {
+          "label": "Je t'appelle sur ton ancien numéro pour vérifier",
+          "protective": true,
+          "outcome": "« Non non, il ne marche plus, écris-moi ici. » Elle évite l'appel.",
+          "advice": "Vérifier par un autre moyen que la conversation est le bon réflexe. Un refus est déjà un indice."
+        },
+        {
+          "label": "Envoie-moi un message vocal pour que je reconnaisse ta voix",
+          "protective": true,
+          "outcome": "« Mon micro est cassé. » Toujours une excuse, jamais de preuve.",
+          "advice": "Demander une preuve simple, comme la voix, aide à repérer une personne qui se fait passer pour une autre."
+        }
+      ],
+      "feedback": "« J'ai changé de numéro » est une façon courante de se faire passer pour un proche. Vérifie toujours par un appel ou en personne."
+    },
+    {
+      "chapter": "2 · Le code reçu par SMS",
+      "messages": [
+        ["Chantal", "Je t'ai envoyé un code à 6 chiffres par erreur, c'était pour moi."],
+        ["Chantal", "Renvoie-le-moi vite s'il te plaît, c'est urgent !"]
+      ],
+      "choices": [
+        {
+          "label": "Renvoyer le code",
+          "protective": false,
+          "outcome": "Quelques minutes plus tard, tu es déconnectée de ta messagerie. Le code servait à ouvrir ton compte sur un autre téléphone.",
+          "advice": "Ce n'est pas ta faute : la demande portait le nom d'une amie. Si cela arrive, reconnecte-toi vite avec ton numéro et active la vérification en deux étapes."
+        },
+        {
+          "label": "Demander pourquoi le code est arrivé chez moi",
+          "protective": true,
+          "outcome": "« C'est une erreur du réseau, envoie vite ! » Aucune explication, seulement de la précipitation.",
+          "advice": "Un code arrive sur ton téléphone parce qu'il concerne ton compte, pas celui de quelqu'un d'autre."
+        },
+        {
+          "label": "Garder le code pour moi",
+          "protective": true,
+          "outcome": "« Chantal » insiste, puis se fâche. Tu ne cèdes pas et ton compte reste à toi.",
+          "advice": "Un code reçu par SMS ne se partage jamais, même avec une personne proche."
+        }
+      ],
+      "feedback": "Un code de vérification est la clé de ton compte. La personne qui l'obtient peut lire tes messages et écrire à tes contacts à ta place."
+    },
+    {
+      "chapter": "3 · Le lien de confirmation",
+      "messages": [["Chantal", "Bon, sinon clique ici pour confirmer que c'est bien ton compte."]],
+      "attachment": {
+        "label": "Confirmer mon compte",
+        "url": "verif-compte.example-secure.net",
+        "cta": "Ouvrir le lien",
+        "pageUrl": "verif-compte-login.net",
+        "pageTitle": "Confirme ton compte",
+        "pageText": "Saisis ton adresse e-mail et ton mot de passe pour continuer.",
+        "clue": "Aucun service ne te demande de confirmer ton compte par un lien envoyé dans une discussion."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · L'alerte dans le groupe",
+      "header": { "name": "Groupe des vendeuses", "status": "12 membres", "portrait": "afi" },
+      "messages": [
+        ["Awa · Groupe", "Les filles, attention ! Quelqu'un utilise le nom de Chantal pour demander de l'argent."],
+        ["Awa · Groupe", "Trois personnes ont déjà reçu une demande de 20 000 F ce matin."]
+      ],
+      "choices": [
+        {
+          "label": "Envoyer quand même l'argent, au cas où",
+          "protective": false,
+          "outcome": "L'argent part vers un numéro inconnu. La vraie Chantal n'a jamais rien demandé.",
+          "advice": "Avant d'envoyer de l'argent, un appel à la personne suffit pour vérifier. Si c'est déjà fait, garde le reçu et les messages."
+        },
+        {
+          "label": "Ne rien dire, cela ne me concerne pas",
+          "protective": false,
+          "outcome": "D'autres vendeuses du groupe reçoivent la même demande dans la journée, et l'une d'elles paie.",
+          "advice": "Un mot de ta part peut éviter à une autre de se faire piéger."
+        },
+        {
+          "label": "Prévenir le groupe et appeler la vraie Chantal",
+          "protective": true,
+          "outcome": "Tu confirmes l'alerte dans le groupe et tu appelles Chantal : elle n'a jamais changé de numéro. Elle prévient ses contacts.",
+          "advice": "Prévenir et vérifier par appel, c'est ce qui arrête la chaîne."
+        }
+      ],
+      "feedback": "Ces arnaques se propagent de contact en contact. Avertir son entourage protège tout le monde."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": { "status": "Messages à conserver" },
+      "danger": true,
+      "messages": [
+        ["Chantal", "Tu parles trop."],
+        ["Chantal", "Si tu continues, j'envoie tes conversations privées à tous tes contacts."]
+      ],
+      "choices": [
+        {
+          "label": "Supprimer mon compte dans la panique",
+          "protective": false,
+          "outcome": "Le compte disparaît, mais les messages de menace aussi : il ne reste plus aucune preuve.",
+          "advice": "Ta peur est légitime. Avant de supprimer quoi que ce soit, fais des captures d'écran avec la date."
+        },
+        {
+          "label": "Négocier pour qu'il arrête",
+          "protective": false,
+          "outcome": "Il demande de l'argent pour « oublier ». Chaque réponse lui donne une nouvelle prise.",
+          "advice": "On ne négocie pas avec une menace. Le plus protecteur est de ne plus répondre."
+        },
+        {
+          "label": "Garder les preuves, sécuriser mon compte et demander de l'aide",
+          "protective": true,
+          "outcome": "Tu fais des captures, tu changes ton mot de passe, tu actives la vérification en deux étapes et tu en parles à une personne de confiance.",
+          "advice": "C'est le réflexe le plus protecteur : preuves, compte sécurisé, soutien."
+        }
+      ],
+      "feedback": "Tu n'es pas responsable de la menace. Sécurise ton compte, garde les preuves sans te mettre en danger et ne reste pas seule."
+    }
+  ]
+}
