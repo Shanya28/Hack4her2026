@@ -1,0 +1,188 @@
+[
+  {
+    "id": "cadeau-telephone",
+    "category": "Faux cadeau",
+    "sender": "Promo Cadeaux",
+    "status": "numéro inconnu",
+    "text": "Félicitations ! Tu as gagné un téléphone. Clique ici dans les 5 prochaines minutes pour récupérer ton cadeau.",
+    "link": "cadeau-gratuit.example-prix.com",
+    "trap": true,
+    "clues": [
+      "Un cadeau alors que tu n'as participé à aucun jeu.",
+      "Une pression sur le temps : « 5 minutes ».",
+      "Un lien vers une adresse inconnue.",
+      "Un expéditeur que tu ne connais pas."
+    ],
+    "reflex": "Ne clique jamais sur un lien parce qu'un message te promet un cadeau. Vérifie d'abord qui écrit."
+  },
+  {
+    "id": "nouveau-numero",
+    "category": "Faux compte",
+    "sender": "Chantal",
+    "status": "nouveau numéro",
+    "text": "Coucou c'est moi, j'ai changé de numéro. Supprime l'ancien. Tu peux me rendre un petit service, vite fait ?",
+    "trap": true,
+    "clues": [
+      "Un nouveau numéro que tu ne peux pas vérifier.",
+      "On te demande de supprimer l'ancien numéro.",
+      "Un service flou, demandé dans l'urgence."
+    ],
+    "reflex": "Avant de répondre, appelle la personne sur le numéro que tu connais déjà."
+  },
+  {
+    "id": "maman-riz",
+    "category": "Message du quotidien",
+    "sender": "Maman",
+    "status": "contact enregistré",
+    "text": "Je rentre tard ce soir. Il reste du riz dans la marmite. Pense à fermer le portail.",
+    "trap": false,
+    "clues": [
+      "Le message vient d'un contact que tu connais.",
+      "Il ne demande ni argent, ni code, ni lien.",
+      "Il ne te presse pas et ne te demande aucun secret."
+    ],
+    "reflex": "Un message sûr ne te presse pas et ne te demande rien de secret. Rester vigilante, ce n'est pas se méfier de tout."
+  },
+  {
+    "id": "tonton-frontiere",
+    "category": "Demande d'argent",
+    "sender": "Tonton Paul",
+    "status": "numéro inconnu",
+    "text": "C'est tonton. Je suis bloqué à la frontière. Envoie-moi 20 000 F maintenant, je te rembourse demain. Ne dis rien à ta mère.",
+    "trap": true,
+    "clues": [
+      "Un proche qui écrit depuis un numéro inconnu.",
+      "Une demande d'argent à faire tout de suite.",
+      "On te demande de garder le secret."
+    ],
+    "reflex": "Quand on te demande de l'argent et du secret, parles-en à un adulte de confiance avant de faire quoi que ce soit."
+  },
+  {
+    "id": "compte-suspendu",
+    "category": "Lien frauduleux",
+    "sender": "Service Compte",
+    "status": "expéditeur inconnu",
+    "text": "Ton compte sera suspendu aujourd'hui. Confirme ton mot de passe ici pour le garder.",
+    "link": "compte-verif.example-login.net",
+    "trap": true,
+    "clues": [
+      "Une menace : « ton compte sera suspendu ».",
+      "On te demande ton mot de passe.",
+      "L'adresse du lien ne ressemble à aucun service connu."
+    ],
+    "reflex": "Un vrai service ne demande jamais ton mot de passe par message. Ouvre toi-même l'application officielle pour vérifier."
+  },
+  {
+    "id": "devoir-reporte",
+    "category": "Message du quotidien",
+    "sender": "Mme Adjovi",
+    "status": "groupe de la classe",
+    "text": "Rappel : le devoir de maths est reporté à lundi. Apportez votre calculatrice.",
+    "trap": false,
+    "clues": [
+      "Le message arrive dans le groupe habituel de la classe.",
+      "L'information se vérifie facilement demain à l'école.",
+      "Rien n'est demandé : ni argent, ni code, ni lien."
+    ],
+    "reflex": "Une information fiable se vérifie par un autre moyen. Ici, il suffit de demander en classe."
+  },
+  {
+    "id": "code-par-erreur",
+    "category": "Information personnelle",
+    "sender": "Mariam",
+    "status": "en ligne",
+    "text": "J'ai envoyé un code à 6 chiffres sur ton numéro par erreur. Renvoie-le-moi vite stp !",
+    "trap": true,
+    "clues": [
+      "Un code reçu par SMS est un secret : il ouvre ton compte.",
+      "« Vite » : on te presse pour que tu ne réfléchisses pas.",
+      "Même le compte d'une amie peut avoir été volé."
+    ],
+    "reflex": "Un code reçu par SMS ne se partage jamais, même avec une amie. Appelle-la pour vérifier que c'est bien elle."
+  },
+  {
+    "id": "preuve-amour",
+    "category": "Manipulation affective",
+    "sender": "Kevin",
+    "status": "rencontré en ligne",
+    "text": "Si tu tiens vraiment à moi, prouve-le. Envoie-moi une photo privée. Ça reste entre nous, promis.",
+    "trap": true,
+    "clues": [
+      "On exige une « preuve » d'affection.",
+      "Une photo privée est demandée.",
+      "« Ça reste entre nous » : une promesse impossible à vérifier."
+    ],
+    "reflex": "L'affection ne se prouve jamais par une image. Tu as le droit de dire non, et de changer d'avis à tout moment."
+  },
+  {
+    "id": "frais-dossier",
+    "category": "Demande d'argent",
+    "sender": "Cabinet Avenir Emploi",
+    "status": "compte récent",
+    "text": "Votre candidature est retenue ! Payez 5 000 F de frais de dossier aujourd'hui pour confirmer votre poste.",
+    "trap": true,
+    "clues": [
+      "Une offre pour un poste que tu n'as pas demandé.",
+      "Il faut payer pour être embauchée.",
+      "Tout doit se faire « aujourd'hui »."
+    ],
+    "reflex": "Un vrai emploi ne se paie pas. Vérifie que l'employeur existe avant de répondre."
+  },
+  {
+    "id": "cahier-oublie",
+    "category": "Message du quotidien",
+    "sender": "Afi",
+    "status": "contact enregistré",
+    "text": "Tu as oublié ton cahier chez moi. Je te le ramène demain au cours.",
+    "trap": false,
+    "clues": [
+      "Une amie que tu connais, sur son numéro habituel.",
+      "Le message parle d'une chose que tu peux vérifier.",
+      "Aucune demande, aucune urgence."
+    ],
+    "reflex": "Reconnaître un message sûr est aussi un réflexe : qui écrit, que demande-t-on, pourquoi maintenant ?"
+  },
+  {
+    "id": "menace-photos",
+    "category": "Urgence et menace",
+    "sender": "Inconnu",
+    "status": "numéro masqué",
+    "text": "J'ai des photos de toi. Paie avant ce soir ou je les envoie à tous tes contacts.",
+    "trap": true,
+    "help": true,
+    "clues": [
+      "Une menace pour te faire peur.",
+      "Un délai très court : « avant ce soir ».",
+      "Une demande d'argent venant d'un inconnu."
+    ],
+    "reflex": "Ne paie pas : payer n'arrête pas la menace. Garde les messages, bloque le compte et parles-en. Ce n'est jamais la faute de la personne menacée."
+  },
+  {
+    "id": "bourse-identite",
+    "category": "Information personnelle",
+    "sender": "Bourse Jeunes Talents",
+    "status": "expéditeur inconnu",
+    "text": "Bonne nouvelle, tu es sélectionnée ! Pour recevoir ta bourse, envoie une photo de ta carte d'identité et ta date de naissance.",
+    "trap": true,
+    "clues": [
+      "Une bourse que tu n'as jamais demandée.",
+      "On te réclame ta pièce d'identité par message.",
+      "Aucun organisme que tu peux vérifier."
+    ],
+    "reflex": "Ta pièce d'identité ne s'envoie pas à un inconnu. Vérifie auprès de ton école ou d'un adulte de confiance."
+  },
+  {
+    "id": "bibliotheque",
+    "category": "Message du quotidien",
+    "sender": "Bibliothèque du lycée",
+    "status": "groupe de l'établissement",
+    "text": "Les livres empruntés ce trimestre sont à rendre avant vendredi. Merci de passer à la bibliothèque.",
+    "trap": false,
+    "clues": [
+      "Le message vient d'un groupe de ton établissement.",
+      "Il t'invite à venir sur place, pas à cliquer.",
+      "Rien de personnel n'est demandé."
+    ],
+    "reflex": "Un message qui t'invite à vérifier sur place, sans lien ni paiement, est un bon signe."
+  }
+]

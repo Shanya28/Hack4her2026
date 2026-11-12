@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
+import vopContent from "./content/vrai-ou-piege.json";
 
 type Screen =
   | "welcome"
@@ -9,6 +10,8 @@ type Screen =
   | "home"
   | "story"
   | "scenarios"
+  | "play"
+  | "vop"
   | "fake-login"
   | "phishing"
   | "resources"
@@ -603,6 +606,9 @@ function App() {
         unlocked={unlocked.length}
       />
     );
+  else if (screen === "play")
+    content = <Play go={go} story={story} scenario={scenario} />;
+  else if (screen === "vop") content = <VraiOuPiege go={go} timer={timer} />;
   else if (screen === "scenarios")
     content = (
       <Scenarios
@@ -1031,59 +1037,90 @@ function Home({
   return (
     <section className="screen with-nav">
       <div className="home-header">
+        <button className="home-avatar" onClick={() => go("settings")} aria-label="Paramètres">
+          <Portrait person={person} small />
+        </button>
         <div>
-          <p>Bonjour, {person === "afi" ? "Afi" : "Maya"}</p>
-          <h1>Avance à ton rythme.</h1>
+          <h1>Bonjour, {person === "afi" ? "Afi" : "Maya"}</h1>
+          <p>
+            Bienvenue sur <strong>Ayidote</strong>
+          </p>
         </div>
-        <div className="home-actions">
-          <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
-            <Icon name="book" size={18} />
-          </button>
-          <button onClick={() => go("settings")} aria-label="Paramètres">
-            <Portrait person={person} small />
-          </button>
-        </div>
+        <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
+          <Icon name="book" size={20} />
+        </button>
       </div>
       <div className="page-content home-content">
-        <div className="progress-line">
-          <span>Ton parcours</span>
-          <strong>
-            {Math.min(story, total)}/{total} situations
-          </strong>
+        <button className="vop-card" onClick={() => go("vop")}>
+          <VopArt />
+          <span className="eyebrow">À jouer en groupe</span>
+          <strong>Vrai ou piège ?</strong>
+          <span>Un message s’affiche, le groupe décide ensemble.</span>
+          <span className="vop-card-cta">
+            Jouer en groupe <Icon name="arrow" size={18} />
+          </span>
+        </button>
+        <section className="option-card">
+          <h2>Que veux-tu faire ?</h2>
           <div>
-            <i style={{ width: `${Math.max(8, (Math.min(story, total) / total) * 100)}%` }} />
+            <button className="option-tile" onClick={() => go(finished ? "scenarios" : "story")}>
+              <span className="option-art story">
+                <Portrait person={person} />
+                <i />
+              </span>
+              <span className="option-label">
+                {finished ? "Une histoire" : story ? "Reprendre" : "Une histoire"}
+                <em>
+                  <Icon name="arrow" size={15} />
+                </em>
+              </span>
+            </button>
+            <button className="option-tile" onClick={() => go("resources")}>
+              <span className="option-art shield">
+                <svg viewBox="0 0 120 120" aria-hidden>
+                  <ellipse cx="34" cy="84" rx="13" ry="26" transform="rotate(-28 34 84)" fill="var(--sage)" opacity="0.55" />
+                  <ellipse cx="90" cy="80" rx="12" ry="24" transform="rotate(30 90 80)" fill="var(--sage)" opacity="0.4" />
+                  <path d="M60 22 92 34v27c0 21-13 37-32 46-19-9-32-25-32-46V34Z" fill="var(--coral)" />
+                  <path d="m46 63 10 10 20-21" fill="none" stroke="var(--cream)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <span className="option-label">
+                Mes réflexes
+                <em>
+                  <Icon name="arrow" size={15} />
+                </em>
+              </span>
+            </button>
           </div>
-        </div>
-        <article className="hero-card">
-          <div className="hero-pattern" />
-          <span className="hero-icon">
+        </section>
+        <section className="journey-card">
+          <h2>Ton parcours</h2>
+          <div>
+            <span>
+              <strong>
+                {Math.min(story, total)}/{total}
+              </strong>
+              situations
+            </span>
+            <span>
+              <strong>{unlocked}/6</strong>
+              réflexes
+            </span>
+            <button onClick={() => go("guide")}>
+              Ma fiche <Icon name="arrow" size={15} />
+            </button>
+          </div>
+        </section>
+        <button className="wide-link" onClick={() => onPick(daily.id)}>
+          <span className="link-icon orange">
             <Icon name="spark" />
           </span>
-          <p className="eyebrow">Histoire interactive · {scenario.title}</p>
-          <h2>
-            {finished
-              ? "Envie d’une autre histoire ?"
-              : story
-                ? "Prête à continuer ?"
-                : "Prête à découvrir quelque chose ?"}
-          </h2>
-          <p>
-            {finished
-              ? "Tu as terminé celle-ci. D’autres situations t’attendent."
-              : "Entre dans une conversation réaliste et choisis comment réagir."}
-          </p>
-          <Button
-            onClick={() => go(finished ? "scenarios" : "story")}
-            variant="secondary"
-            icon="arrow"
-          >
-            {finished
-              ? "Choisir une histoire"
-              : story
-                ? "Reprendre mon histoire"
-                : "Commencer l’histoire"}
-          </Button>
-        </article>
+          <span>
+            <strong>L’histoire du jour</strong>
+            <small>{daily.title} · une nouvelle chaque jour</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
         <button className="wide-link" onClick={() => go("scenarios")}>
           <span className="link-icon">
             <Icon name="book" />
@@ -1091,43 +1128,6 @@ function Home({
           <span>
             <strong>Toutes les histoires</strong>
             <small>{scenarios.length} situations selon ton profil</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <h2 className="section-title">Que veux-tu faire ?</h2>
-        <div className="action-cards">
-          <ActionCard
-            icon="book"
-            tone="terracotta"
-            title="Vivre une histoire"
-            text="Apprendre en faisant des choix."
-            onClick={() => go("story")}
-          />
-          <ActionCard
-            icon="spark"
-            tone="sage"
-            title="L’histoire du jour"
-            text={`${daily.title} · une nouvelle chaque jour.`}
-            onClick={() => onPick(daily.id)}
-          />
-          <ActionCard
-            icon="shield"
-            tone="sand"
-            title="Mes réflexes"
-            text="Des gestes simples pour te protéger."
-            onClick={() => go("resources")}
-          />
-        </div>
-        <h2 className="section-title">À garder près de toi</h2>
-        <button className="wide-link" onClick={() => go("guide")}>
-          <span className="link-icon">
-            <Icon name="download" />
-          </span>
-          <span>
-            <strong>Mes 6 réflexes</strong>
-            <small>
-              {unlocked}/6 débloqués · fiche disponible hors ligne
-            </small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -1267,9 +1267,9 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="home" />
         <span>Accueil</span>
       </button>
-      <button className={active === "story" ? "active" : ""} onClick={() => go("story")}>
-        <Icon name="message" />
-        <span>Histoire</span>
+      <button className={active === "play" ? "active" : ""} onClick={() => go("play")}>
+        <Icon name="spark" />
+        <span>Jouer</span>
       </button>
       <button className={active === "resources" ? "active" : ""} onClick={() => go("resources")}>
         <Icon name="shield" />
@@ -1726,6 +1726,560 @@ function FakeLogin({
           </Button>
         )}
       </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// « Vrai ou piège ? » : a group game around one phone. Everyone is on the same
+// side; the app shows a message and the group decides together. Nobody ever
+// plays the scammer, and points only reward spotting the signs.
+// ---------------------------------------------------------------------------
+type VopCard = {
+  id: string;
+  category: string;
+  sender: string;
+  status: string;
+  text: string;
+  link?: string;
+  trap: boolean;
+  help?: boolean;
+  clues: string[];
+  reflex: string;
+};
+const vopCards = vopContent as VopCard[];
+type VopStats = { games: number; best: number; signs: string[] };
+
+function readVopStats(): VopStats {
+  try {
+    const value = JSON.parse(localStorage.getItem("naya-vop") || "null");
+    if (value && Array.isArray(value.signs))
+      return { games: Number(value.games) || 0, best: Number(value.best) || 0, signs: value.signs };
+  } catch {
+    // fall through to empty stats
+  }
+  return { games: 0, best: 0, signs: [] };
+}
+
+function shuffled<T>(list: T[]): T[] {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+/** A deck that always mixes safe messages with traps, so "piège" is never a sure bet. */
+function buildDeck(size: number): VopCard[] {
+  const safe = shuffled(vopCards.filter((c) => !c.trap));
+  const traps = shuffled(vopCards.filter((c) => c.trap));
+  const safeCount = Math.min(safe.length, Math.max(1, Math.round(size * 0.3)));
+  return shuffled([...safe.slice(0, safeCount), ...traps.slice(0, size - safeCount)]);
+}
+
+const TALK_S = 30;
+const vopRanks = [
+  [0, "Équipe curieuse", "Vous avez ouvert l’œil ensemble. Chaque manche vous apprend un signe de plus."],
+  [0.5, "Équipe attentive", "Vous repérez déjà la plupart des signes. Continuez à en parler entre vous."],
+  [0.8, "Équipe vigilante", "Presque rien ne vous échappe. Vous pouvez aider les autres à repérer les pièges."],
+  [1, "Équipe sentinelle", "Sans faute. Transmettez ces réflexes autour de vous."],
+] as [number, string, string][];
+
+function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean }) {
+  const [phase, setPhase] = useState<
+    "intro" | "setup" | "message" | "talk" | "vote" | "reveal" | "round" | "final"
+  >("intro");
+  const [size, setSize] = useState(5);
+  const [deck, setDeck] = useState<VopCard[]>([]);
+  const [round, setRound] = useState(0);
+  const [vote, setVote] = useState<boolean | null>(null);
+  const [results, setResults] = useState<boolean[]>([]);
+  const [talkOver, setTalkOver] = useState(false);
+  const [stats, setStats] = useState<VopStats>(readVopStats);
+  const card = deck[round];
+  const score = results.filter(Boolean).length;
+
+  const to = (next: typeof phase) => {
+    setPhase(next);
+    window.scrollTo(0, 0);
+  };
+  const start = () => {
+    setDeck(buildDeck(size));
+    setRound(0);
+    setResults([]);
+    setVote(null);
+    setTalkOver(false);
+    to("message");
+  };
+  const confirmVote = () => {
+    if (vote === null) return;
+    const right = vote === card.trap;
+    setResults([...results, right]);
+    vibrate(right ? 40 : [30, 60, 30]);
+    to("reveal");
+  };
+  const nextRound = () => {
+    if (round < deck.length - 1) {
+      setRound(round + 1);
+      setVote(null);
+      setTalkOver(false);
+      to("message");
+      return;
+    }
+    const signs = [...new Set([...stats.signs, ...deck.filter((c) => c.trap).map((c) => c.category)])];
+    const next = { games: stats.games + 1, best: Math.max(stats.best, score * 10), signs };
+    setStats(next);
+    localStorage.setItem("naya-vop", JSON.stringify(next));
+    to("final");
+  };
+  const quit = () => go("play");
+
+  if (phase === "intro")
+    return (
+      <section className="screen vop">
+        <TopBar title="Vrai ou piège ?" onBack={quit} />
+        <div className="page-content">
+          <div className="vop-hero">
+            <VopArt />
+            <p className="eyebrow">Jeu à plusieurs · un seul téléphone</p>
+            <h1>Vrai ou piège ?</h1>
+            <p>Un message s’affiche. Ensemble, vous décidez : peut-on lui faire confiance ?</p>
+          </div>
+          <ol className="vop-steps">
+            <li>
+              <span>1</span>
+              <p>
+                <strong>Lisez le message</strong>à voix haute, pour tout le groupe.
+              </p>
+            </li>
+            <li>
+              <span>2</span>
+              <p>
+                <strong>Discutez</strong>
+                des détails qui vous rassurent ou vous alertent.
+              </p>
+            </li>
+            <li>
+              <span>3</span>
+              <p>
+                <strong>Votez ensemble</strong>
+                puis découvrez les signes à retenir.
+              </p>
+            </li>
+          </ol>
+          <div className="tip">
+            <Icon name="shield" />
+            <p>
+              <strong>Tout le groupe est dans la même équipe.</strong>
+              <br />
+              Personne ne joue le piégeur, et personne n’est jugé pour sa réponse.
+            </p>
+          </div>
+          {stats.games > 0 && (
+            <p className="vop-best">
+              Meilleur score du groupe : <strong>{stats.best} points</strong> · {stats.signs.length}{" "}
+              signe{stats.signs.length > 1 ? "s" : ""} déjà repéré{stats.signs.length > 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
+        <div className="sticky-action">
+          <Button onClick={() => to("setup")} icon="arrow">
+            Préparer une partie
+          </Button>
+        </div>
+      </section>
+    );
+
+  if (phase === "setup")
+    return (
+      <section className="screen vop">
+        <TopBar title="Préparer la partie" onBack={() => to("intro")} />
+        <div className="page-content">
+          <h1>Installez-vous.</h1>
+          <p className="lead">Posez le téléphone au milieu. Une personne lit, tout le monde décide.</p>
+          <h2>Combien de messages ?</h2>
+          <div className="vop-sizes" role="group" aria-label="Nombre de messages">
+            {(
+              [
+                [5, "Partie courte", "environ 5 minutes"],
+                [8, "Partie longue", "environ 10 minutes"],
+              ] as [number, string, string][]
+            ).map(([n, label, time]) => (
+              <button
+                key={n}
+                className={size === n ? "selected" : ""}
+                aria-pressed={size === n}
+                onClick={() => setSize(n)}
+              >
+                <strong>{n}</strong>
+                <span>{label}</span>
+                <small>{time}</small>
+                {size === n && (
+                  <i>
+                    <Icon name="check" size={14} />
+                  </i>
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="vop-rules">
+            <p>
+              <Icon name="user" size={18} />
+              De 2 à 10 personnes, à partir de 12 ans.
+            </p>
+            <p>
+              <Icon name="message" size={18} />
+              Tous les messages sont inventés pour le jeu.
+            </p>
+            <p>
+              <Icon name="help" size={18} />
+              Si une situation te touche, la page Aide est là.
+            </p>
+          </div>
+        </div>
+        <div className="sticky-action">
+          <Button onClick={start} icon="arrow">
+            Commencer
+          </Button>
+        </div>
+      </section>
+    );
+
+  if (phase === "final") {
+    const ratio = deck.length ? score / deck.length : 0;
+    const rank = [...vopRanks].reverse().find((r) => ratio >= r[0]) ?? vopRanks[0];
+    const learnt = [...new Set(deck.filter((c) => c.trap).map((c) => c.category))];
+    return (
+      <section className="screen vop">
+        <TopBar title="Progression du groupe" onBack={quit} />
+        <div className="page-content">
+          <div className="vop-hero">
+            <VopArt lit={score} total={deck.length} />
+            <p className="eyebrow">Partie terminée</p>
+            <h1>{rank[1]}</h1>
+            <p>{rank[2]}</p>
+          </div>
+          <div className="vop-score">
+            <div>
+              <strong>{score * 10}</strong>
+              <span>points de vigilance</span>
+            </div>
+            <div>
+              <strong>
+                {score}/{deck.length}
+              </strong>
+              <span>messages bien lus</span>
+            </div>
+          </div>
+          <h2>Les signes que vous savez repérer</h2>
+          <div className="vop-signs">
+            {learnt.map((sign) => (
+              <span key={sign}>
+                <Icon name="check" size={14} />
+                {sign}
+              </span>
+            ))}
+          </div>
+          <p className="microcopy">
+            {stats.signs.length} signe{stats.signs.length > 1 ? "s" : ""} repéré
+            {stats.signs.length > 1 ? "s" : ""} en {stats.games} partie{stats.games > 1 ? "s" : ""} ·
+            meilleur score : {stats.best} points
+          </p>
+          <Button onClick={() => to("setup")} icon="arrow">
+            Rejouer avec d’autres messages
+          </Button>
+          <Button variant="secondary" onClick={() => go("scenarios")}>
+            Vivre une histoire
+          </Button>
+          <Button variant="ghost" onClick={() => go("help")}>
+            Besoin d’aide ?
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  const right = results[round];
+  return (
+    <section className="screen vop vop-round">
+      <header className="vop-bar">
+        <button className="icon-button" onClick={quit} aria-label="Quitter la partie">
+          <Icon name="back" />
+        </button>
+        <div>
+          <strong>
+            Message {round + 1} sur {deck.length}
+          </strong>
+          <ol aria-hidden>
+            {deck.map((_, i) => (
+              <li
+                key={i}
+                className={i < results.length ? (results[i] ? "right" : "seen") : i === round ? "now" : ""}
+              />
+            ))}
+          </ol>
+        </div>
+        <span className="vop-points" aria-label={`${score * 10} points`}>
+          <Icon name="spark" size={14} />
+          {score * 10}
+        </span>
+      </header>
+
+      {phase !== "round" && (
+        <div className={`vop-message ${phase === "reveal" ? "compact" : ""}`}>
+          <div className="vop-sender">
+            <span aria-hidden>{card.sender.charAt(0)}</span>
+            <div>
+              <strong>{card.sender}</strong>
+              <small>{card.status}</small>
+            </div>
+          </div>
+          <div className="bubble">
+            <p>{card.text}</p>
+            {card.link && (
+              <span className="vop-link">
+                <Icon name="lock" size={13} />
+                {card.link}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {phase === "message" && (
+        <div className="choice-panel vop-panel">
+          <p>Lisez ce message à voix haute</p>
+          <h2>Vrai, ou piège ?</h2>
+          <Button onClick={() => to("talk")} icon="arrow">
+            On en discute
+          </Button>
+        </div>
+      )}
+
+      {phase === "talk" && (
+        <div className="choice-panel vop-panel">
+          <p>Discutez-en ensemble</p>
+          {timer && !talkOver && <Countdown seconds={TALK_S} onEnd={() => setTalkOver(true)} />}
+          {talkOver && <p className="vop-ready">Le temps de discussion est passé. Prenez-en plus si besoin.</p>}
+          <ul className="vop-questions">
+            <li>
+              <Icon name="user" size={18} />
+              Qui écrit ? Le connaît-on vraiment ?
+            </li>
+            <li>
+              <Icon name="search" size={18} />
+              Que demande ce message ?
+            </li>
+            <li>
+              <Icon name="warning" size={18} />
+              Pourquoi faudrait-il répondre tout de suite ?
+            </li>
+          </ul>
+          <Button onClick={() => to("vote")} icon="arrow">
+            Passer au vote
+          </Button>
+        </div>
+      )}
+
+      {phase === "vote" && (
+        <div className="choice-panel vop-panel">
+          <p>La réponse du groupe</p>
+          <div className="vop-vote" role="radiogroup" aria-label="La réponse du groupe">
+            <button
+              role="radio"
+              aria-checked={vote === false}
+              className={`safe ${vote === false ? "selected" : ""}`}
+              onClick={() => setVote(false)}
+            >
+              <Icon name="check" size={30} />
+              <strong>Vrai</strong>
+              <small>On peut lui faire confiance</small>
+            </button>
+            <button
+              role="radio"
+              aria-checked={vote === true}
+              className={`trap ${vote === true ? "selected" : ""}`}
+              onClick={() => setVote(true)}
+            >
+              <Icon name="warning" size={30} />
+              <strong>Piège</strong>
+              <small>Quelque chose cloche</small>
+            </button>
+          </div>
+          <Button onClick={confirmVote} disabled={vote === null} icon="arrow">
+            {vote === null ? "Choisissez une réponse" : "Valider notre réponse"}
+          </Button>
+          <Button variant="ghost" onClick={() => to("talk")}>
+            On veut encore discuter
+          </Button>
+        </div>
+      )}
+
+      {phase === "reveal" && (
+        <div className="choice-panel vop-panel vop-reveal">
+          <div className={`vop-answer ${card.trap ? "trap" : "safe"}`} role="status">
+            <span>
+              <Icon name={card.trap ? "warning" : "check"} size={26} />
+            </span>
+            <div>
+              <h2>{card.trap ? "C’était un piège !" : "C’était un vrai message."}</h2>
+              <small>
+                {right
+                  ? "Bien vu, l’équipe !"
+                  : card.trap
+                    ? "Celui-là était bien déguisé. Voici ce qui le trahit."
+                    : "Rester prudentes était normal. Voici ce qui rassure."}
+              </small>
+            </div>
+          </div>
+          <p>{card.trap ? "Les signes qui devaient vous alerter" : "Les signes qui rassurent"}</p>
+          <ul className="vop-clues">
+            {card.clues.map((clue, i) => (
+              <li key={clue} style={{ animationDelay: `${200 + i * 140}ms` }}>
+                <span>{i + 1}</span>
+                {clue}
+              </li>
+            ))}
+          </ul>
+          <Button onClick={() => to("round")} icon="arrow">
+            Le réflexe à retenir
+          </Button>
+        </div>
+      )}
+
+      {phase === "round" && (
+        <div className="vop-result">
+          <span className="vop-category">{card.category}</span>
+          <div className="vop-reflex">
+            <span>
+              <Icon name="shield" size={24} />
+            </span>
+            <p className="eyebrow">Le réflexe à retenir</p>
+            <p>{card.reflex}</p>
+          </div>
+          <div className="vop-gain">
+            <strong>{right ? "+10" : "+0"}</strong>
+            <p>
+              {right
+                ? "points de vigilance pour le groupe."
+                : "point cette fois, mais un signe de plus dans votre mémoire."}
+            </p>
+          </div>
+          {card.help && (
+            <button className="vop-help" onClick={() => go("help")}>
+              <Icon name="help" size={18} />
+              Cette situation existe vraiment. Voir qui peut aider.
+              <Icon name="chevron" size={16} />
+            </button>
+          )}
+          <Button onClick={nextRound} icon="arrow">
+            {round < deck.length - 1 ? "Message suivant" : "Voir la progression du groupe"}
+          </Button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Two speech bubbles: one checked, one flagged. Dots show the group's score. */
+function VopArt({ lit, total }: { lit?: number; total?: number }) {
+  return (
+    <svg className="vop-art" viewBox="0 0 200 130" role="img" aria-label="Vrai ou piège ?">
+      <rect x="14" y="16" width="96" height="62" rx="18" fill="var(--sage-light)" />
+      <path d="M34 78v18l18-18Z" fill="var(--sage-light)" />
+      <path
+        d="m46 47 11 11 21-22"
+        fill="none"
+        stroke="var(--sage)"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect x="92" y="40" width="96" height="62" rx="18" fill="var(--plum)" />
+      <path d="M168 102v18l-18-18Z" fill="var(--plum)" />
+      <path d="M140 56v20" stroke="var(--orange)" strokeWidth="7" strokeLinecap="round" />
+      <circle cx="140" cy="88" r="4.5" fill="var(--orange)" />
+      {total !== undefined &&
+        Array.from({ length: total }, (_, i) => (
+          <circle
+            key={i}
+            cx={100 - (total - 1) * 7 + i * 14}
+            cy="124"
+            r="4.5"
+            fill={i < (lit ?? 0) ? "var(--orange)" : "var(--sand)"}
+          />
+        ))}
+    </svg>
+  );
+}
+
+/** The « Jouer » tab: every activity in one place, the group game first. */
+function Play({
+  go,
+  story,
+  scenario,
+}: {
+  go: (s: Screen) => void;
+  story: number;
+  scenario: Scenario;
+}) {
+  const inStory = story > 0 && story < scenario.steps.length;
+  return (
+    <section className="screen with-nav">
+      <TopBar title="Jouer" onBack={() => go("home")} />
+      <div className="page-content home-content">
+        <button className="vop-card" onClick={() => go("vop")}>
+          <VopArt />
+          <span className="eyebrow">À plusieurs · un seul téléphone</span>
+          <strong>Vrai ou piège ?</strong>
+          <span>Un message s’affiche, le groupe décide ensemble.</span>
+          <span className="vop-card-cta">
+            Jouer en groupe <Icon name="arrow" size={18} />
+          </span>
+        </button>
+        <h2 className="section-title">Jouer seule</h2>
+        <button className="wide-link" onClick={() => go(inStory ? "story" : "scenarios")}>
+          <span className="link-icon">
+            <Icon name="message" />
+          </span>
+          <span>
+            <strong>Histoires interactives</strong>
+            <small>{inStory ? `Reprendre « ${scenario.title} »` : "Une conversation, tes choix"}</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("quiz")}>
+          <span className="link-icon orange">
+            <Icon name="spark" />
+          </span>
+          <span>
+            <strong>Tester mes réflexes</strong>
+            <small>5 questions, sans jugement</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Bientôt</h2>
+        {(
+          [
+            ["search", "Démasque-le", "Quatre contacts, un seul profil suspect à repérer ensemble."],
+            ["eye", "Duel d’indices", "Deux joueuses, trois indices à trouver sur une fausse page."],
+            ["user", "Mode Débat", "Chacune annonce son choix, puis on compare sans se juger."],
+          ] as [IconName, string, string][]
+        ).map(([icon, title, text]) => (
+          <div className="wide-link soon" key={title}>
+            <span className="link-icon">
+              <Icon name={icon} />
+            </span>
+            <span>
+              <strong>{title}</strong>
+              <small>{text}</small>
+            </span>
+            <em>Bientôt</em>
+          </div>
+        ))}
+      </div>
+      <BottomNav active="play" go={go} />
     </section>
   );
 }
@@ -2374,7 +2928,7 @@ function Settings({
           <div>
             <strong>Compte à rebours</strong>
             <small>
-              {timer ? "Activé pendant le chantage · sans pénalité" : "Désactivé · je lis à mon rythme"}
+              {timer ? "Activé dans les jeux · sans pénalité" : "Désactivé · à notre rythme"}
             </small>
           </div>
           <span className={`toggle ${timer ? "on" : ""}`}>

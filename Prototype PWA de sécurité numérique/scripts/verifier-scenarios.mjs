@@ -133,6 +133,54 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
   }
 }
 
+// « Vrai ou piège ? » : mêmes règles de protection, plus une règle propre au jeu.
+// On montre le signe vu par la victime, jamais la recette de l'arnaqueur.
+const RECIPE =
+  /(comment (créer|fabriquer|faire) (un|une) (faux|fausse)|pour (piéger|arnaquer|tromper) quelqu|masquer (ton|son) (numéro|identité)|encaisser l'argent)/i;
+{
+  const file = "vrai-ou-piege.json";
+  const problems = [];
+  const fail = (message) => problems.push(message);
+  let cards = [];
+  try {
+    cards = JSON.parse(readFileSync(path.join(dir, "..", file), "utf8"));
+  } catch (e) {
+    fail(`JSON invalide : ${e.message}`);
+  }
+  const seen = new Set();
+  cards.forEach((card, i) => {
+    const where = `message ${i + 1}`;
+    for (const key of ["id", "category", "sender", "status", "text", "reflex"])
+      if (!isText(card[key])) fail(`${where} : champ « ${key} » manquant`);
+    if (seen.has(card.id)) fail(`${where} : id « ${card.id} » déjà utilisé`);
+    seen.add(card.id);
+    if (typeof card.trap !== "boolean") fail(`${where} : « trap » doit valoir true ou false`);
+    if ((card.text ?? "").length > MAX_MESSAGE) fail(`${where} : message trop long`);
+    const clues = Array.isArray(card.clues) ? card.clues : [];
+    if (clues.length < 3 || clues.length > 4 || !clues.every(isText))
+      fail(`${where} : 3 ou 4 signes attendus`);
+    if (card.link !== undefined && !/example/.test(card.link))
+      fail(`${where} : l'adresse du lien doit être fictive (contenir « example »)`);
+    for (const text of [card.sender, card.status, card.text, card.reflex, ...clues]) {
+      if (typeof text !== "string") continue;
+      const short = text.length > 60 ? `${text.slice(0, 60)}…` : text;
+      if (BRANDS.test(text)) fail(`${where} : marque réelle citée : « ${short} »`);
+      if (BLAME.test(text)) fail(`${where} : ton culpabilisant : « ${short} »`);
+      if (EXPLICIT.test(text)) fail(`${where} : contenu explicite : « ${short} »`);
+      if (CONTACT_DATA.test(text)) fail(`${where} : coordonnée ou lien réel possible : « ${short} »`);
+      if (RECIPE.test(text)) fail(`${where} : explique comment piéger au lieu de montrer le signe : « ${short} »`);
+    }
+  });
+  const traps = cards.filter((c) => c.trap === true).length;
+  if (cards.length - traps < 3) fail("il faut au moins 3 messages fiables, sinon « piège » gagne toujours");
+  if (traps < 5) fail("il faut au moins 5 pièges");
+  if (problems.length) {
+    errors += problems.length;
+    console.log(`✗ ${file}`);
+    for (const problem of problems) console.log(`    ${problem}`);
+  } else console.log(`✓ ${file} — ${cards.length} messages, dont ${traps} pièges`);
+}
+
 if (toReview.length)
   console.log(`\nÀ relire par l'équipe (puis passer "relu" à true) : ${toReview.join(", ")}`);
 if (errors) {

@@ -81,3 +81,23 @@ Exemple : `"reflexes": [4, 5]`.
 
 Valeurs possibles pour `portrait` : `kevin`, `rh`, `chantal`, `afi`, `maya`. Les messages
 écrits par l'utilisatrice ont pour auteur `"moi"`.
+
+---
+
+## Règles pour ne jamais apprendre à piéger
+
+Elles valent pour tout contenu : histoires, « Vrai ou piège ? », futurs modes de jeu.
+`pnpm verifier:scenarios` contrôle ce qui peut l'être ; le reste se vérifie à la relecture.
+
+1. **Montrer le signe, jamais la recette.** On montre le piège tel que la victime le voit
+   (« il te presse », « il demande un code »). Jamais le côté de l'arnaqueur : fabriquer une
+   fausse page, encaisser l'argent, cacher son identité, choisir une cible.
+2. **Des messages courts et incomplets.** Une ou deux phrases, pas de scénario réutilisable.
+3. **Chaque technique vient avec sa parade.** On ne nomme pas une manipulation sans le
+   réflexe qui la bloque.
+4. **L'arnaqueur ne gagne jamais.** Aucun point, rang ou badge ne récompense le fait de
+   tromper. Personne ne joue l'arnaqueur.
+5. **Des messages fiables aussi.** « Vrai ou piège ? » garde au moins 3 messages sûrs :
+   on apprend à reconnaître, pas à se méfier de tout.
+
+Les messages de « Vrai ou piège ? » sont dans `src/content/vrai-ou-piege.json`.
