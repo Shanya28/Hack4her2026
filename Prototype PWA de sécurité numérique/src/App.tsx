@@ -172,11 +172,11 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 }
 
 const portraitColors: Record<string, string[]> = {
-  afi: ["#B96E56", "#49213D", "#799375"],
-  maya: ["#D58C72", "#49213D", "#E8B55A"],
-  kevin: ["#8FA58E", "#352331", "#C98167"],
-  rh: ["#A8705A", "#2F3A4A", "#C9B48A"],
-  chantal: ["#C17F63", "#5A2A3A", "#9DB0C4"],
+  afi: ["#B96E56", "#49372D", "#F58232"],
+  maya: ["#D58C72", "#49372D", "#FFB36B"],
+  kevin: ["#A8705A", "#352331", "#E8DCCB"],
+  rh: ["#A8705A", "#352331", "#E8DCCB"],
+  chantal: ["#C17F63", "#49372D", "#FFE8D2"],
 };
 
 function Portrait({ person = "afi", small = false }: { person?: string; small?: boolean }) {

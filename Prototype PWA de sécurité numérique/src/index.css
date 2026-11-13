@@ -2,30 +2,38 @@
 @import "tailwindcss";
 
 :root {
-  /* Slate page, pastel cards, navy ink. */
-  --slate: #5f7584;
-  --slate-deep: #4c606e;
-  --navy: #3b4460;
-  --peach: #ebb06e;
-  --coral: #ee8c6b;
-  --pink: #edbdb4;
-  --khaki: #c3c7b1;
-  --mist: #8fa5b6;
-  --plum: #3b4460;
-  --plum-2: #535d7c;
-  --terra: #c9684a;
-  --cream: #fbf4e8;
-  --sand: #f1e2cb;
+  /* Palette: white cards on light beige, orange for actions, dark brown ink. */
+  --beige: #f5efe6;
+  --beige-2: #e8dccb;
+  --orange-main: #f58232;
+  --orange-soft: #ffb36b;
+  --orange-tint: #ffe8d2;
+  --orange-ink: #a84b08;
+  --brown: #49372d;
+  /* Names kept from the earlier themes, now pointing at the palette above. */
+  --slate: var(--beige);
+  --slate-deep: var(--beige-2);
+  --navy: var(--brown);
+  --peach: var(--orange-soft);
+  --coral: var(--orange-main);
+  --pink: var(--orange-tint);
+  --khaki: var(--beige-2);
+  --mist: var(--beige-2);
+  --plum: var(--brown);
+  --plum-2: #6b564a;
+  --terra: var(--orange-ink);
+  --cream: #ffffff;
+  --sand: var(--beige-2);
   --sage: #5f8168;
-  --sage-light: #dde6d6;
-  --orange: #ebb06e;
+  --sage-light: #e3ebdd;
+  --orange: var(--orange-soft);
   --brick: #b9503d;
-  --ink: #2f3650;
-  --muted: #666d85;
-  --white: #fffdf8;
+  --ink: var(--brown);
+  --muted: #75655b;
+  --white: #ffffff;
   font-family: "Nunito", sans-serif;
   color: var(--ink);
-  background: #4c606e;
+  background: var(--beige-2);
 }
 
 @layer base {
@@ -192,7 +200,7 @@
 .button.primary {
   background: var(--plum);
   color: white;
-  box-shadow: 0 8px 20px #3b446022;
+  box-shadow: 0 8px 20px #49372d22;
 }
 .button.secondary {
   color: var(--plum);
@@ -416,7 +424,7 @@
   color: white;
   display: grid;
   place-items: center;
-  box-shadow: 0 20px 35px #3b446030;
+  box-shadow: 0 20px 35px #49372d30;
   transform: rotate(-3deg);
 }
 .floating-card {
@@ -478,7 +486,7 @@
 }
 .character-card.active {
   border: 2px solid var(--plum);
-  box-shadow: 0 8px 24px #3b446016;
+  box-shadow: 0 8px 24px #49372d16;
 }
 .portrait {
   height: 150px;
@@ -589,7 +597,7 @@
   color: white;
   border-radius: 24px;
   padding: 25px 22px;
-  box-shadow: 0 14px 30px #3b446030;
+  box-shadow: 0 14px 30px #49372d30;
 }
 .hero-card h2 {
   font-size: 29px;
@@ -784,7 +792,7 @@
 .messages {
   padding: 24px 16px 18px;
   flex: 1;
-  background-image: radial-gradient(#3b44600a 1px, transparent 1px);
+  background-image: radial-gradient(#49372d0a 1px, transparent 1px);
   background-size: 18px 18px;
   min-height: 300px;
 }
@@ -1399,7 +1407,7 @@
   color: var(--muted);
 }
 .help-now {
-  background: #e6d5de;
+  background: #f5efe6;
   border-radius: 18px;
   padding: 18px;
   margin: 24px 0;
@@ -1523,7 +1531,7 @@
   place-items: center;
   margin: 0 auto 25px;
   transform: rotate(-4deg);
-  box-shadow: 0 15px 30px #3b446030;
+  box-shadow: 0 15px 30px #49372d30;
 }
 .finish h1 {
   font-size: 60px;
@@ -1707,7 +1715,7 @@
   opacity: 0.45;
 }
 .replay-card {
-  background: #e6d5de;
+  background: #f5efe6;
   border-radius: 20px;
   padding: 20px;
   margin-top: 25px;
@@ -2073,8 +2081,8 @@ button.pulse {
   color: white;
   transition: 2s linear;
   box-shadow:
-    0 0 0 22px #3b446033,
-    0 0 0 44px #3b446018;
+    0 0 0 22px #49372d33,
+    0 0 0 44px #49372d18;
 }
 .alert-demo .alert-visual + .button {
   margin-bottom: 18px;
@@ -2657,7 +2665,7 @@ button.pulse {
 .guide-heading .guide-count {
   margin: 10px 0 0;
   font-size: 13px;
-  color: #e9d7df;
+  color: #f5efe6;
 }
 .reflex-list > div.unlocked {
   animation: reflex-in 0.45s ease-out both;
@@ -2738,7 +2746,7 @@ button.pulse {
 }
 .hunt-banner small {
   font-size: 13px;
-  color: #e9d7df;
+  color: #f5efe6;
 }
 .hunt-banner span {
   display: flex;
@@ -2949,7 +2957,7 @@ button.pulse {
   background: #f6ead9;
   color: var(--plum);
   text-align: left;
-  box-shadow: 0 10px 26px #3b44601c;
+  box-shadow: 0 10px 26px #49372d1c;
   transition: transform 0.15s;
 }
 .vop-card:active {
@@ -2975,7 +2983,7 @@ button.pulse {
 .vop-card > span:not(.eyebrow):not(.vop-card-cta) {
   font-size: 15px;
   line-height: 1.45;
-  color: #5c4a52;
+  color: #6b564a;
 }
 .vop-card-cta {
   display: inline-flex;
@@ -3008,7 +3016,7 @@ button.pulse {
 .vop-hero > p:last-child {
   font-size: 16px;
   line-height: 1.5;
-  color: #5c4a52;
+  color: #6b564a;
   margin: 0;
 }
 .vop-steps {
@@ -3042,7 +3050,7 @@ button.pulse {
   margin: 0;
   font-size: 15px;
   line-height: 1.4;
-  color: #5c4a52;
+  color: #6b564a;
 }
 .vop-steps strong {
   display: block;
@@ -3093,7 +3101,7 @@ button.pulse {
 }
 .vop-sizes button.selected {
   border-color: var(--plum);
-  background: #f3e8ee;
+  background: #f5efe6;
 }
 .vop-sizes i {
   position: absolute;
@@ -3115,7 +3123,7 @@ button.pulse {
   margin: 0 0 12px;
   font-size: 15px;
   line-height: 1.4;
-  color: #5c4a52;
+  color: #6b564a;
 }
 .vop-rules svg {
   color: var(--terra);
@@ -3180,7 +3188,7 @@ button.pulse {
 .vop-message {
   flex: 1;
   padding: 26px 18px 22px;
-  background-image: radial-gradient(#3b44600a 1px, transparent 1px);
+  background-image: radial-gradient(#49372d0a 1px, transparent 1px);
   background-size: 18px 18px;
   animation: message-in 0.3s ease-out both;
 }
@@ -3322,7 +3330,7 @@ button.pulse {
 }
 .vop-vote button.selected {
   border-color: var(--plum);
-  box-shadow: 0 8px 20px #3b446026;
+  box-shadow: 0 8px 20px #49372d26;
 }
 .vop-vote button.selected strong {
   text-decoration: underline;
@@ -3470,7 +3478,7 @@ button.pulse {
   margin: 0;
   font-size: 15px;
   line-height: 1.4;
-  color: #5c4a52;
+  color: #6b564a;
 }
 .vop-help {
   display: grid;
@@ -3572,7 +3580,7 @@ button.pulse {
   background: var(--slate);
 }
 .phone-shell {
-  box-shadow: 0 0 60px #1d2a3340;
+  box-shadow: 0 0 60px #49372d40;
 }
 
 /* Reading pages: one cream sheet on the slate page. */
@@ -3581,7 +3589,7 @@ button.pulse {
   border-radius: 30px;
   margin: 6px 12px 18px;
   padding: 24px 20px 26px;
-  box-shadow: 0 10px 28px #25323c2e;
+  box-shadow: 0 10px 28px #49372d2e;
 }
 .page-content.home-content {
   background: transparent;
@@ -3603,7 +3611,7 @@ button.pulse {
 
 /* Bars */
 .topbar {
-  background: #5f7584f0;
+  background: #f5efe6f0;
   border-bottom: 0;
   color: var(--white);
 }
@@ -3637,10 +3645,10 @@ button.pulse {
 }
 .button.primary {
   background: var(--navy);
-  box-shadow: 0 6px 0 #2a3149, 0 12px 20px #25323c2e;
+  box-shadow: 0 6px 0 #2f221b, 0 12px 20px #49372d2e;
 }
 .button.primary:active {
-  box-shadow: 0 2px 0 #2a3149;
+  box-shadow: 0 2px 0 #2f221b;
   transform: translateY(4px);
 }
 .button.secondary {
@@ -3655,10 +3663,10 @@ button.pulse {
 .sticky-action .button.primary {
   background: var(--peach);
   color: var(--navy);
-  box-shadow: 0 6px 0 #c98d4a, 0 12px 20px #25323c33;
+  box-shadow: 0 6px 0 #d96a1c, 0 12px 20px #49372d33;
 }
 .sticky-action .button.primary:active {
-  box-shadow: 0 2px 0 #c98d4a;
+  box-shadow: 0 2px 0 #d96a1c;
 }
 .sticky-action .button.ghost {
   color: var(--white);
@@ -3677,7 +3685,7 @@ button.pulse {
 }
 .home-header p {
   font-size: 14px;
-  color: #e6edf2;
+  color: #6b564a;
   margin: 2px 0 0;
 }
 .home-header p strong {
@@ -3707,7 +3715,7 @@ button.pulse {
   position: relative;
   overflow: hidden;
   border-radius: 30px;
-  box-shadow: 0 10px 24px #25323c33;
+  box-shadow: 0 10px 24px #49372d33;
   isolation: isolate;
 }
 .vop-card::before,
@@ -3792,7 +3800,7 @@ button.pulse {
   border-radius: 22px;
   overflow: hidden;
   background: #e9e3d3;
-  box-shadow: 0 6px 14px #25323c26;
+  box-shadow: 0 6px 14px #49372d26;
   transition: transform 0.15s;
 }
 .option-tile:active {
@@ -3884,7 +3892,7 @@ button.pulse {
   color: var(--white);
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 4px 0 #2a3149;
+  box-shadow: 0 4px 0 #2f221b;
 }
 .journey-card strong {
   font-size: 19px;
@@ -3906,7 +3914,7 @@ button.pulse {
   border: 0;
   border-radius: 22px;
   background: var(--cream);
-  box-shadow: 0 6px 14px #25323c26;
+  box-shadow: 0 6px 14px #49372d26;
   margin-bottom: 10px;
   padding: 14px;
 }
@@ -3943,10 +3951,10 @@ button.pulse {
     radial-gradient(190px 86px at 48% 128%, var(--khaki) 99%, transparent 100%),
     radial-gradient(170px 84px at 98% 110%, #c1afc3 99%, transparent 100%),
     #a9b6c4;
-  box-shadow: 0 -8px 22px #25323c33;
+  box-shadow: 0 -8px 22px #49372d33;
 }
 .bottom-nav button {
-  color: #3b4460a6;
+  color: #49372da6;
   font-size: 12px;
   font-weight: 800;
   gap: 2px;
@@ -3962,7 +3970,7 @@ button.pulse {
 /* Story and game chrome */
 .story-screen,
 .vop-round {
-  background: color-mix(in srgb, #dfe4e6, var(--navy) calc(var(--tension, 0) * 78%));
+  background: color-mix(in srgb, #f5efe6, var(--navy) calc(var(--tension, 0) * 78%));
 }
 .chapter-strip,
 .vop-bar {
@@ -3979,7 +3987,7 @@ button.pulse {
   background: var(--peach);
 }
 .mine .bubble {
-  background: #dfe3f0;
+  background: #ffe8d2;
 }
 .choice-panel {
   border-radius: 30px 30px 0 0;
@@ -4021,7 +4029,7 @@ button.pulse {
   font-weight: 900;
 }
 .vop-sizes button.selected {
-  background: #e7eaf3;
+  background: #ffe8d2;
 }
 .vop-vote .trap {
   background: #f7dcb3;
@@ -4054,7 +4062,7 @@ button.pulse {
   color: var(--peach);
 }
 .guide-heading .guide-count {
-  color: #dfe3f0;
+  color: #ffe8d2;
 }
 .replay-card {
   background: var(--pink);
@@ -4064,7 +4072,7 @@ button.pulse {
   background: var(--navy);
 }
 .hunt-banner small {
-  color: #dfe3f0;
+  color: #ffe8d2;
 }
 .profile-picker button.active {
   background: var(--navy);
@@ -4103,7 +4111,7 @@ button.pulse {
   font-weight: 900;
 }
 .welcome-copy p:last-child {
-  color: #e6edf2;
+  color: #6b564a;
   font-size: 17px;
 }
 .welcome .eyebrow {
@@ -4112,7 +4120,7 @@ button.pulse {
 .welcome .button.primary {
   background: var(--peach);
   color: var(--navy);
-  box-shadow: 0 6px 0 #c98d4a, 0 12px 20px #25323c33;
+  box-shadow: 0 6px 0 #d96a1c, 0 12px 20px #49372d33;
 }
 .screen.finish {
   background: var(--slate);
@@ -4123,7 +4131,7 @@ button.pulse {
   color: var(--white);
 }
 .finish > p:not(.eyebrow) {
-  color: #e6edf2;
+  color: #6b564a;
 }
 .finish .eyebrow {
   color: var(--peach);
@@ -4131,7 +4139,7 @@ button.pulse {
 .finish .button.primary {
   background: var(--peach);
   color: var(--navy);
-  box-shadow: 0 6px 0 #c98d4a;
+  box-shadow: 0 6px 0 #d96a1c;
 }
 .finish .button.ghost {
   color: var(--white);
@@ -4330,4 +4338,196 @@ button.pulse {
 /* Home: a single "today" card instead of repeating the Jouer tab */
 .vop-card.today-card > span:not(.eyebrow):not(.vop-card-cta) {
   max-width: 100%;
+}
+
+
+/* =====================================================================
+   Palette beige & orange: light beige page, white cards, orange actions,
+   dark brown text. Overrides the places that were light-on-dark before.
+   ===================================================================== */
+.phone-shell {
+  box-shadow: 0 0 50px #49372d26;
+}
+.page-content {
+  box-shadow: 0 6px 20px #49372d14;
+}
+.topbar {
+  color: var(--brown);
+}
+.topbar .icon-button,
+.vop-bar .icon-button,
+.home-header .carnet-button {
+  background: var(--white);
+  color: var(--brown);
+  box-shadow: 0 2px 8px #49372d14;
+}
+.vop-bar .icon-button {
+  background: #ffffff26;
+  color: var(--white);
+  box-shadow: none;
+}
+.icon-button:hover {
+  background: var(--beige-2);
+}
+.topbar .saved {
+  color: var(--orange-ink);
+}
+
+/* Buttons: orange for the main action, white for the others. */
+.button.primary,
+.sticky-action .button.primary,
+.welcome .button.primary,
+.finish .button.primary {
+  background: var(--orange-main);
+  color: var(--brown);
+  box-shadow: 0 5px 0 #d96a1c, 0 10px 18px #49372d1f;
+}
+.button.primary:active,
+.sticky-action .button.primary:active {
+  box-shadow: 0 2px 0 #d96a1c;
+}
+.button.secondary {
+  background: var(--white);
+  border-color: var(--beige-2);
+  color: var(--brown);
+}
+.sticky-action .button.ghost,
+.finish .button.ghost {
+  color: var(--brown);
+}
+.help-call,
+.mot-form button {
+  background: var(--orange-main);
+  color: var(--brown);
+}
+.profile-picker button.active {
+  background: var(--brown);
+  border-color: var(--brown);
+  color: var(--white);
+}
+
+/* Home */
+.home-header h1,
+.home-header p strong,
+.section-title,
+.home-content > .section-title {
+  color: var(--brown);
+}
+.home-header p {
+  color: var(--muted);
+}
+.home-header .home-avatar {
+  border-color: var(--orange-soft);
+}
+.vop-card,
+.option-card,
+.journey-card {
+  background: var(--white);
+  box-shadow: 0 6px 20px #49372d14;
+}
+.vop-card::before {
+  background: var(--orange-tint);
+}
+.vop-card .eyebrow {
+  color: var(--orange-ink);
+}
+.vop-card > span:not(.eyebrow):not(.vop-card-cta) {
+  color: var(--muted);
+}
+.vop-card-cta {
+  background: var(--orange-main);
+  color: var(--brown);
+}
+.option-card::before,
+.journey-card::before {
+  background: var(--beige);
+}
+.option-card h2,
+.journey-card h2 {
+  color: var(--brown);
+}
+.option-tile {
+  background: var(--beige);
+  box-shadow: 0 3px 10px #49372d14;
+}
+.option-label em {
+  background: var(--orange-tint);
+}
+.journey-card span {
+  background: var(--beige);
+  color: var(--brown);
+  box-shadow: 0 3px 0 var(--beige-2);
+}
+.journey-card button {
+  background: var(--orange-main);
+  color: var(--brown);
+  box-shadow: 0 3px 0 #d96a1c;
+}
+.wide-link {
+  background: var(--white);
+  box-shadow: 0 3px 12px #49372d12;
+}
+.wide-link.soon {
+  background: #ffffffb3;
+}
+.link-icon,
+.link-icon.orange {
+  background: var(--orange-tint);
+  color: var(--orange-ink);
+}
+
+/* Bottom navigation: a plain white bar, orange for the current tab. */
+.bottom-nav {
+  background: var(--white);
+  box-shadow: 0 -4px 18px #49372d14;
+}
+.bottom-nav button {
+  color: var(--muted);
+}
+.bottom-nav button.active {
+  color: var(--orange-ink);
+  background: var(--orange-tint);
+}
+
+/* Welcome and end screens */
+.welcome-copy h1,
+.finish h1,
+.finish h2 {
+  color: var(--brown);
+}
+.screen.finish {
+  color: var(--brown);
+}
+.welcome-copy p:last-child,
+.finish > p:not(.eyebrow) {
+  color: var(--muted);
+}
+.welcome .eyebrow,
+.finish .eyebrow {
+  color: var(--orange-ink);
+}
+
+/* Story and game */
+.danger-mode .chapter-strip {
+  background: var(--brick);
+}
+.vop-reflex .eyebrow,
+.guide-heading .eyebrow {
+  color: var(--orange-soft);
+}
+.guide-heading .guide-count,
+.hunt-banner small {
+  color: var(--beige-2);
+}
+.story-choice {
+  box-shadow: 0 3px 0 var(--beige-2);
+}
+.vop-vote .trap {
+  background: var(--orange-tint);
+}
+.mot-guesses b {
+  background: var(--beige-2);
+}
+.mot-actions button {
+  border-color: var(--beige-2);
 }
