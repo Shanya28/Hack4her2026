@@ -6,9 +6,11 @@ import defisContent from "./content/defis.json";
 
 type Screen =
   | "welcome"
-  | "language"
-  | "intro"
   | "character"
+  | "install-offer"
+  | "learn"
+  | "ia"
+  | "results"
   | "home"
   | "story"
   | "scenarios"
@@ -785,6 +787,7 @@ function App() {
     const choice = await installPrompt.userChoice;
     if (choice.outcome === "accepted") setInstalled(true);
     setInstallPrompt(null);
+    if (screen === "install-offer") completeOnboarding();
   };
   const [wordGame, setWordGameState] = useState<WordGame>(readWordGame);
   const setWordGame = (game: WordGame) => {
@@ -957,7 +960,7 @@ function App() {
     setPressureState(START_PRESSURE);
     setUnlocked([]);
     setFresh([]);
-    setTimerState(true);
+    setTimerState(false);
     setProfileState("");
     setQuizIndex(0);
     setQuizScore(0);
@@ -970,27 +973,43 @@ function App() {
 
   let content: React.ReactNode;
   if (screen === "welcome")
-    content = <Welcome onNext={() => go("language")} onListen={startListening} />;
-  else if (screen === "language")
     content = (
-      <Language
+      <Welcome
         lang={lang}
         setLang={setLang}
-        audio={audio}
-        setAudio={setAudio}
-        onNext={() => go("intro")}
-        onBack={() => go("welcome")}
+        onNext={() => go("character")}
+        onListen={startListening}
       />
     );
-  else if (screen === "intro")
-    content = <Intro onNext={() => go("character")} onBack={() => go("language")} />;
   else if (screen === "character")
     content = (
       <Character
         person={person}
         setPerson={setPerson}
-        onNext={completeOnboarding}
-        onBack={() => go("intro")}
+        onNext={() => (installed ? completeOnboarding() : go("install-offer"))}
+        onBack={() => go("welcome")}
+      />
+    );
+  else if (screen === "install-offer")
+    content = (
+      <InstallOffer
+        onInstall={() => {
+          localStorage.setItem("naya-started", "yes");
+          install();
+        }}
+        onLater={completeOnboarding}
+      />
+    );
+  else if (screen === "learn") content = <Learn go={go} unlocked={unlocked.length} />;
+  else if (screen === "ia") content = <IaApercu go={go} person={person} />;
+  else if (screen === "results")
+    content = (
+      <Results
+        go={go}
+        done={done}
+        unlocked={unlocked}
+        wordFound={wordGame.found}
+        onStory={startScenario}
       />
     );
   else if (screen === "home") content = (
@@ -1014,6 +1033,8 @@ function App() {
         stopListening={stopListening}
         onPick={startScenario}
         unlocked={unlocked.length}
+        doneCount={done.length}
+        badgeCount={badgesOf(done, unlocked, wordGame.found).filter((b) => b.won).length}
       />
     );
   else if (screen === "mot")
@@ -1039,7 +1060,7 @@ function App() {
         story={story}
         done={done}
         onPick={startScenario}
-        onBack={() => go("home")}
+        onBack={() => go("play")}
         profile={profile}
         setProfile={setProfile}
         daily={dailyScenario().id}
@@ -1047,8 +1068,16 @@ function App() {
     );
   else if (screen === "story" && !listen && story === 0 && storyChoice === null && noted !== scenario.id)
     content = (
-      <ContentNote
+      <StorySetup
         scenario={scenario}
+        lang={lang}
+        setLang={setLang}
+        audio={audio}
+        setAudio={setAudio}
+        timer={timer}
+        setTimer={setTimer}
+        askWord={scenario.id === dailyScenario().id && !!scenario.mot && !wordGame.found && !wordGame.revealed}
+        onGuess={() => go("mot")}
         onStart={() => setNoted(scenario.id)}
         onOther={() => go("scenarios")}
         onHelp={() => go("help")}
@@ -1153,7 +1182,7 @@ function App() {
           localStorage.setItem("naya-guide", "yes");
           notify("Fiche enregistrée sur ce téléphone");
         }}
-        onBack={() => go("home")}
+        onBack={() => go("learn")}
         go={go}
       />
     );
@@ -1162,6 +1191,8 @@ function App() {
       <Progress
         title={scenario.title}
         unlocked={unlocked}
+        canInstall={!installed && done.length === 1}
+        install={install}
         onOther={() => go("scenarios")}
         go={go}
         replay={() => {
@@ -1294,7 +1325,17 @@ function App() {
   );
 }
 
-function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang) => void }) {
+function Welcome({
+  lang,
+  setLang,
+  onNext,
+  onListen,
+}: {
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  onNext: () => void;
+  onListen: (l: Lang) => void;
+}) {
   return (
     <section className="screen welcome">
       <div className="welcome-mark">
@@ -1305,10 +1346,46 @@ function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang)
       <div className="welcome-copy">
         <p className="eyebrow">Mon espace</p>
         <h1>Ayìdótɛ́</h1>
-        <p>Un endroit calme pour faire le point, à ton rythme.</p>
+        <p>Un endroit calme pour apprendre à repérer les pièges en ligne, à ton rythme.</p>
       </div>
+      <ul className="welcome-about">
+        <li>
+          <Icon name="message" />
+          <span>
+            <strong>Des histoires</strong> inventées, où tu choisis quoi répondre.
+          </span>
+        </li>
+        <li>
+          <Icon name="spark" />
+          <span>
+            <strong>Des jeux</strong> à faire seule ou en groupe.
+          </span>
+        </li>
+        <li>
+          <Icon name="help" />
+          <span>
+            <strong>De l’aide au Bénin</strong> : numéros, structures, tes droits.
+          </span>
+        </li>
+      </ul>
       <div>
-        <OfflinePill />
+        <p className="welcome-lang-label">Ta langue</p>
+        <div className="segmented welcome-lang" role="radiogroup" aria-label="Langue">
+          {(["fr", ...recordedLangs] as Lang[]).map((l) => (
+            <button
+              key={l}
+              role="radio"
+              aria-checked={lang === l}
+              className={lang === l ? "on" : ""}
+              onClick={() => setLang(l)}
+            >
+              {langNames[l]}
+            </button>
+          ))}
+        </div>
+        {lang !== "fr" && (
+          <p className="microcopy">Traduction et voix automatiques, à l’essai.</p>
+        )}
         <Button onClick={onNext} icon="arrow">
           Continuer
         </Button>
@@ -1341,122 +1418,6 @@ function ListenChooser({ onListen }: { onListen: (l: Lang) => void }) {
   );
 }
 
-function Language({
-  lang,
-  setLang,
-  audio,
-  setAudio,
-  onNext,
-  onBack,
-}: {
-  lang: Lang;
-  setLang: (l: Lang) => void;
-  audio: boolean;
-  setAudio: (v: boolean) => void;
-  onNext: () => void;
-  onBack: () => void;
-}) {
-  return (
-    <section className="screen">
-      <TopBar title="Tes préférences" onBack={onBack} />
-      <div className="page-content">
-        <p className="step">1 sur 3</p>
-        <h1>Comment veux-tu explorer ?</h1>
-        <p className="lead">Tu pourras changer ces choix plus tard.</p>
-        <h3>Langue</h3>
-        <div className="option-list">
-          {(["fr", ...localLangs] as Lang[]).map((x) => (
-            <button
-              key={x}
-              disabled={x !== "fr" && !recordedLangs.includes(x)}
-              onClick={() => setLang(x)}
-              className={`select-row ${lang === x ? "selected" : ""}`}
-            >
-              <span>
-                <strong>{langNames[x]}</strong>
-                {x !== "fr" && (
-                  <small>
-                    {recordedLangs.includes(x)
-                      ? "Textes et voix traduits automatiquement · à l’essai"
-                      : "En préparation"}
-                  </small>
-                )}
-              </span>
-              {lang === x && (
-                <span className="radio">
-                  <Icon name="check" size={14} />
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <h3>Audio</h3>
-        <button className="toggle-row" onClick={() => setAudio(!audio)} disabled={!canListen}>
-          <span>
-            <strong>Voix des messages</strong>
-            <small>
-              {!canListen
-                ? "Non disponible sur ce téléphone"
-                : audio
-                  ? "Activée · tu entends la voix de la personne qui t’écrit"
-                  : "Continuer sans audio"}
-            </small>
-          </span>
-          <span className={`toggle ${audio ? "on" : ""}`}>
-            <i />
-          </span>
-        </button>
-      </div>
-      <div className="sticky-action">
-        <Button onClick={onNext} icon="arrow">
-          Continuer en {langNames[lang].toLowerCase()}
-        </Button>
-      </div>
-    </section>
-  );
-}
-
-function Intro({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  return (
-    <section className="screen intro">
-      <TopBar title="" onBack={onBack} />
-      <div className="intro-art">
-        <div className="orbit o1" />
-        <div className="orbit o2" />
-        <span className="shield-big">
-          <Icon name="shield" size={50} />
-        </span>
-        <span className="floating-card fc1">
-          <Icon name="message" />
-        </span>
-        <span className="floating-card fc2">
-          <Icon name="eye" />
-        </span>
-      </div>
-      <div className="page-content intro-copy">
-        <p className="step">2 sur 3</p>
-        <h1>Les pièges ne se montrent pas toujours tout de suite.</h1>
-        <p className="lead">
-          Ici, tu peux vivre des situations fictives et apprendre à les reconnaître à ton rythme.
-        </p>
-        <div className="reassurance">
-          <Icon name="spark" />
-          <p>
-            <strong>Explore librement.</strong>
-            <br />
-            Il n’y a pas de mauvaise réponse et rien n’est envoyé.
-          </p>
-        </div>
-      </div>
-      <div className="sticky-action">
-        <Button onClick={onNext} icon="arrow">
-          Découvrir
-        </Button>
-      </div>
-    </section>
-  );
-}
-
 function Character({
   person,
   setPerson,
@@ -1470,9 +1431,9 @@ function Character({
 }) {
   return (
     <section className="screen">
-      <TopBar title="Choisis ton histoire" onBack={onBack} />
+      <TopBar title="Ton personnage" onBack={onBack} />
       <div className="page-content">
-        <p className="step">3 sur 3</p>
+        <p className="step">1 sur 2</p>
         <h1>À travers qui veux-tu vivre l’histoire ?</h1>
         <p className="lead">Ton choix change le visage du personnage, pas les apprentissages.</p>
         <div className="character-grid">
@@ -1524,6 +1485,45 @@ function Character({
   );
 }
 
+function InstallOffer({ onInstall, onLater }: { onInstall: () => void; onLater: () => void }) {
+  return (
+    <section className="screen">
+      <div className="page-content install-offer">
+        <p className="step">2 sur 2</p>
+        <span className="resource-icon big">
+          <Icon name="download" size={32} />
+        </span>
+        <h1>Garde Ayìdótɛ́ sur ton téléphone</h1>
+        <p className="lead">
+          Une icône comme une application, sans magasin d’applications. Elle marche sans réseau.
+        </p>
+        <ul className="help-list">
+          <li>
+            <Icon name="offline" size={16} />
+            <span>Fonctionne hors connexion après la première ouverture.</span>
+          </li>
+          <li>
+            <Icon name="eye" size={16} />
+            <span>Un nom et une icône discrets.</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} />
+            <span>Tu peux la supprimer à tout moment.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="sticky-action">
+        <Button onClick={onInstall} icon="download">
+          Installer
+        </Button>
+        <Button variant="ghost" onClick={onLater}>
+          Plus tard
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function Home({
   person,
   story,
@@ -1541,6 +1541,8 @@ function Home({
   wordOpen,
   onPick,
   unlocked,
+  doneCount,
+  badgeCount,
 }: {
   person: "afi" | "maya";
   story: number;
@@ -1558,6 +1560,8 @@ function Home({
   wordOpen: boolean;
   onPick: (id: string) => void;
   unlocked: number;
+  doneCount: number;
+  badgeCount: number;
 }) {
   const total = scenario.steps.length;
   const inStory = story > 0 && story < total;
@@ -1573,6 +1577,9 @@ function Home({
             Bienvenue sur <strong>Ayìdótɛ́</strong>
           </p>
         </div>
+        <button className="carnet-button" onClick={() => go("help")} aria-label="Trouver de l’aide">
+          <Icon name="help" size={20} />
+        </button>
         <QuickExitButton />
         <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
           <Icon name="book" size={20} />
@@ -1597,55 +1604,42 @@ function Home({
             {inStory ? "Reprendre l’histoire" : "Écouter une histoire"}
           </button>
         )}
-        {!listen && inStory ? (
-          <button className="vop-card today-card" onClick={() => go("story")}>
-            <span className="eyebrow">Ton histoire en cours</span>
-            <strong>{scenario.title}</strong>
+        {!listen && inStory && (
+          <button className="resume-line" onClick={() => go("story")}>
+            <Icon name="play" size={16} />
             <span>
-              Situation {story + 1} sur {total}. Reprends là où tu t’es arrêtée.
+              Reprendre « {scenario.title} » · {story + 1}/{total}
             </span>
-            <span className="vop-card-cta">
-              Reprendre <Icon name="arrow" size={18} />
-            </span>
+            <Icon name="chevron" size={16} />
           </button>
-        ) : listen ? null : daily.mot && !wordOpen ? (
-          <button className="vop-card today-card" onClick={() => go("mot")}>
-            <span className="eyebrow">Aujourd’hui</span>
-            <strong>Le mot du jour</strong>
-            <span>Trouve-le pour ouvrir l’histoire du jour.</span>
-            <span className="vop-card-cta">
-              Deviner le mot <Icon name="arrow" size={18} />
-            </span>
-          </button>
-        ) : (
-          <button className="vop-card today-card" onClick={() => onPick(daily.id)}>
+        )}
+        {!listen && (
+          <button className="vop-card today-card compact" onClick={() => onPick(daily.id)}>
             <span className="eyebrow">
-              {daily.mot ? `Mot du jour : ${daily.mot.mot}` : "Aujourd’hui"}
+              {daily.mot && wordOpen ? `Mot du jour : ${daily.mot.mot}` : "Aujourd’hui"}
             </span>
             <strong>L’histoire du jour</strong>
-            <span>
-              « {daily.title} » · {daily.summary}
-            </span>
+            <span>« {daily.title} »</span>
             <span className="vop-card-cta">
-              Jouer <Icon name="arrow" size={18} />
+              {daily.mot && !wordOpen ? "Deviner le mot" : "Jouer"} <Icon name="arrow" size={18} />
             </span>
           </button>
         )}
-        <section className="journey-card">
-          <h2>Ton parcours</h2>
-          <div>
+        <button className="results-tile" onClick={() => go("results")}>
+          <span className="eyebrow">Mes résultats</span>
+          <span className="results-tile-stats">
             <span>
-              <strong>
-                {Math.min(story, total)}/{total}
-              </strong>
-              situations
+              <strong>{doneCount}/{scenarios.length}</strong> histoires
             </span>
             <span>
-              <strong>{unlocked}/6</strong>
-              réflexes
+              <strong>{unlocked}/6</strong> réflexes
             </span>
-          </div>
-        </section>
+            <span>
+              <strong>{badgeCount}</strong> badge{badgeCount > 1 ? "s" : ""}
+            </span>
+          </span>
+          <Icon name="chevron" />
+        </button>
         {!listen && canPlay && (
           <button className="wide-link" onClick={() => startListening(lang)}>
             <span className="link-icon">
@@ -1675,16 +1669,6 @@ function Home({
             </button>
           </div>
         )}
-        <button className="wide-link" onClick={() => go("play")}>
-          <span className="link-icon orange">
-            <Icon name="spark" />
-          </span>
-          <span>
-            <strong>Tous les jeux</strong>
-            <small>Histoires, mot du jour, jeu de groupe, quiz</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
       </div>
       <BottomNav active="home" go={go} />
     </section>
@@ -1966,9 +1950,9 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="spark" />
         <span>Jouer</span>
       </button>
-      <button className={active === "guide" ? "active" : ""} onClick={() => go("guide")}>
-        <Icon name="shield" />
-        <span>Réflexes</span>
+      <button className={active === "learn" ? "active" : ""} onClick={() => go("learn")}>
+        <Icon name="book" />
+        <span>S’éduquer</span>
       </button>
       <button className={active === "settings" ? "active" : ""} onClick={() => go("settings")}>
         <Icon name="settings" />
@@ -2064,41 +2048,147 @@ function Countdown({ seconds, onEnd }: { seconds: number; onEnd: () => void }) {
 
 const COUNTDOWN_S = 15;
 
-/** Before a story: what it is about, and that she can stop at any time. */
-function ContentNote({
+/**
+ * Before a story: what it is about, its settings, then (for the story of the
+ * day) the word to guess, which can be skipped, and the padlock that opens.
+ */
+function StorySetup({
   scenario,
+  lang,
+  setLang,
+  audio,
+  setAudio,
+  timer,
+  setTimer,
+  askWord,
+  onGuess,
   onStart,
   onOther,
   onHelp,
 }: {
   scenario: Scenario;
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  audio: boolean;
+  setAudio: (v: boolean) => void;
+  timer: boolean;
+  setTimer: (v: boolean) => void;
+  askWord: boolean;
+  onGuess: () => void;
   onStart: () => void;
   onOther: () => void;
   onHelp: () => void;
 }) {
+  const [phase, setPhase] = useState<"setup" | "word" | "unlock">("setup");
+  useEffect(() => {
+    if (phase !== "unlock") return;
+    vibrate(30);
+    const id = window.setTimeout(onStart, reducedMotion() ? 300 : 1300);
+    return () => window.clearTimeout(id);
+  }, [phase]);
+  if (phase === "unlock")
+    return (
+      <section className="screen story-unlock" aria-live="polite">
+        <div className="padlock" aria-hidden>
+          <svg viewBox="0 0 120 140" width="120" height="140">
+            <path className="shackle" d="M34 62V44a26 26 0 0 1 52 0v18" fill="none" strokeWidth="12" strokeLinecap="round" />
+            <rect x="14" y="60" width="92" height="72" rx="18" className="body" />
+            <circle cx="60" cy="92" r="9" className="hole" />
+            <path d="M60 98v14" className="hole-line" strokeWidth="6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <p className="eyebrow">Histoire débloquée</p>
+        <h1>{scenario.title}</h1>
+      </section>
+    );
   return (
-    <section className="screen content-note">
+    <section className="screen story-setup">
       <TopBar title={scenario.title} onBack={onOther} />
       <div className="page-content">
-        <span className="resource-icon">
+        <div className="setup-head">
+          <Portrait person={scenario.contact.portrait} small />
+          <div>
+            <small>{scenario.profile}</small>
+            <strong>{scenario.title}</strong>
+          </div>
+        </div>
+        <div className="setup-note">
           <Icon name="shield" />
-        </span>
-        <p className="eyebrow">Avant de commencer</p>
-        <h1>{scenario.avertissement ?? scenario.summary}</h1>
-        <p className="lead">
-          C’est une histoire inventée. Si elle te rappelle quelque chose de vrai, tu peux arrêter à
-          tout moment, et ce n’est jamais ta faute.
-        </p>
-        <Button onClick={onStart} icon="arrow">
-          Commencer l’histoire
-        </Button>
-        <Button variant="secondary" onClick={onOther}>
-          Choisir une autre histoire
-        </Button>
+          <p>
+            <strong>{scenario.avertissement ?? scenario.summary}</strong>
+            <br />
+            C’est une histoire inventée. Si elle te rappelle quelque chose de vrai, tu peux arrêter
+            à tout moment, et ce n’est jamais ta faute.
+          </p>
+        </div>
+        <h3>Langue</h3>
+        <div className="segmented" role="radiogroup" aria-label="Langue de l’histoire">
+          {(["fr", ...recordedLangs] as Lang[]).map((l) => (
+            <button
+              key={l}
+              role="radio"
+              aria-checked={lang === l}
+              className={lang === l ? "on" : ""}
+              onClick={() => setLang(l)}
+            >
+              {langNames[l]}
+            </button>
+          ))}
+        </div>
+        <h3>Réglages</h3>
+        {canListen && (
+          <button className="setting-row" onClick={() => setAudio(!audio)} aria-pressed={audio}>
+            <span>
+              <Icon name="play" />
+            </span>
+            <div>
+              <strong>Voix des messages</strong>
+              <small>{audio ? "Tu entends la personne qui t’écrit" : "Lecture silencieuse"}</small>
+            </div>
+            <span className={`toggle ${audio ? "on" : ""}`}>
+              <i />
+            </span>
+          </button>
+        )}
+        <button className="setting-row" onClick={() => setTimer(!timer)} aria-pressed={timer}>
+          <span>
+            <Icon name="spark" />
+          </span>
+          <div>
+            <strong>Compte à rebours</strong>
+            <small>{timer ? "Activé sur les menaces · sans pénalité" : "Désactivé · à ton rythme"}</small>
+          </div>
+          <span className={`toggle ${timer ? "on" : ""}`}>
+            <i />
+          </span>
+        </button>
         <Button variant="ghost" onClick={onHelp} icon="help">
           Parler à quelqu’un maintenant
         </Button>
       </div>
+      <div className="sticky-action">
+        <Button onClick={() => setPhase(askWord ? "word" : "unlock")} icon="lock">
+          Débloquer l’histoire
+        </Button>
+      </div>
+      {phase === "word" && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Le mot du jour">
+          <div className="modal word-popup">
+            <span className="modal-icon">
+              <Icon name="search" />
+            </span>
+            <p className="eyebrow">C’est l’histoire du jour</p>
+            <h2>Devine le mot du jour pour l’ouvrir</h2>
+            <p>{scenario.mot?.indices[0]}</p>
+            <Button onClick={onGuess} icon="arrow">
+              Deviner le mot
+            </Button>
+            <Button variant="ghost" onClick={() => setPhase("unlock")}>
+              Passer et ouvrir l’histoire
+            </Button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -3754,13 +3844,49 @@ function Play({
     <section className="screen with-nav">
       <TopBar title="Jouer" onBack={() => go("home")} />
       <div className="page-content home-content">
-        <button className="vop-card team-card" onClick={() => go("equipes")}>
-          <span className="eyebrow">En équipes · un seul écran</span>
-          <strong>Le grand quiz</strong>
-          <span>Jusqu’à 4 équipes. Répondez juste et vite, le classement s’affiche à chaque question.</span>
-          <span className="vop-card-cta">
-            Lancer une partie <Icon name="arrow" size={18} />
+        <h2 className="section-title">Jeu solo</h2>
+        <button className="wide-link" onClick={() => go("scenarios")}>
+          <span className="link-icon orange">
+            <Icon name="message" />
           </span>
+          <span>
+            <strong>Histoires</strong>
+            <small>
+              {inStory ? `Reprendre « ${scenario.title} »` : `${scenarios.length} conversations, tes choix`}
+            </small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("mot")}>
+          <span className="link-icon">
+            <Icon name="search" />
+          </span>
+          <span>
+            <strong>Le mot du jour</strong>
+            <small>Devine le thème, ouvre l’histoire du jour</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("quiz")}>
+          <span className="link-icon">
+            <Icon name="spark" />
+          </span>
+          <span>
+            <strong>Quiz sans jugement</strong>
+            <small>5 questions sur les pièges en ligne</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Jeu de groupe</h2>
+        <button className="wide-link" onClick={() => go("equipes")}>
+          <span className="link-icon orange">
+            <Icon name="user" />
+          </span>
+          <span>
+            <strong>Le grand quiz</strong>
+            <small>Jusqu’à 4 équipes, un seul écran : juste et vite</small>
+          </span>
+          <Icon name="chevron" />
         </button>
         <button className="wide-link" onClick={() => go("vop")}>
           <span className="link-icon">
@@ -3773,54 +3899,22 @@ function Play({
           <Icon name="chevron" />
         </button>
         <button className="wide-link" onClick={() => go("defis")}>
-          <span className="link-icon orange">
+          <span className="link-icon">
             <Icon name="check" />
           </span>
           <span>
             <strong>Défis en groupe</strong>
-            <small>La loi, les bons réflexes, le bouton d’alerte : relevez les défis ensemble</small>
+            <small>La loi, les bonnes attitudes, le bouton d’alerte</small>
           </span>
           <Icon name="chevron" />
         </button>
-        <h2 className="section-title">Bientôt</h2>
         <button className="wide-link soon" onClick={() => go("multi")}>
           <span className="link-icon">
             <Icon name="spark" />
           </span>
           <span>
-            <strong>Le grand quiz, chacune sur son téléphone</strong>
-            <small>Comme un quiz en direct : un code, et toutes répondent en même temps. Voir l’aperçu</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <h2 className="section-title">Jouer seule</h2>
-        <button className="wide-link" onClick={() => go("mot")}>
-          <span className="link-icon orange">
-            <Icon name="search" />
-          </span>
-          <span>
-            <strong>Le mot du jour</strong>
-            <small>Devine le thème, ouvre l’histoire du jour</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <button className="wide-link" onClick={() => go(inStory ? "story" : "scenarios")}>
-          <span className="link-icon">
-            <Icon name="message" />
-          </span>
-          <span>
-            <strong>Histoires interactives</strong>
-            <small>{inStory ? `Reprendre « ${scenario.title} »` : "Une conversation, tes choix"}</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <button className="wide-link" onClick={() => go("quiz")}>
-          <span className="link-icon orange">
-            <Icon name="spark" />
-          </span>
-          <span>
-            <strong>Quiz sans jugement</strong>
-            <small>5 questions sur les pièges en ligne</small>
+            <strong>Chacune sur son téléphone · bientôt</strong>
+            <small>Un code, et toutes répondent en même temps. Voir l’aperçu</small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -4496,7 +4590,250 @@ function Guide({
           Que faire si ça m’arrive ?
         </Button>
       </div>
-      <BottomNav active="guide" go={go} />
+      <BottomNav active="learn" go={go} />
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// « S'éduquer » : the reflexes, the right moves, the law and help, and the
+// coming assistant.
+// ---------------------------------------------------------------------------
+function Learn({ go, unlocked }: { go: (s: Screen) => void; unlocked: number }) {
+  return (
+    <section className="screen with-nav">
+      <TopBar title="S’éduquer" onBack={() => go("home")} />
+      <div className="page-content home-content">
+        <h1 className="learn-title">Comprendre pour mieux se protéger</h1>
+        <button className="wide-link" onClick={() => go("guide")}>
+          <span className="link-icon orange">
+            <Icon name="shield" />
+          </span>
+          <span>
+            <strong>Mes 6 réflexes</strong>
+            <small>{unlocked}/6 débloqués · ta fiche à garder près de toi</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("resources")}>
+          <span className="link-icon">
+            <Icon name="check" />
+          </span>
+          <span>
+            <strong>Les bons gestes</strong>
+            <small>Comptes, confidentialité, bloquer et signaler, preuves</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("help")}>
+          <span className="link-icon">
+            <Icon name="book" />
+          </span>
+          <span>
+            <strong>Tes droits et l’aide au Bénin</strong>
+            <small>Les lois, les numéros utiles, les structures</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Bientôt</h2>
+        <button className="wide-link soon" onClick={() => go("ia")}>
+          <span className="link-icon orange">
+            <Icon name="message" />
+          </span>
+          <span>
+            <strong>Pose ta question · IA</strong>
+            <small>« Veux-tu savoir quelque chose en particulier ? » Voir l’aperçu</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+      </div>
+      <BottomNav active="learn" go={go} />
+    </section>
+  );
+}
+
+// Coming soon: an assistant that answers questions. In this preview the
+// answers are written in advance from the app's content; nothing is sent.
+const iaTopics: { q: string; a: string; help?: boolean }[] = [
+  {
+    q: "C’est quoi la sextorsion ?",
+    a: "C’est quand quelqu’un menace de publier des photos ou des messages intimes pour obtenir de l’argent, d’autres photos ou autre chose. Ne paie pas, n’envoie rien, garde les preuves et demande de l’aide. Ce n’est jamais ta faute.",
+    help: true,
+  },
+  {
+    q: "Comment porter plainte ?",
+    a: "Va dans un commissariat avec tes captures d’écran, si possible accompagnée. Le dépôt de plainte est gratuit. Le CNIN, au 151, traite les crimes en ligne, et l’Institut National de la Femme, au 114, peut t’accompagner.",
+    help: true,
+  },
+  {
+    q: "Mon copain veut mes codes",
+    a: "Tu as le droit de refuser. Exiger tes mots de passe ou ta position, c’est du contrôle, pas de l’amour. Si tu as peur de sa réaction, parles-en à une personne de confiance.",
+  },
+  {
+    q: "Comment protéger mon compte ?",
+    a: "Un mot de passe long et différent pour chaque compte, et la vérification en deux étapes. Sur ta messagerie : Paramètres, Compte, Vérification en deux étapes, Activer. Ne donne jamais un code reçu par SMS.",
+  },
+  {
+    q: "Une amie est victime, que faire ?",
+    a: "Crois-la, respecte son rythme et aide-la à garder les preuves. Ne la juge pas et ne la force pas à porter plainte. Proposez ensemble d’appeler le 114.",
+    help: true,
+  },
+];
+
+function IaApercu({ go, person }: { go: (s: Screen) => void; person: "afi" | "maya" }) {
+  const [asked, setAsked] = useState<number[]>([]);
+  const endRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (asked.length) endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [asked]);
+  const name = person === "afi" ? "Afi" : "Maya";
+  return (
+    <section className="screen ia-screen">
+      <TopBar title="Pose ta question" onBack={() => go("learn")} />
+      <div className="page-content">
+        <div className="multi-banner">
+          <Icon name="spark" size={16} /> Aperçu · à venir. Les réponses sont préparées à l’avance et
+          rien n’est envoyé.
+        </div>
+        <div className="ia-thread">
+          <p className="ia-bubble bot">
+            Bonjour {name} ! Veux-tu savoir quelque chose en particulier ?
+          </p>
+          {asked.map((n) => (
+            <div key={n}>
+              <p className="ia-bubble me">{iaTopics[n].q}</p>
+              <p className="ia-bubble bot">{iaTopics[n].a}</p>
+              {iaTopics[n].help && (
+                <button className="ia-help" onClick={() => go("help")}>
+                  <Icon name="help" size={16} /> Voir les numéros d’aide
+                </button>
+              )}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+        <div className="ia-chips">
+          {iaTopics.map((topic, n) =>
+            asked.includes(n) ? null : (
+              <button key={topic.q} onClick={() => setAsked([...asked, n])}>
+                {topic.q}
+              </button>
+            ),
+          )}
+        </div>
+        <div className="ia-input" aria-disabled>
+          <span>Bientôt : écris ta propre question ici</span>
+          <Icon name="arrow" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Badges: earned from what is already kept on the phone, never compared with
+// anyone else.
+function badgesOf(done: string[], unlocked: number[], wordFound: boolean) {
+  const vop = readVopStats();
+  return [
+    { icon: "message" as IconName, name: "Première histoire", how: "Termine une histoire", won: done.length >= 1 },
+    { icon: "spark" as IconName, name: "Exploratrice", how: "Termine 5 histoires", won: done.length >= 5 },
+    { icon: "book" as IconName, name: "Toutes les histoires", how: `Termine les ${scenarios.length} histoires`, won: done.length >= scenarios.length },
+    { icon: "search" as IconName, name: "Œil de lynx", how: "Repère un lien piégé", won: unlocked.includes(0) },
+    { icon: "download" as IconName, name: "Gardienne des preuves", how: "Garde les preuves dans une histoire", won: unlocked.includes(4) },
+    { icon: "shield" as IconName, name: "Sentinelle", how: "Débloque les 6 réflexes", won: unlocked.length >= 6 },
+    { icon: "check" as IconName, name: "Mot trouvé", how: "Trouve le mot du jour", won: wordFound },
+    { icon: "user" as IconName, name: "Esprit d’équipe", how: "Joue à Vrai ou piège en groupe", won: vop.games >= 1 },
+    { icon: "eye" as IconName, name: "Quiz terminé", how: "Termine le quiz sans jugement", won: localStorage.getItem("naya-quiz") === "done" },
+  ];
+}
+
+function Results({
+  go,
+  done,
+  unlocked,
+  wordFound,
+  onStory,
+}: {
+  go: (s: Screen) => void;
+  done: string[];
+  unlocked: number[];
+  wordFound: boolean;
+  onStory: (id: string) => void;
+}) {
+  const badges = badgesOf(done, unlocked, wordFound);
+  const won = badges.filter((b) => b.won).length;
+  const count = unlocked.length;
+  const rank = [...ranks].reverse().find((r) => count >= r[0]) ?? ranks[0];
+  const vop = readVopStats();
+  return (
+    <section className="screen with-nav results-screen">
+      <TopBar title="Mes résultats" onBack={() => go("home")} />
+      <div className="page-content">
+        <div className="rank-hero small">
+          <RankArt lit={count} />
+          <p className="eyebrow">Ton rang</p>
+          <h1>{rank[1]}</h1>
+          <p>{rank[2]}</p>
+        </div>
+        <div className="results-stats">
+          <div>
+            <strong>
+              {done.length}/{scenarios.length}
+            </strong>
+            <small>histoires</small>
+          </div>
+          <div>
+            <strong>{count}/6</strong>
+            <small>réflexes</small>
+          </div>
+          <div>
+            <strong>
+              {won}/{badges.length}
+            </strong>
+            <small>badges</small>
+          </div>
+        </div>
+        <h2>Mes badges</h2>
+        <div className="badge-grid">
+          {badges.map((b) => (
+            <div key={b.name} className={`badge ${b.won ? "won" : ""}`}>
+              <span>
+                <Icon name={b.won ? b.icon : "lock"} size={20} />
+              </span>
+              <strong>{b.name}</strong>
+              <small>{b.won ? "Gagné" : b.how}</small>
+            </div>
+          ))}
+        </div>
+        <h2>Mes réflexes</h2>
+        <div className="reflex-grid">
+          {reflexes.map((_, i) => (
+            <ReflexTile key={i} index={i} open={unlocked.includes(i)} />
+          ))}
+        </div>
+        <h2>Mes histoires</h2>
+        <ul className="results-stories">
+          {scenarios.map((s) => (
+            <li key={s.id}>
+              <button onClick={() => onStory(s.id)}>
+                <Icon name={done.includes(s.id) ? "check" : "play"} size={16} />
+                <span>{s.title}</span>
+                <small>{done.includes(s.id) ? "Terminée" : "À jouer"}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {vop.games > 0 && (
+          <p className="lead">
+            Vrai ou piège : {vop.games} partie{vop.games > 1 ? "s" : ""}, meilleur score {vop.best}.
+          </p>
+        )}
+        <Button variant="secondary" onClick={() => go("guide")} icon="shield">
+          Ouvrir ma fiche réflexes
+        </Button>
+        <p className="microcopy">Tes résultats restent sur ce téléphone. Personne d’autre ne les voit.</p>
+      </div>
+      <BottomNav active="home" go={go} />
     </section>
   );
 }
@@ -4547,12 +4884,16 @@ function RankArt({ lit }: { lit: number }) {
 function Progress({
   title,
   unlocked,
+  canInstall,
+  install,
   onOther,
   go,
   replay,
 }: {
   title: string;
   unlocked: number[];
+  canInstall: boolean;
+  install: () => void;
   onOther: () => void;
   go: (s: Screen) => void;
   replay: () => void;
@@ -4574,7 +4915,7 @@ function Progress({
   const rank = [...ranks].reverse().find((r) => count >= r[0]) ?? ranks[0];
   return (
     <section className="screen progress-screen">
-      <TopBar title="Ma progression" onBack={() => go("home")} />
+      <TopBar title="Histoire terminée" onBack={() => go("home")} />
       <div className="page-content">
         <div className="rank-hero">
           <RankArt lit={count} />
@@ -4595,9 +4936,21 @@ function Progress({
             <ReflexTile key={i} index={i} open={unlocked.includes(i)} />
           ))}
         </div>
-        <Button variant="secondary" onClick={() => go("guide")} icon="download">
-          Ouvrir ma fiche
+        <Button variant="secondary" onClick={() => go("results")} icon="spark">
+          Voir mes résultats
         </Button>
+        {canInstall && (
+          <button className="wide-link" onClick={install}>
+            <span className="link-icon">
+              <Icon name="download" />
+            </span>
+            <span>
+              <strong>Garder Ayìdótɛ́ sur ton téléphone</strong>
+              <small>Pour rejouer même sans réseau</small>
+            </span>
+            <Icon name="chevron" />
+          </button>
+        )}
         <div className="replay-card">
           <p className="eyebrow">Et maintenant ?</p>
           <h2>Et si tu essayais un autre chemin ?</h2>
