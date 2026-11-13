@@ -4115,6 +4115,11 @@ function Resources({ go }: { go: (s: Screen) => void }) {
   );
 }
 
+// Hackathon rule: no connection to real emergency services. The numbers are
+// shown but cannot be dialled from the app. Set to true only after the
+// technical, legal and safety checks required for real use.
+const CALLS_ENABLED = false;
+
 // Who to turn to in Benin. The short numbers come from the official list
 // published by ARCEP Bénin (June 2026), cross-checked with the Government's
 // VBG-FT platform (adovbg-ft.social.gouv.bj) and the UNFPA Bénin digital
@@ -4267,11 +4272,17 @@ function Help({ go }: { go: (s: Screen) => void }) {
               <strong>{c.name}</strong>
               <p className="help-when">{c.when}</p>
               <p>{c.what}</p>
-              {c.number && (
-                <a className="help-call" href={`tel:${c.number}`}>
-                  Appeler le {c.number}
-                </a>
-              )}
+              {c.number &&
+                (CALLS_ENABLED ? (
+                  <a className="help-call" href={`tel:${c.number}`}>
+                    Appeler le {c.number}
+                  </a>
+                ) : (
+                  <p className="help-number">
+                    <strong>{c.number}</strong>
+                    <small>Appel désactivé pendant la démonstration</small>
+                  </p>
+                ))}
             </div>
           </article>
         ))}

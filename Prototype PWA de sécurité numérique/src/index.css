@@ -6015,3 +6015,20 @@ textarea {
 .install-card .wide-link {
   padding-bottom: 14px;
 }
+
+/* Help numbers shown without a call button (hackathon demonstration) */
+.help-number {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+}
+.help-number strong {
+  font-size: 22px;
+  letter-spacing: 0.02em;
+}
+.help-number small {
+  font-size: 12px;
+  color: var(--muted);
+}
