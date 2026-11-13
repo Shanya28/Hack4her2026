@@ -3,6 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+// Chrome offers installation once, sometimes before React has mounted: keep
+// the offer so the « Installer » button can use it later.
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  (window as Window & { __installPrompt?: Event }).__installPrompt = event;
+});
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

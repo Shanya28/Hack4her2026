@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: "/src/**/*.stories.{ts,tsx,js,jsx}" }),
       figmaLinkedPackageSourcemaps(),
+      ...(emitSourcemaps ? [] : [contentSecurityPolicy()]),
     ],
     resolve: {
       alias: {
@@ -45,6 +46,40 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
+
+/**
+ * Ayidote talks to no server: the page may only load its own files. Links to
+ * official sites still open (navigation is not restricted), and tel: calls
+ * still work. Added to production builds only.
+ */
+function contentSecurityPolicy(): Plugin {
+  const policy = [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "media-src 'self' blob:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    "worker-src 'self'",
+    "manifest-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'none'",
+  ].join("; ");
+  return {
+    name: "ayidote-csp",
+    apply: "build",
+    transformIndexHtml: () => [
+      {
+        tag: "meta",
+        attrs: { "http-equiv": "Content-Security-Policy", content: policy },
+        injectTo: "head-prepend",
+      },
+      { tag: "meta", attrs: { name: "referrer", content: "no-referrer" }, injectTo: "head" },
+    ],
+  };
+}
 
 type FigmaSiteConfiguration = {
   title?: string;

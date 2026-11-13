@@ -39,6 +39,7 @@ type IconName =
   | "check"
   | "chevron"
   | "download"
+  | "exit"
   | "eye"
   | "help"
   | "home"
@@ -156,7 +157,76 @@ const icons: Record<IconName, React.ReactNode> = {
       <path d="M12 9v5m0 3h.01" />
     </>
   ),
+  exit: (
+    <>
+      <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
+      <path d="M10 16l-4-4 4-4M6 12h10" />
+    </>
+  ),
 };
+
+// ---------------------------------------------------------------------------
+// Quick exit. One tap leaves for a neutral page and replaces Ayidote in the
+// tab's history, so « Retour » does not bring it back. Optionally, it also
+// wipes what Ayidote keeps on the phone first. The Escape key does the same.
+// ---------------------------------------------------------------------------
+const QUICK_EXIT_URL = "https://www.google.com/search?q=m%C3%A9t%C3%A9o+Cotonou";
+
+/** Removes the voice clips kept for offline use (they reveal the language chosen). */
+function clearOfflineAudio() {
+  if (!("caches" in window)) return Promise.resolve();
+  return caches
+    .keys()
+    .then((keys) =>
+      Promise.all(
+        keys.map((key) =>
+          caches.open(key).then((cache) =>
+            cache
+              .keys()
+              .then((requests) =>
+                Promise.all(
+                  requests
+                    .filter((r) => /\.(mp3|m4a|ogg|wav)(\?|$)/i.test(r.url))
+                    .map((r) => cache.delete(r)),
+                ),
+              ),
+          ),
+        ),
+      ),
+    )
+    .then(() => undefined)
+    .catch(() => undefined);
+}
+
+function quickExit() {
+  try {
+    window.speechSynthesis?.cancel();
+  } catch {
+    // nothing to stop
+  }
+  const wipe = localStorage.getItem("naya-exit-erase") === "yes";
+  const leave = () => window.location.replace(QUICK_EXIT_URL);
+  if (!wipe) return leave();
+  localStorage.clear();
+  localStorage.setItem("naya-exit-erase", "yes");
+  // Leave even if clearing the cache is slow: safety first.
+  window.setTimeout(leave, 400);
+  clearOfflineAudio().then(leave);
+}
+
+function QuickExitButton({ light = false }: { light?: boolean }) {
+  return (
+    <button
+      className={`quick-exit ${light ? "light" : ""}`}
+      onClick={quickExit}
+      aria-label="Quitter vite Ayidote"
+      title="Quitter vite (touche Échap)"
+    >
+      <Icon name="exit" size={18} />
+      <span>Quitter</span>
+    </button>
+  );
+}
 
 function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return (
@@ -258,7 +328,7 @@ function TopBar({
         <Icon name="back" />
       </button>
       <strong>{title}</strong>
-      <div className="top-action">{action}</div>
+      <div className="top-action">{action ?? <QuickExitButton />}</div>
     </header>
   );
 }
@@ -589,6 +659,18 @@ type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<
 const isInstalled = () =>
   window.matchMedia?.("(display-mode: standalone)").matches ||
   (navigator as Navigator & { standalone?: boolean }).standalone === true;
+// Browsers built into Facebook, Instagram, TikTok, Messenger… cannot install
+// an app: the link has to be opened in Chrome (Android) or Safari (iPhone).
+const inAppBrowser = (): string | null => {
+  const ua = navigator.userAgent;
+  if (/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua)) return "Facebook";
+  if (/Instagram/i.test(ua)) return "Instagram";
+  if (/musical_ly|BytedanceWebview|TikTok/i.test(ua)) return "TikTok";
+  if (/Snapchat/i.test(ua)) return "Snapchat";
+  if (/\bLine\//i.test(ua)) return "Line";
+  if (/; wv\)/i.test(ua)) return "une application";
+  return null;
+};
 const devicePlatform = (): "android" | "ios" | "other" => {
   const ua = navigator.userAgent;
   if (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1))
@@ -660,7 +742,10 @@ function App() {
   const total = scenario.steps.length;
   const [story, setStory] = useState(Number(localStorage.getItem("naya-story") || 0));
   const [done, setDone] = useState<string[]>(readDone);
-  const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(null);
+  // main.tsx catches the browser's offer before React starts, so it is not missed.
+  const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(
+    () => (window as Window & { __installPrompt?: InstallPrompt }).__installPrompt ?? null,
+  );
   const [installed, setInstalled] = useState(isInstalled);
   const [installHidden, setInstallHidden] = useState(
     () => localStorage.getItem("naya-install") === "hidden",
@@ -682,7 +767,10 @@ function App() {
     };
   }, []);
   const install = async () => {
-    if (!installPrompt) return;
+    if (!installPrompt) {
+      go("install");
+      return;
+    }
     await installPrompt.prompt();
     const choice = await installPrompt.userChoice;
     if (choice.outcome === "accepted") setInstalled(true);
@@ -740,6 +828,20 @@ function App() {
   const [saved, setSaved] = useState(localStorage.getItem("naya-guide") === "yes");
   const [toast, setToast] = useState("");
   const [eraseOpen, setEraseOpen] = useState(false);
+  const [exitErase, setExitEraseState] = useState(
+    () => localStorage.getItem("naya-exit-erase") === "yes",
+  );
+  const setExitErase = (on: boolean) => {
+    setExitEraseState(on);
+    localStorage.setItem("naya-exit-erase", on ? "yes" : "no");
+  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !eraseOpen) quickExit();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [eraseOpen]);
 
   const go = (next: Screen) => {
     setScreen(next);
@@ -821,6 +923,8 @@ function App() {
   };
   const resetAll = () => {
     localStorage.clear();
+    clearOfflineAudio();
+    setExitEraseState(false);
     stopSpeaking();
     setWordGameState(readWordGame());
     setAudioState(false);
@@ -880,6 +984,7 @@ function App() {
         openCarnet={openCarnet}
         daily={dailyScenario()}
         showInstall={!installed && !installHidden}
+        install={install}
         hideInstall={() => {
           setInstallHidden(true);
           localStorage.setItem("naya-install", "hidden");
@@ -1095,6 +1200,8 @@ function App() {
         setTimer={setTimer}
         go={go}
         erase={() => setEraseOpen(true)}
+        exitErase={exitErase}
+        setExitErase={setExitErase}
         notify={notify}
       />
     );
@@ -1117,8 +1224,8 @@ function App() {
               </span>
               <h2>Tout effacer ?</h2>
               <p>
-                Ta progression, tes préférences et ta fiche enregistrée seront supprimées de ce
-                téléphone. Cette action est définitive.
+                Ta progression, tes préférences, ta fiche enregistrée et les voix téléchargées
+                seront supprimées de ce téléphone. Cette action est définitive.
               </p>
               <Button variant="danger" onClick={resetAll}>
                 Oui, tout effacer
@@ -1372,6 +1479,7 @@ function Home({
   openCarnet,
   daily,
   showInstall,
+  install,
   hideInstall,
   listen,
   lang,
@@ -1388,6 +1496,7 @@ function Home({
   openCarnet: () => void;
   daily: Scenario;
   showInstall: boolean;
+  install: () => void;
   hideInstall: () => void;
   listen: boolean;
   lang: Lang;
@@ -1411,9 +1520,7 @@ function Home({
             Bienvenue sur <strong>Ayidote</strong>
           </p>
         </div>
-        <button className="carnet-button" onClick={() => go("settings")} aria-label="Paramètres">
-          <Icon name="settings" size={20} />
-        </button>
+        <QuickExitButton />
         <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
           <Icon name="book" size={20} />
         </button>
@@ -1500,7 +1607,7 @@ function Home({
         )}
         {showInstall && (
           <div className="install-card">
-            <button className="wide-link" onClick={() => go("install")}>
+            <button className="wide-link" onClick={install}>
               <span className="link-icon">
                 <Icon name="download" />
               </span>
@@ -4235,6 +4342,8 @@ function Settings({
   setTimer,
   go,
   erase,
+  exitErase,
+  setExitErase,
   notify,
 }: {
   listen: boolean;
@@ -4250,6 +4359,8 @@ function Settings({
   setTimer: (v: boolean) => void;
   go: (s: Screen) => void;
   erase: () => void;
+  exitErase: boolean;
+  setExitErase: (v: boolean) => void;
   notify: (s: string) => void;
 }) {
   return (
@@ -4403,6 +4514,29 @@ function Settings({
             <small>Simulation · aucune alerte envoyée</small>
           </div>
           <Icon name="chevron" />
+        </button>
+        <button
+          className="setting-row"
+          aria-pressed={exitErase}
+          onClick={() => {
+            setExitErase(!exitErase);
+            notify(exitErase ? "Quitter vite garde tes données" : "Quitter vite effacera tout");
+          }}
+        >
+          <span>
+            <Icon name="exit" />
+          </span>
+          <div>
+            <strong>Effacer en quittant vite</strong>
+            <small>
+              {exitErase
+                ? "Activé : le bouton « Quitter » efface aussi ta progression"
+                : "Désactivé : le bouton « Quitter » garde ta progression"}
+            </small>
+          </div>
+          <span className={`toggle ${exitErase ? "on" : ""}`}>
+            <i />
+          </span>
         </button>
         <button className="setting-row danger-link" onClick={erase}>
           <span>
@@ -4561,6 +4695,14 @@ function Install({
   onBack: () => void;
 }) {
   const platform = devicePlatform();
+  const inApp = inAppBrowser();
+  const [copied, setCopied] = useState(false);
+  const copyLink = () => {
+    navigator.clipboard
+      ?.writeText(window.location.origin + window.location.pathname)
+      .then(() => setCopied(true))
+      .catch(() => undefined);
+  };
   const order = [platform, ...(["android", "ios", "other"] as const).filter((p) => p !== platform)];
   return (
     <section className="screen resources">
@@ -4577,10 +4719,31 @@ function Install({
               : "Une icône comme une application, sans passer par un magasin d’applications, et qui marche sans réseau."}
           </p>
         </div>
+        {!installed && inApp && (
+          <div className="tip install-warning">
+            <Icon name="warning" />
+            <p>
+              <strong>Tu es dans le navigateur de {inApp}.</strong>
+              <br />
+              Il ne peut pas installer d’application. Touche ⋮ ou ··· puis « Ouvrir dans
+              {platform === "ios" ? " Safari" : " Chrome"} », ou copie le lien et colle-le dans
+              {platform === "ios" ? " Safari" : " Chrome"}.
+            </p>
+            <Button variant="secondary" onClick={copyLink}>
+              {copied ? "Lien copié ✓" : "Copier le lien"}
+            </Button>
+          </div>
+        )}
         {!installed && canPrompt && (
           <Button onClick={install} icon="download">
             Installer maintenant
           </Button>
+        )}
+        {!installed && !canPrompt && !inApp && platform === "android" && (
+          <p className="help-intro">
+            Le bouton d’installation direct n’est pas proposé par ce navigateur : suis les étapes
+            ci-dessous, ça prend dix secondes.
+          </p>
         )}
         {!installed &&
           order.map((p, n) => (

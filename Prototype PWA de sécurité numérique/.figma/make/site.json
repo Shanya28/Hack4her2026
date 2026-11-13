@@ -1,10 +1,12 @@
 {
-  "description": "A discreet, interactive digital safety app for young women in West Africa to spot online threats, practise protective responses and find practical support.",
+  "description": "Ayidote, mon espace.",
   "robots": {
     "index": false
   },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
-  }
+  },
+  "title": "Ayidote",
+  "language": "fr"
 }

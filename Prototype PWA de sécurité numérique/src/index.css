@@ -5264,3 +5264,41 @@ textarea {
     animation: none;
   }
 }
+
+/* Quick exit: always within reach, top right */
+.quick-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 10px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brick);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.quick-exit:active {
+  transform: scale(0.96);
+}
+.topbar {
+  grid-template-columns: 42px 1fr auto;
+}
+.top-action {
+  min-width: 42px;
+}
+.install-warning {
+  flex-wrap: wrap;
+}
+.install-warning .btn,
+.install-warning button {
+  width: 100%;
+}
+.home-header .quick-exit {
+  border: 0;
+  border-radius: 999px;
+  padding: 0 10px 0 8px;
+  box-shadow: none;
+}
