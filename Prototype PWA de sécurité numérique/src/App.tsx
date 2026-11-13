@@ -14,6 +14,7 @@ type Screen =
   | "play"
   | "vop"
   | "equipes"
+  | "multi"
   | "mot"
   | "fake-login"
   | "phishing"
@@ -906,6 +907,7 @@ function App() {
     content = <Play go={go} story={story} scenario={scenario} />;
   else if (screen === "vop") content = <VraiOuPiege go={go} timer={timer} />;
   else if (screen === "equipes") content = <QuizEquipes go={go} />;
+  else if (screen === "multi") content = <QuizMultiApercu go={go} />;
   else if (screen === "scenarios")
     content = (
       <Scenarios
@@ -3070,6 +3072,252 @@ function QuizEquipes({ go }: { go: (s: Screen) => void }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Coming soon: « Le grand quiz » on several phones, Kahoot-style. The
+// facilitator shows a code, each player joins from her own phone and answers
+// there. This screen is only a preview: the players are simulated on this
+// device, nothing is sent anywhere. The real version needs a live relay
+// between phones (to be chosen: Supabase Realtime, Firebase or PeerJS).
+// ---------------------------------------------------------------------------
+const demoPlayers = ["Aïcha", "Grâce", "Fifamè", "Nafissa", "Mariam", "Sènami"];
+const DEMO_TIME_S = 15;
+
+function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
+  const [phase, setPhase] = useState<"lobby" | "question" | "reveal" | "board">("lobby");
+  const [code] = useState(() => String(Math.floor(1000 + Math.random() * 9000)));
+  const [joined, setJoined] = useState(0);
+  const [question, setQuestion] = useState(() => shuffled(teamQuestions)[0]);
+  const [left, setLeft] = useState(DEMO_TIME_S);
+  const [answers, setAnswers] = useState<({ choice: number; at: number } | null)[]>([]);
+  const [mine, setMine] = useState<number | null>(null);
+
+  // Lobby: simulated players join one after another.
+  useEffect(() => {
+    if (phase !== "lobby" || joined >= demoPlayers.length) return;
+    const id = window.setTimeout(() => setJoined((n) => n + 1), 600 + Math.random() * 700);
+    return () => window.clearTimeout(id);
+  }, [phase, joined]);
+
+  // Question: countdown, and each simulated player answers at a random moment.
+  useEffect(() => {
+    if (phase !== "question") return;
+    if (left <= 0 || answers.every(Boolean)) {
+      setPhase("reveal");
+      vibrate([40, 40, 80]);
+      return;
+    }
+    const id = window.setTimeout(() => setLeft((v) => v - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [phase, left, answers]);
+  useEffect(() => {
+    if (phase !== "question") return;
+    // Player 0 (Aïcha) is the one shown on the mock phone: she answers when you tap.
+    const timers = demoPlayers.slice(1).map((_, n) => n + 1).map((i) =>
+      window.setTimeout(
+        () => {
+          const right = Math.random() < 0.7;
+          const wrong = [0, 1, 2, 3].filter((c) => c !== question.correct);
+          const choice = right ? question.correct : wrong[Math.floor(Math.random() * 3)];
+          setAnswers((cur) => cur.map((a, n) => (n === i && !a ? { choice, at: Date.now() } : a)));
+        },
+        1500 + Math.random() * 9000,
+      ),
+    );
+    return () => timers.forEach((id) => window.clearTimeout(id));
+  }, [phase, question]);
+
+  const start = () => {
+    setQuestion(shuffled(teamQuestions)[0]);
+    setAnswers(demoPlayers.map(() => null));
+    setMine(null);
+    setLeft(DEMO_TIME_S);
+    setPhase("question");
+    window.scrollTo(0, 0);
+  };
+  const startedAt = useRef(0);
+  useEffect(() => {
+    if (phase === "question") startedAt.current = Date.now();
+  }, [phase]);
+  const points = (a: { choice: number; at: number } | null) => {
+    if (!a || a.choice !== question.correct) return 0;
+    const remaining = Math.max(0, DEMO_TIME_S - (a.at - startedAt.current) / 1000) / DEMO_TIME_S;
+    return Math.round((500 + 500 * remaining) / 10) * 10;
+  };
+  const answered = answers.filter(Boolean).length;
+  const ranking = demoPlayers
+    .map((name, i) => ({ name, i, score: points(answers[i] ?? null) }))
+    .sort((a, b) => b.score - a.score);
+  const best = Math.max(1, ...ranking.map((r) => r.score));
+
+  const banner = (
+    <div className="multi-banner">
+      <Icon name="spark" size={16} /> Aperçu · fonctionnalité à venir. Les joueuses sont simulées.
+    </div>
+  );
+
+  if (phase === "lobby")
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Quiz sur plusieurs téléphones" onBack={() => go("play")} />
+        <div className="page-content">
+          {banner}
+          <p className="eyebrow">Écran de l’animatrice</p>
+          <h1>Rejoignez la partie avec ce code</h1>
+          <div className="multi-code" aria-label={`Code de la partie ${code}`}>
+            {code.split("").map((d, i) => (
+              <span key={i}>{d}</span>
+            ))}
+          </div>
+          <p className="lead">
+            Chaque joueuse ouvre Ayidote sur son téléphone, touche « Rejoindre » et tape le code.
+            Pas de compte, juste un prénom ou un pseudo.
+          </p>
+          <h2>
+            {joined} joueuse{joined > 1 ? "s" : ""} connectée{joined > 1 ? "s" : ""}
+          </h2>
+          <div className="team-chips multi-players">
+            {demoPlayers.slice(0, joined).map((n, i) => (
+              <span key={n} style={{ background: teamsAll[i % teamsAll.length].color }}>
+                {n}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="sticky-action">
+          <Button onClick={start} icon="arrow" disabled={joined < 2}>
+            Lancer la question
+          </Button>
+        </div>
+      </section>
+    );
+
+  if (phase === "board")
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Classement" onBack={() => go("play")} />
+        <div className="page-content">
+          {banner}
+          <ol className="team-board">
+            {ranking.map((r, i) => (
+              <li key={r.name}>
+                <span className="team-rank">{i + 1}</span>
+                <div>
+                  <strong>{r.name}</strong>
+                  <i>
+                    <b
+                      style={{
+                        width: `${(r.score / best) * 100}%`,
+                        background: teamsAll[r.i % teamsAll.length].color,
+                      }}
+                    />
+                  </i>
+                </div>
+                <span className="team-score">{r.score}</span>
+              </li>
+            ))}
+          </ol>
+          <div className="tip">
+            <Icon name="shield" />
+            <p>
+              <strong>Dans la vraie version</strong>
+              <br />
+              Chaque joueuse voit son propre score sur son téléphone, et seul le prénom choisi est
+              partagé, le temps de la partie.
+            </p>
+          </div>
+          <Button onClick={start} icon="arrow">
+            Une autre question
+          </Button>
+          <Button variant="secondary" onClick={() => go("equipes")}>
+            Jouer sur un seul écran
+          </Button>
+        </div>
+      </section>
+    );
+
+  return (
+    <section className="screen team-quiz">
+      <header className="team-bar">
+        <button className="icon-button" onClick={() => go("play")} aria-label="Quitter l’aperçu">
+          <Icon name="back" />
+        </button>
+        <strong>
+          {phase === "question" ? `${answered}/${demoPlayers.length} ont répondu` : "Réponse"}
+        </strong>
+        <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
+          {phase === "question" ? left : <Icon name="check" size={18} />}
+        </span>
+      </header>
+      {phase === "question" && (
+        <div className="team-time" aria-hidden>
+          <i style={{ width: `${(left / DEMO_TIME_S) * 100}%` }} />
+        </div>
+      )}
+      <div className="page-content">
+        {banner}
+        <p className="eyebrow">Écran de l’animatrice</p>
+        <h1 className="team-question">{question.q}</h1>
+        <div className="team-answers">
+          {question.a.map((text, i) => (
+            <div
+              key={text}
+              className={`team-answer ${phase === "reveal" ? (i === question.correct ? "right" : "dim") : ""}`}
+              style={{ background: answerColors[i] }}
+            >
+              <b>{"ABCD"[i]}</b>
+              <span>{text}</span>
+              {phase === "reveal" && (
+                <small className="multi-count">
+                  {answers.filter((a) => a?.choice === i).length}
+                </small>
+              )}
+            </div>
+          ))}
+        </div>
+        {phase === "question" ? (
+          <div className="multi-phone">
+            <p className="eyebrow">Et sur le téléphone d’une joueuse</p>
+            <div className="multi-phone-frame">
+              <small>Aïcha · Question 1</small>
+              <div className="multi-pad">
+                {[0, 1, 2, 3].map((c) => (
+                  <button
+                    key={c}
+                    style={{ background: answerColors[c] }}
+                    className={mine === c ? "picked" : mine !== null ? "dim" : ""}
+                    onClick={() => {
+                      if (mine !== null) return;
+                      setMine(c);
+                      setAnswers((cur) =>
+                        cur.map((a, n) => (n === 0 && !a ? { choice: c, at: Date.now() } : a)),
+                      );
+                      vibrate(25);
+                    }}
+                    aria-label={`Répondre ${"ABCD"[c]}`}
+                  >
+                    {"ABCD"[c]}
+                  </button>
+                ))}
+              </div>
+              <small>{mine === null ? "Touche ta réponse" : "Réponse envoyée ✓"}</small>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="team-why">
+              <strong>Bonne réponse : {"ABCD"[question.correct]}</strong>
+              <p>{question.why}</p>
+            </div>
+            <Button onClick={() => setPhase("board")} icon="arrow">
+              Voir le classement
+            </Button>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** Two speech bubbles: one checked, one flagged. Dots show the group's score. */
 function VopArt({ lit, total }: { lit?: number; total?: number }) {
   return (
@@ -3132,6 +3380,17 @@ function Play({
           <span>
             <strong>Vrai ou piège ?</strong>
             <small>Un message s’affiche, le groupe décide ensemble</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Bientôt</h2>
+        <button className="wide-link soon" onClick={() => go("multi")}>
+          <span className="link-icon">
+            <Icon name="spark" />
+          </span>
+          <span>
+            <strong>Le grand quiz, chacune sur son téléphone</strong>
+            <small>Comme un quiz en direct : un code, et toutes répondent en même temps. Voir l’aperçu</small>
           </span>
           <Icon name="chevron" />
         </button>

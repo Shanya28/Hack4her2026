@@ -5170,3 +5170,97 @@ textarea {
     grid-template-columns: 66px minmax(0, 1fr);
   }
 }
+
+/* Coming soon: multi-phone quiz preview */
+.multi-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--sand);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+.multi-code {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+.multi-code span {
+  width: 56px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 34px;
+  font-weight: 800;
+}
+.multi-players span {
+  animation: multi-pop 0.35s ease-out;
+}
+@keyframes multi-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+.team-answer {
+  position: relative;
+}
+.multi-count {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.multi-phone {
+  margin-top: 22px;
+}
+.multi-phone-frame {
+  max-width: 230px;
+  margin: 8px auto 0;
+  padding: 14px;
+  border: 6px solid var(--navy);
+  border-radius: 28px;
+  background: var(--white);
+  display: grid;
+  gap: 10px;
+  text-align: center;
+  color: var(--muted);
+}
+.multi-pad {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.multi-pad button {
+  height: 64px;
+  border: 0;
+  border-radius: 14px;
+  color: white;
+  font-size: 22px;
+  font-weight: 800;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.multi-pad button.picked {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px var(--ink);
+}
+.multi-pad button.dim {
+  opacity: 0.35;
+}
+.wide-link.soon {
+  border: 2px dashed var(--mist);
+}
+@media (prefers-reduced-motion: reduce) {
+  .multi-players span {
+    animation: none;
+  }
+}
