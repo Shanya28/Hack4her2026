@@ -1041,7 +1041,7 @@ function Language({
                 {x !== "fr" && (
                   <small>
                     {recordedLangs.includes(x)
-                      ? "Voix enregistrée · texte en français"
+                      ? "Voix de synthèse à l’essai · texte en français"
                       : "En préparation"}
                   </small>
                 )}
@@ -3290,7 +3290,7 @@ function Settings({
             <strong>Langue</strong>
             <small>
               {lang !== "fr"
-                ? `${langNames[lang]} · voix enregistrée, texte en français`
+                ? `${langNames[lang]} · voix de synthèse à l’essai, texte en français`
                 : choices.length > 1
                   ? "Français · toucher pour changer"
                   : "Français · fon et mina bientôt"}
