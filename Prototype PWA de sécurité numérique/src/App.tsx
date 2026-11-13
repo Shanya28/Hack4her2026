@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
 import teamQuizContent from "./content/quiz-equipes.json";
 import vopContent from "./content/vrai-ou-piege.json";
+import defisContent from "./content/defis.json";
 
 type Screen =
   | "welcome"
@@ -15,6 +16,7 @@ type Screen =
   | "vop"
   | "equipes"
   | "multi"
+  | "defis"
   | "mot"
   | "fake-login"
   | "phishing"
@@ -1013,6 +1015,7 @@ function App() {
   else if (screen === "vop") content = <VraiOuPiege go={go} timer={timer} />;
   else if (screen === "equipes") content = <QuizEquipes go={go} />;
   else if (screen === "multi") content = <QuizMultiApercu go={go} />;
+  else if (screen === "defis") content = <DefisGroupe go={go} />;
   else if (screen === "scenarios")
     content = (
       <Scenarios
@@ -1917,9 +1920,9 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="shield" />
         <span>Réflexes</span>
       </button>
-      <button className={active === "help" ? "active" : ""} onClick={() => go("help")}>
-        <Icon name="help" />
-        <span>Aide</span>
+      <button className={active === "settings" ? "active" : ""} onClick={() => go("settings")}>
+        <Icon name="settings" />
+        <span>Paramètres</span>
       </button>
     </nav>
   );
@@ -3425,6 +3428,191 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// « Défis en groupe » : one phone for the group. Each card is a true/false, a
+// question to answer aloud, a situation to discuss or an action to do
+// together on everyone's phone. The group decides if it succeeded: no one is
+// scored individually. Content: src/content/defis.json.
+// ---------------------------------------------------------------------------
+type Defi = {
+  theme: "loi" | "attitudes" | "alerte";
+  type: "vrai-faux" | "question" | "situation" | "action";
+  prompt: string;
+  answer?: boolean;
+  reveal: string;
+};
+const defis = defisContent as Defi[];
+const defiThemes: { id: Defi["theme"] | "tout"; icon: IconName; title: string; text: string }[] = [
+  { id: "loi", icon: "book", title: "Le Code du numérique", text: "Ce que dit la loi au Bénin" },
+  { id: "attitudes", icon: "shield", title: "Les bonnes attitudes", text: "Réagir, aider, se protéger" },
+  { id: "alerte", icon: "warning", title: "Le bouton d’alerte", text: "Quitter vite, alerter, qui appeler" },
+  { id: "tout", icon: "spark", title: "Tout mélanger", text: "Un peu de chaque" },
+];
+const defiTypes: Record<Defi["type"], string> = {
+  "vrai-faux": "Vrai ou faux ?",
+  question: "Question",
+  situation: "Que faites-vous ?",
+  action: "Défi action",
+};
+const DEFIS_PAR_PARTIE = 6;
+
+function DefisGroupe({ go }: { go: (s: Screen) => void }) {
+  const [deck, setDeck] = useState<Defi[]>([]);
+  const [index, setIndex] = useState(0);
+  const [revealed, setRevealed] = useState(false);
+  const [guess, setGuess] = useState<boolean | null>(null);
+  const [won, setWon] = useState<boolean[]>([]);
+  const start = (theme: Defi["theme"] | "tout") => {
+    const pool = theme === "tout" ? defis : defis.filter((d) => d.theme === theme);
+    setDeck(shuffled(pool).slice(0, DEFIS_PAR_PARTIE));
+    setIndex(0);
+    setWon([]);
+    setRevealed(false);
+    setGuess(null);
+    window.scrollTo(0, 0);
+  };
+  const next = (success: boolean) => {
+    setWon([...won, success]);
+    setIndex(index + 1);
+    setRevealed(false);
+    setGuess(null);
+    vibrate(success ? [30, 40, 60] : 25);
+    window.scrollTo(0, 0);
+  };
+  const defi = deck[index];
+
+  if (!deck.length)
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Défis en groupe" onBack={() => go("play")} />
+        <div className="page-content">
+          <p className="eyebrow">En groupe · un seul téléphone</p>
+          <h1>Prêtes à relever les défis ?</h1>
+          <p className="lead">
+            {DEFIS_PAR_PARTIE} défis : des vrai ou faux, des questions, des situations à discuter et
+            des actions à faire ensemble sur vos téléphones. Le groupe décide s’il a réussi.
+          </p>
+          {defiThemes.map((t) => (
+            <button className="wide-link" key={t.id} onClick={() => start(t.id)}>
+              <span className="link-icon">
+                <Icon name={t.icon} />
+              </span>
+              <span>
+                <strong>{t.title}</strong>
+                <small>{t.text}</small>
+              </span>
+              <Icon name="chevron" />
+            </button>
+          ))}
+          <div className="tip">
+            <Icon name="shield" />
+            <p>
+              <strong>On joue ensemble, pas les unes contre les autres.</strong>
+              <br />
+              Personne n’a à raconter sa propre histoire.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+
+  if (!defi) {
+    const score = won.filter(Boolean).length;
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Défis en groupe" onBack={() => go("play")} />
+        <div className="page-content">
+          <div className="defi-stars" aria-label={`${score} défis réussis sur ${won.length}`}>
+            {won.map((w, i) => (
+              <span key={i} className={w ? "on" : ""}>
+                ★
+              </span>
+            ))}
+          </div>
+          <h1>
+            {score} défi{score > 1 ? "s" : ""} réussi{score > 1 ? "s" : ""} sur {won.length}
+          </h1>
+          <p className="lead">
+            {score === won.length
+              ? "Bravo, le groupe est prêt à se protéger et à protéger les autres."
+              : "Chaque défi discuté est un réflexe de plus. Rejouez pour les relever tous."}
+          </p>
+          <Button onClick={() => setDeck([])} icon="arrow">
+            Choisir d’autres défis
+          </Button>
+          <Button variant="secondary" onClick={() => go("help")}>
+            Où trouver de l’aide
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  const isVF = defi.type === "vrai-faux";
+  return (
+    <section className="screen team-quiz">
+      <TopBar
+        title={`Défi ${index + 1}/${deck.length}`}
+        onBack={() => setDeck([])}
+        action={<QuickExitButton />}
+      />
+      <div className="page-content">
+        <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
+        <h1 className="team-question">{defi.prompt}</h1>
+        {isVF && !revealed && (
+          <div className="defi-vf">
+            {[true, false].map((v) => (
+              <button
+                key={String(v)}
+                onClick={() => {
+                  setGuess(v);
+                  setRevealed(true);
+                }}
+              >
+                {v ? "Vrai" : "Faux"}
+              </button>
+            ))}
+          </div>
+        )}
+        {!isVF && !revealed && (
+          <>
+            <p className="team-help">
+              {defi.type === "action"
+                ? "Faites-le ensemble, puis regardez l’explication."
+                : "Discutez entre vous, puis découvrez la réponse."}
+            </p>
+            <Button onClick={() => setRevealed(true)} icon="eye">
+              {defi.type === "action" ? "C’est fait, voir l’explication" : "Voir la réponse"}
+            </Button>
+          </>
+        )}
+        {revealed && (
+          <>
+            <div className={`team-why ${isVF ? (guess === defi.answer ? "good" : "miss") : ""}`}>
+              {isVF && <strong>{guess === defi.answer ? "Bien vu !" : "Pas tout à fait."}</strong>}
+              <p>{defi.reveal}</p>
+            </div>
+            {isVF ? (
+              <Button onClick={() => next(guess === defi.answer)} icon="arrow">
+                Défi suivant
+              </Button>
+            ) : (
+              <>
+                <Button onClick={() => next(true)} icon="check">
+                  Défi réussi
+                </Button>
+                <Button variant="secondary" onClick={() => next(false)}>
+                  Pas encore, on passe
+                </Button>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** Two speech bubbles: one checked, one flagged. Dots show the group's score. */
 function VopArt({ lit, total }: { lit?: number; total?: number }) {
   return (
@@ -3487,6 +3675,16 @@ function Play({
           <span>
             <strong>Vrai ou piège ?</strong>
             <small>Un message s’affiche, le groupe décide ensemble</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("defis")}>
+          <span className="link-icon orange">
+            <Icon name="check" />
+          </span>
+          <span>
+            <strong>Défis en groupe</strong>
+            <small>La loi, les bons réflexes, le bouton d’alerte : relevez les défis ensemble</small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -3729,7 +3927,7 @@ function Resources({ go }: { go: (s: Screen) => void }) {
           Trouver de l’aide
         </Button>
       </div>
-      <BottomNav active="help" go={go} />
+      <BottomNav active="settings" go={go} />
     </section>
   );
 }
@@ -3858,7 +4056,7 @@ const helpFriendDont = [
 function Help({ go }: { go: (s: Screen) => void }) {
   return (
     <section className="screen with-nav resources">
-      <TopBar title="Trouver de l’aide" onBack={() => go("home")} />
+      <TopBar title="Trouver de l’aide" onBack={() => go("settings")} />
       <div className="page-content">
         <div className="resource-title">
           <span>
@@ -4007,7 +4205,7 @@ function Help({ go }: { go: (s: Screen) => void }) {
           Voir les gestes à faire toi-même
         </Button>
       </div>
-      <BottomNav active="help" go={go} />
+      <BottomNav active="settings" go={go} />
     </section>
   );
 }
@@ -4364,9 +4562,19 @@ function Settings({
   notify: (s: string) => void;
 }) {
   return (
-    <section className="screen settings-page">
+    <section className="screen settings-page with-nav">
       <TopBar title="Paramètres" onBack={() => go("home")} />
       <div className="page-content">
+        <button className="help-shortcut" onClick={() => go("help")}>
+          <span>
+            <Icon name="help" size={24} />
+          </span>
+          <div>
+            <strong>Trouver de l’aide</strong>
+            <small>Numéros utiles, structures, tes droits au Bénin</small>
+          </div>
+          <Icon name="chevron" />
+        </button>
         <div className="settings-profile">
           <div className="welcome-mark small">
             <span />
@@ -4558,6 +4766,7 @@ function Settings({
         </div>
         <p className="version">Ayidote · Prototype 1.0</p>
       </div>
+      <BottomNav active="settings" go={go} />
     </section>
   );
 }

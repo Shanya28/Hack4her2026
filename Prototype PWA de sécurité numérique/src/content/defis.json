@@ -1,0 +1,141 @@
+[
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Au Bénin, diffuser la photo intime de quelqu'un sans son accord est puni par la loi.",
+    "answer": true,
+    "reveal": "Vrai. C'est une violence punie par la loi, même si la photo avait été envoyée par confiance."
+  },
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Si tu as envoyé la photo toi-même, tu ne peux plus porter plainte.",
+    "answer": false,
+    "reveal": "Faux. Envoyer une photo à quelqu'un ne l'autorise jamais à la diffuser. Tu peux porter plainte."
+  },
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Créer un faux compte au nom de quelqu'un, c'est juste une blague : la loi ne dit rien.",
+    "answer": false,
+    "reveal": "Faux. Le Code du numérique punit l'usurpation d'identité en ligne."
+  },
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Le harcèlement en ligne est puni au Bénin.",
+    "answer": true,
+    "reveal": "Vrai. Insulter, menacer ou humilier quelqu'un de façon répétée en ligne est une infraction."
+  },
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Pour porter plainte, il faut payer.",
+    "answer": false,
+    "reveal": "Faux. Le dépôt de plainte est gratuit. Méfie-toi de toute personne qui te demande de l'argent pour « t'aider »."
+  },
+  {
+    "theme": "loi",
+    "type": "vrai-faux",
+    "prompt": "Pendant la procédure, une victime peut demander que son identité soit protégée.",
+    "answer": true,
+    "reveal": "Vrai. La victime a droit à l'information, à la protection, à l'accompagnement, à la réparation et à la protection de son identité."
+  },
+  {
+    "theme": "loi",
+    "type": "question",
+    "prompt": "Quel service est spécialisé dans les crimes en ligne au Bénin, et quel est son numéro ?",
+    "reveal": "Le Centre National d'Investigations Numériques (CNIN), au 151."
+  },
+  {
+    "theme": "loi",
+    "type": "question",
+    "prompt": "Comment s'appelle la loi qui encadre Internet et protège les données au Bénin ?",
+    "reveal": "Le Code du numérique : loi n° 2017-20, modifiée par la loi n° 2020-35 du 6 janvier 2021."
+  },
+  {
+    "theme": "attitudes",
+    "type": "situation",
+    "prompt": "Dans un groupe, quelqu'un partage la vidéo intime d'une fille de l'école. Que faites-vous ?",
+    "reveal": "On ne la partage pas, on la supprime, on signale le message et on soutient la fille visée. Repartager, même pour dénoncer, fait grandir la violence."
+  },
+  {
+    "theme": "attitudes",
+    "type": "situation",
+    "prompt": "Un commentaire méchant arrive sous ta vidéo. Tu as envie de répondre tout de suite. Que faire ?",
+    "reveal": "Faire une pause avant de répondre, faire une capture, puis bloquer et signaler. Une réponse à chaud nourrit l'escalade."
+  },
+  {
+    "theme": "attitudes",
+    "type": "situation",
+    "prompt": "Une amie vous confie qu'on la fait chanter avec une photo. Comment l'aider ?",
+    "reveal": "La croire, respecter son rythme, l'aider à garder les preuves et l'encourager à chercher de l'aide. Éviter de minimiser, de la juger ou de la forcer à porter plainte."
+  },
+  {
+    "theme": "attitudes",
+    "type": "situation",
+    "prompt": "Ton copain veut ton mot de passe « pour prouver que tu n'as rien à cacher ». Que réponds-tu ?",
+    "reveal": "Non. Exiger tes codes, c'est du contrôle. L'amour ne se prouve pas en donnant ses mots de passe."
+  },
+  {
+    "theme": "attitudes",
+    "type": "question",
+    "prompt": "Citez les 4 questions à se poser avant de cliquer sur un lien.",
+    "reveal": "Est-ce que je connais l'expéditeur ? L'offre est-elle trop belle ? L'adresse du site est-elle correcte ? Me demande-t-on un mot de passe ou de l'argent ?"
+  },
+  {
+    "theme": "attitudes",
+    "type": "action",
+    "prompt": "Chacune active la vérification en deux étapes sur sa messagerie. Aidez-vous entre vous !",
+    "reveal": "Dans les paramètres de la messagerie : Compte › Vérification en deux étapes › Activer. Même avec ton code SMS, personne ne pourra prendre ton compte."
+  },
+  {
+    "theme": "attitudes",
+    "type": "action",
+    "prompt": "Chacune regarde son profil comme le voit un inconnu. Qu'est-ce qui est visible ? Réglez vos publications sur « Amis ».",
+    "reveal": "Numéro, position, photos anciennes : ce qu'un inconnu voit peut servir à te retrouver ou à te manipuler."
+  },
+  {
+    "theme": "attitudes",
+    "type": "action",
+    "prompt": "Audit éclair : vos téléphones ont-ils un code de verrouillage ? La localisation des applications est-elle coupée ?",
+    "reveal": "Un téléphone verrouillé protège tes messages si tu le perds. Une position partagée en direct permet de te suivre."
+  },
+  {
+    "theme": "alerte",
+    "type": "vrai-faux",
+    "prompt": "L'alerte discrète d'Ayidote prévient vraiment tes contacts.",
+    "answer": false,
+    "reveal": "Faux. C'est une simulation pour s'entraîner : elle n'envoie rien. En danger immédiat, appelle le 117."
+  },
+  {
+    "theme": "alerte",
+    "type": "question",
+    "prompt": "Quel numéro appeler en cas de danger immédiat ? Et pour une enfant ou une ado ?",
+    "reveal": "Le 117, Police secours, jour et nuit. Pour une mineure : le 138, la ligne d'assistance aux enfants."
+  },
+  {
+    "theme": "alerte",
+    "type": "situation",
+    "prompt": "Qui choisir comme contact d'alerte, et que faut-il lui dire à l'avance ?",
+    "reveal": "Une personne de confiance, joignable, qui saura quoi faire, et jamais la personne qui te fait peur. Préviens-la à l'avance et convenez d'un mot code."
+  },
+  {
+    "theme": "alerte",
+    "type": "action",
+    "prompt": "Trouvez ensemble le bouton « Quitter » d'Ayidote. Que se passe-t-il quand on le touche ?",
+    "reveal": "Ayidote se ferme et laisse place à une recherche météo. Le bouton Retour ne ramène pas l'application."
+  },
+  {
+    "theme": "alerte",
+    "type": "action",
+    "prompt": "Ouvrez le carnet discret depuis l'accueil, puis configurez l'alerte discrète dans les paramètres.",
+    "reveal": "Le carnet ressemble à une simple note. Sur Android, un appui long sur l'icône d'Ayidote ouvre aussi « Mon carnet »."
+  },
+  {
+    "theme": "alerte",
+    "type": "action",
+    "prompt": "Chacune enregistre le 117, le 114, le 138 et le 151 dans son téléphone, sous des noms neutres si besoin.",
+    "reveal": "117 : Police secours. 114 : Institut National de la Femme. 138 : aide aux enfants. 151 : CNIN, crimes en ligne."
+  }
+]

@@ -5537,3 +5537,88 @@ textarea {
 .quick-exit {
   color: var(--brown);
 }
+
+/* With the beige/orange palette, white on orange is too pale to read. */
+.quick-exit {
+  color: var(--ink);
+}
+
+/* Settings: help first */
+.help-shortcut {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 18px;
+  padding: 14px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--orange-main);
+  color: var(--ink);
+  text-align: left;
+}
+.help-shortcut > span {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff66;
+}
+.help-shortcut strong {
+  display: block;
+  font-size: 16px;
+}
+.help-shortcut small {
+  font-size: 13px;
+}
+
+/* Défis en groupe */
+.defi-badge {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--beige-2);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.defi-badge.action {
+  background: var(--orange-soft);
+}
+.defi-vf {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+.defi-vf button {
+  height: 88px;
+  border: 0;
+  border-radius: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--orange-soft);
+}
+.defi-vf button + button {
+  background: var(--beige-2);
+}
+.team-why.good {
+  box-shadow: inset 4px 0 0 var(--orange-main);
+}
+.defi-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0 18px;
+  font-size: 34px;
+  color: var(--beige-2);
+}
+.defi-stars .on {
+  color: var(--orange-main);
+}
