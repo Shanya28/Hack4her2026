@@ -327,6 +327,141 @@
       #veil.on {
         opacity: 1;
       }
+      /* Phone home screen used by the discreet alert scene */
+      #os {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(160deg, #6b564a, #49372d 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+      }
+      #os.on {
+        opacity: 1;
+      }
+      .os-grid {
+        position: absolute;
+        left: 7%;
+        right: 7%;
+        top: 13%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        row-gap: 30px;
+        justify-items: center;
+      }
+      .os-grid i,
+      .os-dock i {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        background: #ffffff26;
+      }
+      .os-grid b {
+        position: relative;
+        width: 58px;
+        height: 58px;
+        transition: transform 0.4s ease;
+      }
+      /* #zoom img hides and stretches the captures: undo it for these icons */
+      #zoom #os img {
+        position: static;
+        inset: auto;
+        opacity: 1;
+        transition: none;
+      }
+      #zoom #os .os-grid b img {
+        width: 58px;
+        height: 58px;
+      }
+      #zoom #os .os-menu img {
+        width: 34px;
+        height: 34px;
+      }
+      .os-grid b img {
+        width: 58px;
+        height: 58px;
+        border-radius: 16px;
+        display: block;
+      }
+      .os-grid b span {
+        position: absolute;
+        left: 50%;
+        top: 64px;
+        transform: translateX(-50%);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      #os.press .os-grid b {
+        transform: scale(1.12);
+      }
+      #os.press .os-grid i,
+      #os.press .os-dock i {
+        opacity: 0.35;
+        transition: opacity 0.4s ease;
+      }
+      .os-menu {
+        position: absolute;
+        left: 22%;
+        right: 22%;
+        top: 62%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border-radius: 18px;
+        padding: 12px 16px;
+        box-shadow: 0 14px 30px #0005;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--brown);
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+      }
+      .os-menu img {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+      }
+      #os.menu .os-menu {
+        opacity: 1;
+        transform: none;
+      }
+      .os-dock {
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        bottom: 3%;
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+        border-radius: 26px;
+        background: #ffffff1f;
+      }
+      /* Long press: the ring stays down for a moment */
+      #tap.hold {
+        animation: hold 1.5s ease-out;
+      }
+      @keyframes hold {
+        0% {
+          opacity: 0;
+          transform: scale(1.6);
+        }
+        20% {
+          opacity: 1;
+          transform: scale(0.85);
+        }
+        80% {
+          opacity: 1;
+          transform: scale(0.85);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.4);
+        }
+      }
       #tap {
         position: absolute;
         width: 76px;
@@ -442,6 +577,17 @@
             <img id="imgA" alt="" />
             <img id="imgB" alt="" />
             <div id="veil"></div>
+            <!-- Phone home screen (illustration of the system, not an app screen) -->
+            <div id="os">
+              <div class="os-grid">
+                <i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i>
+                <i></i><i></i><b><img src="demo-assets/icon-app.png" alt="" /><span>Ayìdótɛ́</span></b><i></i>
+              </div>
+              <div class="os-menu"><img src="demo-assets/icon-carnet.png" alt="" /><span>Mon carnet</span></div>
+              <div class="os-dock"><i></i><i></i><i></i><i></i></div>
+            </div>
             <div id="tap"></div>
           </div>
         </div>
@@ -491,14 +637,15 @@
         "welcome", "home", "jouer", "histoires", "story-1a", "story-1b", "story-1c", "story-2a",
         "fake-0", "fake-1", "fake-2", "fake-3", "phishing", "story-5a", "story-5b", "story-5d",
         "vop-intro", "vop-2", "vop-3", "vop-4", "vop-voted", "vop-reveal", "reflexes", "aide",
-        "parametres",
+        "parametres", "alerte-carnet-0", "alerte-carnet-1", "alerte-resultat", "alerte-setup-1",
+        "icon-app", "icon-carnet",
       ];
       // Where each real tap landed, in the app's own 390 x 844 coordinates.
       const TAPS = {
         continuer: [147, 768], jouerTab: [148, 802], histoire: [205, 477], choix: [195, 732],
         continuerHistoire: [195, 794], album: [195, 742], indice1: [198, 94], indice2: [195, 285],
         indice3: [195, 456], preuves: [195, 787], discute: [195, 794], piege: [288, 628],
-        valider: [195, 742],
+        valider: [195, 742], icone: [237, 372], carnet: [195, 546], contact: [195, 334],
       };
 
       // ---- Stage helpers ----
@@ -520,12 +667,16 @@
         front.classList.remove("on");
         [front, back] = [back, front];
       };
+      const press = (key) => {
+        tap(key);
+        $("tap").classList.replace("go", "hold");
+      };
       const tap = (key) => {
         const [x, y] = TAPS[key];
         const t = $("tap");
         t.style.left = `${(x / 390) * 100}%`;
         t.style.top = `${(y / 844) * 100}%`;
-        t.classList.remove("go");
+        t.classList.remove("go", "hold");
         void t.offsetWidth;
         t.classList.add("go");
       };
@@ -606,24 +757,36 @@
         [68.4, () => screen("vop-voted")],
         [69.4, () => tap("valider")],
         [70.0, () => screen("vop-reveal")],
+        // 7. Alerte discrète
+        [73.4, () => { show("os"); screen("alerte-carnet-0"); caption("Alerte discrète", "Un geste, en silence", "Un appui long sur l’icône de l’application."); }],
+        [75.4, () => { press("icone"); $("os").classList.add("press"); }],
+        [76.6, () => $("os").classList.add("menu")],
+        [77.0, () => caption("Alerte discrète", "« Mon carnet »", "Un raccourci au nom anodin, préparé à l’avance.")],
+        [78.6, () => tap("carnet")],
+        [79.2, () => { $("os").classList.remove("on", "press", "menu"); caption("Alerte discrète", "Une page anodine", "À l’écran : une simple liste de courses. Rien n’attire l’attention."); }],
+        [82.6, () => screen("alerte-carnet-1")],
+        [83.4, () => { screen("alerte-resultat", true); caption("En arrière-plan", "Un proche est prévenu", "Le message part vers la personne choisie, avec ta position en temps réel."); }],
+        [88.0, () => { screen("alerte-setup-1", true); caption("Préparée à l’avance", "Tes proches, ton message", "Tu les choisis une seule fois, dans l’application."); }],
+        [89.0, () => tap("contact")],
+        [91.0, () => caption("Aujourd’hui", "Encore une simulation", "Rien n’est envoyé dans le prototype. L’envoi réel et la position en direct sont la prochaine étape.")],
         // 7. Réflexes et aide
-        [73.4, () => { screen("reflexes", true); caption("À garder", "Six réflexes", "Une fiche qui se débloque en jouant, consultable hors ligne."); }],
-        [77.0, () => { screen("aide", true); show("veil"); caption("Besoin d’aide", "Ne pas rester seule", "L’application oriente vers une personne de confiance et les structures compétentes."); }],
+        [94.4, () => { screen("reflexes", true); caption("À garder", "Six réflexes", "Une fiche qui se débloque en jouant, consultable hors ligne."); }],
+        [98.0, () => { screen("aide", true); show("veil"); caption("Besoin d’aide", "Ne pas rester seule", "L’application oriente vers une personne de confiance et les structures compétentes."); }],
         // 8. Accessible
-        [80.6, () => { show("veil", false); screen("parametres", true); caption("Accessible", "Français, fon, yoruba", "Un mode écoute pour jouer sans lire. Fonctionne sans réseau."); }],
-        [84.6, () => { demo(false); }],
+        [101.6, () => { show("veil", false); screen("parametres", true); caption("Accessible", "Français, fon, yoruba", "Un mode écoute pour jouer sans lire. Fonctionne sans réseau."); }],
+        [105.6, () => { demo(false); }],
         // 9. Impact
-        [85.4, () => show("impact")],
-        [85.9, () => reveal("#impact .card", 0)],
-        [86.5, () => reveal("#impact .card", 1)],
-        [87.1, () => reveal("#impact .card", 2)],
-        [90.6, () => show("impact", false)],
+        [106.4, () => show("impact")],
+        [106.9, () => reveal("#impact .card", 0)],
+        [107.5, () => reveal("#impact .card", 1)],
+        [108.1, () => reveal("#impact .card", 2)],
+        [111.6, () => show("impact", false)],
         // 10. Fin
-        [91.4, () => show("end")],
+        [112.4, () => show("end")],
       ];
-      // The whole film is played slightly faster than written, to stay under 90 seconds.
+      // The whole film is played slightly faster than written.
       T.forEach((step) => (step[0] *= 0.92));
-      const TOTAL = 89;
+      const TOTAL = 109;
 
       // ---- Clock: pausable, restartable ----
       let elapsed = 0;
@@ -636,6 +799,7 @@
         document.querySelectorAll(".on").forEach((el) => el.classList.remove("on"));
         zoom(1, 0);
         $("zoom").style.transform = "";
+        $("os").classList.remove("press", "menu");
       };
       const frame = (now) => {
         if (playing) {
