@@ -4326,3 +4326,8 @@ button.pulse {
   color: var(--ink);
   margin: 4px 0 0;
 }
+
+/* Home: a single "today" card instead of repeating the Jouer tab */
+.vop-card.today-card > span:not(.eyebrow):not(.vop-card-cta) {
+  max-width: 100%;
+}

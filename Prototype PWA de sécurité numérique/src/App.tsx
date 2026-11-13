@@ -884,6 +884,7 @@ function App() {
           notify("Fiche enregistrée sur ce téléphone");
         }}
         onBack={() => go("home")}
+        go={go}
       />
     );
   else if (screen === "progress")
@@ -1210,7 +1211,7 @@ function Home({
   unlocked: number;
 }) {
   const total = scenario.steps.length;
-  const finished = story >= total;
+  const inStory = story > 0 && story < total;
   return (
     <section className="screen with-nav">
       <div className="home-header">
@@ -1228,48 +1229,42 @@ function Home({
         </button>
       </div>
       <div className="page-content home-content">
-        <button className="vop-card" onClick={() => go("vop")}>
-          <VopArt />
-          <span className="eyebrow">À jouer en groupe</span>
-          <strong>Vrai ou piège ?</strong>
-          <span>Un message s’affiche, le groupe décide ensemble.</span>
-          <span className="vop-card-cta">
-            Jouer en groupe <Icon name="arrow" size={18} />
-          </span>
-        </button>
-        <section className="option-card">
-          <h2>Que veux-tu faire ?</h2>
-          <div>
-            <button className="option-tile" onClick={() => go(finished ? "scenarios" : "story")}>
-              <span className="option-art story">
-                <Portrait person={person} />
-                <i />
-              </span>
-              <span className="option-label">
-                {finished ? "Une histoire" : story ? "Reprendre" : "Une histoire"}
-                <em>
-                  <Icon name="arrow" size={15} />
-                </em>
-              </span>
-            </button>
-            <button className="option-tile" onClick={() => go("resources")}>
-              <span className="option-art shield">
-                <svg viewBox="0 0 120 120" aria-hidden>
-                  <ellipse cx="34" cy="84" rx="13" ry="26" transform="rotate(-28 34 84)" fill="var(--sage)" opacity="0.55" />
-                  <ellipse cx="90" cy="80" rx="12" ry="24" transform="rotate(30 90 80)" fill="var(--sage)" opacity="0.4" />
-                  <path d="M60 22 92 34v27c0 21-13 37-32 46-19-9-32-25-32-46V34Z" fill="var(--coral)" />
-                  <path d="m46 63 10 10 20-21" fill="none" stroke="var(--cream)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="option-label">
-                Mes réflexes
-                <em>
-                  <Icon name="arrow" size={15} />
-                </em>
-              </span>
-            </button>
-          </div>
-        </section>
+        {/* One job per tab: the home screen only shows today's step and where
+            she stands. Every game lives in "Jouer", the reflexes in "Réflexes". */}
+        {inStory ? (
+          <button className="vop-card today-card" onClick={() => go("story")}>
+            <span className="eyebrow">Ton histoire en cours</span>
+            <strong>{scenario.title}</strong>
+            <span>
+              Situation {story + 1} sur {total}. Reprends là où tu t’es arrêtée.
+            </span>
+            <span className="vop-card-cta">
+              Reprendre <Icon name="arrow" size={18} />
+            </span>
+          </button>
+        ) : daily.mot && !wordOpen ? (
+          <button className="vop-card today-card" onClick={() => go("mot")}>
+            <span className="eyebrow">Aujourd’hui</span>
+            <strong>Le mot du jour</strong>
+            <span>Trouve-le pour ouvrir l’histoire du jour.</span>
+            <span className="vop-card-cta">
+              Deviner le mot <Icon name="arrow" size={18} />
+            </span>
+          </button>
+        ) : (
+          <button className="vop-card today-card" onClick={() => onPick(daily.id)}>
+            <span className="eyebrow">
+              {daily.mot ? `Mot du jour : ${daily.mot.mot}` : "Aujourd’hui"}
+            </span>
+            <strong>L’histoire du jour</strong>
+            <span>
+              « {daily.title} » · {daily.summary}
+            </span>
+            <span className="vop-card-cta">
+              Jouer <Icon name="arrow" size={18} />
+            </span>
+          </button>
+        )}
         <section className="journey-card">
           <h2>Ton parcours</h2>
           <div>
@@ -1283,54 +1278,15 @@ function Home({
               <strong>{unlocked}/6</strong>
               réflexes
             </span>
-            <button onClick={() => go("guide")}>
-              Ma fiche <Icon name="arrow" size={15} />
-            </button>
           </div>
         </section>
-        {daily.mot && !wordOpen ? (
-          <button className="wide-link mot-link" onClick={() => go("mot")}>
-            <span className="link-icon orange">
-              <Icon name="lock" />
-            </span>
-            <span>
-              <strong>Le mot du jour</strong>
-              <small>Trouve-le pour ouvrir l’histoire du jour</small>
-            </span>
-            <Icon name="chevron" />
-          </button>
-        ) : (
-          <button className="wide-link" onClick={() => onPick(daily.id)}>
-            <span className="link-icon orange">
-              <Icon name="spark" />
-            </span>
-            <span>
-              <strong>L’histoire du jour</strong>
-              <small>
-                {daily.mot ? `Mot du jour : ${daily.mot.mot} · ` : ""}
-                {daily.title}
-              </small>
-            </span>
-            <Icon name="chevron" />
-          </button>
-        )}
-        <button className="wide-link" onClick={() => go("scenarios")}>
-          <span className="link-icon">
-            <Icon name="book" />
-          </span>
-          <span>
-            <strong>Toutes les histoires</strong>
-            <small>{scenarios.length} situations selon ton profil</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <button className="wide-link" onClick={() => go("quiz")}>
+        <button className="wide-link" onClick={() => go("play")}>
           <span className="link-icon orange">
             <Icon name="spark" />
           </span>
           <span>
-            <strong>Tester mes réflexes</strong>
-            <small>5 questions, sans jugement</small>
+            <strong>Tous les jeux</strong>
+            <small>Histoires, mot du jour, jeu de groupe, quiz</small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -1632,7 +1588,7 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="spark" />
         <span>Jouer</span>
       </button>
-      <button className={active === "resources" ? "active" : ""} onClick={() => go("resources")}>
+      <button className={active === "guide" ? "active" : ""} onClick={() => go("guide")}>
         <Icon name="shield" />
         <span>Réflexes</span>
       </button>
@@ -2633,25 +2589,6 @@ function Play({
           </span>
           <Icon name="chevron" />
         </button>
-        <h2 className="section-title">Bientôt</h2>
-        {(
-          [
-            ["search", "Démasque-le", "Quatre contacts, un seul profil suspect à repérer ensemble."],
-            ["eye", "Duel d’indices", "Deux joueuses, trois indices à trouver sur une fausse page."],
-            ["user", "Mode Débat", "Chacune annonce son choix, puis on compare sans se juger."],
-          ] as [IconName, string, string][]
-        ).map(([icon, title, text]) => (
-          <div className="wide-link soon" key={title}>
-            <span className="link-icon">
-              <Icon name={icon} />
-            </span>
-            <span>
-              <strong>{title}</strong>
-              <small>{text}</small>
-            </span>
-            <em>Bientôt</em>
-          </div>
-        ))}
       </div>
       <BottomNav active="play" go={go} />
     </section>
@@ -2748,7 +2685,7 @@ function Resources({ go }: { go: (s: Screen) => void }) {
   ];
   return (
     <section className="screen with-nav resources">
-      <TopBar title="Mes réflexes" onBack={() => go("home")} />
+      <TopBar title="Les bons gestes" onBack={() => go("help")} />
       <div className="page-content">
         <div className="resource-title">
           <span>
@@ -2799,7 +2736,7 @@ function Resources({ go }: { go: (s: Screen) => void }) {
           Trouver de l’aide
         </Button>
       </div>
-      <BottomNav active="resources" go={go} />
+      <BottomNav active="help" go={go} />
     </section>
   );
 }
@@ -3042,16 +2979,18 @@ function Guide({
   unlocked,
   onSave,
   onBack,
+  go,
 }: {
   saved: boolean;
   unlocked: number[];
   onSave: () => void;
   onBack: () => void;
+  go: (s: Screen) => void;
 }) {
   return (
-    <section className="screen guide">
+    <section className="screen with-nav guide">
       <TopBar
-        title="Ma fiche"
+        title="Mes réflexes"
         onBack={onBack}
         action={
           saved ? (
@@ -3104,13 +3043,11 @@ function Guide({
         </p>
       </div>
       <div className="page-content">
-        <Button onClick={onSave} icon={saved ? "check" : "download"}>
-          {saved ? "Fiche enregistrée" : "Enregistrer ma fiche"}
+        <Button onClick={() => go("resources")} icon="arrow">
+          Que faire si ça m’arrive ?
         </Button>
-        <p className="microcopy">
-          L’enregistrement est local. Aucune donnée personnelle n’est créée.
-        </p>
       </div>
+      <BottomNav active="guide" go={go} />
     </section>
   );
 }
