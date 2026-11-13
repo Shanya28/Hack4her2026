@@ -1,0 +1,218 @@
+{
+  "id": "traque",
+  "order": 9,
+  "title": "Il sait où je suis",
+  "profile": "Étudiante",
+  "summary": "Un compte anonyme commente tes sorties, devine où tu es, puis trouve ta maison.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "localisation",
+    "lecon": "Ta position partagée en direct peut te mettre en danger. Garde-la pour toi et publie tes sorties après coup.",
+    "indices": [
+      "Ton téléphone peut la partager sans que tu y penses.",
+      "Elle dit où tu te trouves.",
+      "Il commence par L et compte 12 lettres."
+    ],
+    "chaud": [
+      "position",
+      "géolocalisation",
+      "geolocalisation",
+      "gps",
+      "adresse",
+      "lieu",
+      "carte",
+      "localiser"
+    ],
+    "tiede": [
+      "suivre",
+      "traque",
+      "harcèlement",
+      "photo",
+      "publication",
+      "public",
+      "maison",
+      "trajet",
+      "danger",
+      "inconnu"
+    ]
+  },
+  "contact": {
+    "name": "Compte anonyme",
+    "status": "aucune photo",
+    "portrait": "kevin"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Les compliments",
+      "messages": [
+        [
+          "Compte anonyme",
+          "Belle photo devant le campus aujourd'hui 😉"
+        ],
+        [
+          "Compte anonyme",
+          "Le jaune te va bien."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Le remercier gentiment",
+          "protective": false,
+          "outcome": "Il répond aussitôt et commente chacune de tes publications.",
+          "advice": "Être polie est naturel. Avec un inconnu insistant, tu n'as pas à répondre."
+        },
+        {
+          "label": "Passer mes publications en « Amis seulement »",
+          "protective": true,
+          "outcome": "Il ne voit plus tes nouvelles photos.",
+          "advice": "Régler qui voit tes publications est ta première protection."
+        },
+        {
+          "label": "Faire une capture et ne pas répondre",
+          "protective": true,
+          "outcome": "Tu gardes son message. Il n'a aucune réponse de ta part.",
+          "advice": "Garder une trace dès le début aide si la situation s'aggrave.",
+          "reflexes": [
+            4
+          ]
+        }
+      ],
+      "feedback": "Par défaut, beaucoup de publications sont visibles par tout le monde. Vérifie tes paramètres."
+    },
+    {
+      "chapter": "2 · La position",
+      "messages": [
+        [
+          "Compte anonyme",
+          "Tu étais au marché à 17 h, non ? Tu marches vite."
+        ],
+        [
+          "Compte anonyme",
+          "Fais attention, la nuit tombe tôt en ce moment."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Lui demander comment il le sait",
+          "protective": false,
+          "outcome": "Il répond : « Je sais beaucoup de choses sur toi. » Il aime te faire peur.",
+          "advice": "Lui répondre lui donne l'attention qu'il cherche. Garde plutôt ses messages."
+        },
+        {
+          "label": "Couper le partage de position dans mes applications",
+          "protective": true,
+          "outcome": "Tu désactives la localisation et le partage automatique de tes sorties.",
+          "advice": "Une position partagée en direct permet à n'importe qui de te suivre."
+        },
+        {
+          "label": "Prévenir mes proches",
+          "protective": true,
+          "outcome": "Ta colocataire décide de rentrer avec toi le soir pendant quelque temps.",
+          "advice": "Tes proches peuvent veiller sur toi. Tu n'as pas à gérer ça seule.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Publie tes sorties après coup, jamais en direct, et coupe la localisation automatique."
+    },
+    {
+      "chapter": "3 · Le lien",
+      "messages": [
+        [
+          "Compte anonyme",
+          "Regarde, je t'ai trouvée sur ce site. Toutes tes photos y sont."
+        ]
+      ],
+      "attachment": {
+        "label": "Tes photos",
+        "url": "galerie-photos.example-site.com",
+        "cta": "Voir mes photos",
+        "pageUrl": "galerie-photos-login.net",
+        "pageTitle": "Connexion requise",
+        "pageText": "Connecte-toi avec ton adresse et ton mot de passe pour voir la galerie.",
+        "clue": "Il veut te faire paniquer pour que tu donnes tes identifiants."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · Devant chez toi",
+      "messages": [
+        [
+          "Compte anonyme",
+          "Joli portail bleu. Tu habites là depuis longtemps ?"
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Publier un message pour le provoquer",
+          "protective": false,
+          "outcome": "Il répond publiquement. D'autres comptes s'en mêlent et ton adresse circule.",
+          "advice": "La colère est légitime. Mais le confronter en public peut aggraver le danger."
+        },
+        {
+          "label": "Garder les preuves et rendre mon compte privé",
+          "protective": true,
+          "outcome": "Tu rassembles toutes les captures, avec les dates, et tu passes ton compte en privé.",
+          "advice": "Une suite de messages datés montre qu'il te suit : c'est une preuve forte.",
+          "reflexes": [
+            4
+          ]
+        },
+        {
+          "label": "Ne plus rentrer seule et changer mes trajets",
+          "protective": true,
+          "outcome": "Un ami t'accompagne. Tu varies tes horaires.",
+          "advice": "Ta sécurité physique passe avant tout.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Quand quelqu'un connaît ton adresse et tes trajets, le danger peut devenir physique. Fais-toi accompagner."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Compte anonyme",
+          "Tu m'as bloqué ? Pas grave. Je sais où te trouver."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Le débloquer pour le calmer",
+          "protective": false,
+          "outcome": "Il reprend les messages, encore plus menaçants.",
+          "advice": "Tu n'as rien fait de mal en le bloquant. Le débloquer ne le calmera pas."
+        },
+        {
+          "label": "Appeler la police si je me sens en danger",
+          "protective": true,
+          "outcome": "Au 117, on prend ta situation au sérieux et on te dit quoi faire.",
+          "advice": "En cas de danger immédiat, appelle le 117, jour et nuit.",
+          "reflexes": [
+            5
+          ]
+        },
+        {
+          "label": "Porter plainte avec toutes mes captures",
+          "protective": true,
+          "outcome": "Tu portes plainte. Le Centre National d'Investigations Numériques peut identifier le compte.",
+          "advice": "Suivre et menacer quelqu'un en ligne est puni. Les preuves datées sont essentielles.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Le harcèlement qui suit tes pas est une violence. Protège ta position, garde les preuves et alerte."
+    }
+  ]
+}

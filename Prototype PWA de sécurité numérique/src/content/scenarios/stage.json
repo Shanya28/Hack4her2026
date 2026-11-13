@@ -1,0 +1,229 @@
+{
+  "id": "stage",
+  "order": 10,
+  "title": "Le message du soir",
+  "profile": "Stagiaire",
+  "summary": "Ton maître de stage t'écrit tard le soir, insiste, puis lie ton évaluation à un dîner.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "harcèlement",
+    "lecon": "Des messages insistants d'un supérieur, qui lient ton travail à ta personne, sont du harcèlement. Tu peux le signaler.",
+    "indices": [
+      "Des messages insistants qu'on n'a pas voulus.",
+      "Quand un supérieur l'exerce, il abuse de son pouvoir.",
+      "Il commence par H et compte 11 lettres."
+    ],
+    "chaud": [
+      "harcelement",
+      "harceler",
+      "insistance",
+      "abus",
+      "pression",
+      "avances",
+      "chantage",
+      "intimidation"
+    ],
+    "tiede": [
+      "patron",
+      "stage",
+      "chef",
+      "travail",
+      "message",
+      "soir",
+      "dîner",
+      "diner",
+      "pouvoir",
+      "évaluation"
+    ]
+  },
+  "contact": {
+    "name": "M. Agossou",
+    "status": "maître de stage",
+    "portrait": "rh"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Le premier message",
+      "messages": [
+        [
+          "M. Agossou",
+          "Bonsoir ma belle stagiaire, tu dors déjà ?"
+        ],
+        [
+          "M. Agossou",
+          "Tu étais très élégante aujourd'hui."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Répondre en riant pour ne pas le vexer",
+          "protective": false,
+          "outcome": "Il prend ta réponse comme un encouragement et écrit encore plus tard le lendemain.",
+          "advice": "Tu as voulu éviter un conflit avec ton chef, c'est compréhensible. Tu peux poser une limite à tout moment."
+        },
+        {
+          "label": "Répondre le lendemain, en restant professionnelle",
+          "protective": true,
+          "outcome": "« Bonjour, à quelle heure est la réunion ? » Tu ramènes l'échange au travail.",
+          "advice": "Un ton neutre et des horaires de bureau posent une limite claire."
+        },
+        {
+          "label": "Faire une capture du message",
+          "protective": true,
+          "outcome": "Tu gardes le message, avec l'heure : 23 h 40.",
+          "advice": "L'heure et le ton des messages sont des preuves utiles.",
+          "reflexes": [
+            4
+          ]
+        }
+      ],
+      "feedback": "Un supérieur n'a pas à commenter ton apparence ni à t'écrire la nuit pour des raisons personnelles."
+    },
+    {
+      "chapter": "2 · L'insistance",
+      "messages": [
+        [
+          "M. Agossou",
+          "Pourquoi tu ne réponds pas ? Je pensais qu'on s'entendait bien."
+        ],
+        [
+          "M. Agossou",
+          "Ton évaluation dépend aussi de ton attitude, tu sais."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "M'excuser et répondre à tous ses messages",
+          "protective": false,
+          "outcome": "Il prend l'habitude de t'écrire chaque soir. Tu redoutes ton téléphone.",
+          "advice": "Tu n'as pas à t'excuser de poser des limites."
+        },
+        {
+          "label": "Lui dire que les messages personnels ne me conviennent pas",
+          "protective": true,
+          "outcome": "« Je préfère que nos échanges restent professionnels. » Il ne répond rien.",
+          "advice": "Dire non clairement est ton droit, même face à un chef.",
+          "reflexes": [
+            3
+          ]
+        },
+        {
+          "label": "En parler à mon école ou à ma tutrice",
+          "protective": true,
+          "outcome": "Ta tutrice t'écoute et te demande de garder tous les messages.",
+          "advice": "Ton école a le devoir de te protéger pendant ton stage.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Lier ton évaluation à ton « attitude » personnelle est une pression. Garde les messages et parles-en."
+    },
+    {
+      "chapter": "3 · Le lien",
+      "messages": [
+        [
+          "M. Agossou",
+          "Remplis ta fiche d'évaluation ici ce soir, c'est urgent."
+        ]
+      ],
+      "attachment": {
+        "label": "Fiche d'évaluation",
+        "url": "evaluation-stage.example-rh.com",
+        "cta": "Ouvrir la fiche",
+        "pageUrl": "evaluation-stage-login.net",
+        "pageTitle": "Connexion à ta fiche",
+        "pageText": "Entre l'adresse e-mail et le mot de passe de ta messagerie personnelle.",
+        "clue": "Une fiche de stage ne demande pas le mot de passe de ta messagerie personnelle."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · L'invitation",
+      "messages": [
+        [
+          "M. Agossou",
+          "Viens dîner avec moi vendredi, on parlera de ton contrat."
+        ],
+        [
+          "M. Agossou",
+          "Personne n'a besoin de savoir."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Accepter pour garder le contrat",
+          "protective": false,
+          "outcome": "Tu y vas à contrecœur. Il te met mal à l'aise toute la soirée.",
+          "advice": "Tu as eu peur pour ton avenir, ce n'est pas une faute. Tu peux encore en parler et demander de l'aide."
+        },
+        {
+          "label": "Refuser et garder les preuves",
+          "protective": true,
+          "outcome": "« Je préfère qu'on en parle au bureau. » Tu gardes toute la conversation.",
+          "advice": "Un contrat se discute au bureau, pas lors d'un dîner secret.",
+          "reflexes": [
+            4
+          ]
+        },
+        {
+          "label": "Signaler la situation à l'école et à l'INF",
+          "protective": true,
+          "outcome": "Ton école contacte l'entreprise. L'INF t'explique tes droits.",
+          "advice": "« Personne n'a besoin de savoir » est un signal d'alarme. En parler te protège.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Le secret et le pouvoir sur ton avenir sont les armes du harcèlement. Tu as le droit de refuser."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "M. Agossou",
+          "Si tu refuses encore, je dirai que tu es incompétente."
+        ],
+        [
+          "M. Agossou",
+          "Ton stage s'arrête là."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Céder pour sauver mon stage",
+          "protective": false,
+          "outcome": "Céder ne garantit rien et la pression continue.",
+          "advice": "Ton stage ne vaut pas ta sécurité. Tu peux encore demander de l'aide."
+        },
+        {
+          "label": "Tout signaler avec mes preuves",
+          "protective": true,
+          "outcome": "Avec tes captures, l'école retire le stage de cette entreprise et t'en trouve un autre.",
+          "advice": "Des preuves datées rendent ta parole difficile à contester.",
+          "reflexes": [
+            4,
+            5
+          ]
+        },
+        {
+          "label": "Porter plainte, accompagnée",
+          "protective": true,
+          "outcome": "L'INF t'accompagne pour porter plainte. La loi protège les femmes contre ce chantage.",
+          "advice": "Exiger quelque chose de toi contre ton travail est puni par la loi.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Un supérieur qui menace ton avenir pour obtenir quelque chose de toi commet une infraction. Tu n'es pas seule."
+    }
+  ]
+}

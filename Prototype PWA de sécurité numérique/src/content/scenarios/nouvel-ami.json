@@ -1,0 +1,223 @@
+{
+  "id": "nouvel-ami",
+  "order": 8,
+  "title": "Le nouvel ami",
+  "profile": "Collégienne, 15 ans",
+  "summary": "Un inconnu très gentil te demande de garder le secret, puis une photo, puis un rendez-vous.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "secret",
+    "lecon": "Un adulte qui te demande de garder le secret sur vos échanges est un signal d'alarme. Un bon secret ne fait jamais peur.",
+    "indices": [
+      "« Ne le dis à personne. »",
+      "Celui qui te le demande veut t'isoler.",
+      "Il commence par S et compte 6 lettres."
+    ],
+    "chaud": [
+      "cachotterie",
+      "confidence",
+      "mystère",
+      "silence",
+      "cacher",
+      "caché",
+      "discret"
+    ],
+    "tiede": [
+      "inconnu",
+      "ami",
+      "parents",
+      "photo",
+      "rendez-vous",
+      "confiance",
+      "message",
+      "mensonge",
+      "peur",
+      "adulte"
+    ]
+  },
+  "contact": {
+    "name": "Junior",
+    "status": "0 ami en commun",
+    "portrait": "kevin"
+  },
+  "steps": [
+    {
+      "chapter": "1 · La demande d'ami",
+      "messages": [
+        [
+          "Junior",
+          "Salut ! Je t'ai vue au match du collège, tu es trop jolie."
+        ],
+        [
+          "Junior",
+          "J'ai 17 ans. Tu me donnes ton numéro ?"
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Lui donner mon numéro",
+          "protective": false,
+          "outcome": "Il t'écrit tous les soirs, avec beaucoup de compliments.",
+          "advice": "Être flattée est normal. Mais ton numéro est une information précieuse, garde-la pour les gens que tu connais vraiment."
+        },
+        {
+          "label": "Regarder son profil avant de répondre",
+          "protective": true,
+          "outcome": "Photo floue, compte créé il y a une semaine, aucun ami en commun.",
+          "advice": "Un profil récent, flou et sans amis en commun doit éveiller la méfiance."
+        },
+        {
+          "label": "Demander à une amie si elle le connaît",
+          "protective": true,
+          "outcome": "Personne au collège ne le connaît, ni au match ni ailleurs.",
+          "advice": "Vérifier auprès de personnes réelles aide à repérer un faux profil."
+        }
+      ],
+      "feedback": "N'accepte en ligne que des personnes que tu connais vraiment dans la vie réelle."
+    },
+    {
+      "chapter": "2 · Le secret",
+      "messages": [
+        [
+          "Junior",
+          "Ne dis à personne qu'on parle. Tes parents ne comprendraient pas."
+        ],
+        [
+          "Junior",
+          "C'est notre secret à nous."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Garder le secret",
+          "protective": false,
+          "outcome": "Tu caches tes conversations. Tu te sens de plus en plus seule avec lui.",
+          "advice": "Il cherche à t'isoler. Tu peux toujours en parler, même plus tard."
+        },
+        {
+          "label": "Lui dire que je ne garde pas de secret avec un inconnu",
+          "protective": true,
+          "outcome": "Il se vexe : « Je croyais que tu étais mature. » La culpabilité est son outil.",
+          "advice": "Une personne bienveillante n'exige jamais le secret."
+        },
+        {
+          "label": "En parler à ma grande sœur",
+          "protective": true,
+          "outcome": "Ta sœur lit les messages : « Un garçon de 17 ans ne parle pas comme ça. Fais attention. »",
+          "advice": "Parler à un proche est le meilleur réflexe dès qu'on te demande de cacher quelque chose.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "« C'est notre secret » est un signe classique de manipulation d'une mineure. Parles-en à un adulte de confiance."
+    },
+    {
+      "chapter": "3 · Le cadeau",
+      "messages": [
+        [
+          "Junior",
+          "Je t'ai acheté du crédit ! Clique ici pour le récupérer."
+        ]
+      ],
+      "attachment": {
+        "label": "Ton cadeau",
+        "url": "credit-cadeau.example-promo.com",
+        "cta": "Récupérer le crédit",
+        "pageUrl": "credit-cadeau-login.net",
+        "pageTitle": "Récupère ton crédit",
+        "pageText": "Entre ton numéro et ton mot de passe pour recevoir ton cadeau.",
+        "clue": "Les cadeaux d'un inconnu servent à créer une dette et à obtenir tes accès."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · La photo",
+      "messages": [
+        [
+          "Junior",
+          "Envoie-moi une photo de toi, juste pour moi. Pas celle de ton profil."
+        ],
+        [
+          "Junior",
+          "Si tu tiens vraiment à moi, tu le feras."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Envoyer une photo pour lui faire plaisir",
+          "protective": false,
+          "outcome": "Il demande aussitôt une autre photo, « plus personnelle ».",
+          "advice": "Ce n'est pas ta faute : il t'a manipulée. Tu peux arrêter et tout raconter à un adulte maintenant."
+        },
+        {
+          "label": "Refuser et le bloquer",
+          "protective": true,
+          "outcome": "Tu le bloques. Ton téléphone redevient calme.",
+          "advice": "Tu as le droit de dire non, sans te justifier.",
+          "reflexes": [
+            3
+          ]
+        },
+        {
+          "label": "Montrer ses messages à un adulte de confiance",
+          "protective": true,
+          "outcome": "Ta mère fait des captures et appelle la ligne d'assistance aux enfants.",
+          "advice": "Un adulte peut agir là où tu ne peux pas seule.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Un adulte qui demande des photos à une mineure commet une infraction. Ce n'est jamais la faute de l'enfant."
+    },
+    {
+      "chapter": "5 · Le rendez-vous",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Junior",
+          "En vrai, j'ai 26 ans. Viens me voir samedi, seule."
+        ],
+        [
+          "Junior",
+          "Sinon je dis à tout le collège que tu m'as écrit."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Y aller seule pour qu'il se taise",
+          "protective": false,
+          "outcome": "Rencontrer seule un adulte qui menace te met en grand danger.",
+          "advice": "Tu peux encore tout arrêter : appelle un adulte ou le 138, même au dernier moment."
+        },
+        {
+          "label": "Ne pas y aller et tout montrer à un parent",
+          "protective": true,
+          "outcome": "Tes parents gardent les preuves et t'accompagnent au commissariat.",
+          "advice": "Sa menace n'a aucun pouvoir quand des adultes te protègent.",
+          "reflexes": [
+            4,
+            5
+          ]
+        },
+        {
+          "label": "Appeler la ligne d'assistance aux enfants",
+          "protective": true,
+          "outcome": "Au 138, on t'écoute et on alerte les services de protection des mineurs.",
+          "advice": "Le 138 est gratuit. La brigade des mineurs protège les enfants victimes.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Approcher une mineure en ligne pour la manipuler est puni par la loi. Parle, garde les preuves, appelle le 138."
+    }
+  ]
+}

@@ -3,41 +3,38 @@
   "order": 2,
   "title": "L’offre trop belle",
   "profile": "Chercheuse d’emploi",
-  "summary": "Un cabinet inconnu te promet un poste, puis réclame des frais et tes papiers.",
+  "summary": "Une fausse recruteuse promet un poste d'hôtesse, réclame des photos, puis un entretien seule à l'hôtel.",
   "source": "ia",
   "relu": false,
   "mot": {
-    "mot": "arnaque",
-    "lecon": "Une offre qui promet beaucoup, presse de décider et demande de l'argent d'abord a tout d'une arnaque. Vérifie toujours par toi-même.",
+    "mot": "hôtesse",
+    "lecon": "Un vrai employeur ne choisit pas sur photos et ne reçoit pas à l'hôtel le soir. Une offre qui vise ton apparence peut cacher de l'exploitation.",
     "indices": [
-      "C'est une tromperie pour obtenir quelque chose de toi.",
-      "Elle promet beaucoup et demande de payer d'abord.",
-      "Il commence par A et compte 7 lettres."
+      "C'est le poste promis dans l'offre.",
+      "On l'imagine à l'accueil d'un hôtel ou d'un salon.",
+      "Il commence par H et compte 7 lettres."
     ],
     "chaud": [
-      "escroquerie",
-      "piège",
-      "tromperie",
-      "fraude",
-      "escroc",
-      "arnaqueur",
-      "mensonge",
-      "duperie",
-      "faux"
+      "hotesse",
+      "accueil",
+      "réceptionniste",
+      "receptionniste",
+      "hôtel",
+      "hotel",
+      "mannequin",
+      "serveuse"
     ],
     "tiede": [
-      "argent",
       "emploi",
       "travail",
-      "frais",
-      "payer",
-      "promesse",
-      "recrutement",
       "offre",
-      "urgent",
+      "recrutement",
       "salaire",
-      "vol",
-      "voleur"
+      "photo",
+      "entretien",
+      "poste",
+      "job",
+      "piège"
     ]
   },
   "contact": {
@@ -51,122 +48,135 @@
       "messages": [
         [
           "Mme Dossou",
-          "Bonjour, votre profil a été retenu pour un poste d'assistante administrative. Salaire : 250 000 F par mois."
+          "Bonjour, nous recrutons des hôtesses pour un grand hôtel. Salaire : 300 000 F par mois."
         ],
         [
           "Mme Dossou",
-          "Aucun entretien n'est nécessaire. Il ne reste qu'une seule place, répondez vite."
+          "Aucun diplôme exigé, seulement une belle présentation. Répondez vite, il reste deux places."
         ]
       ],
       "choices": [
         {
-          "label": "Super, je suis intéressée !",
+          "label": "Répondre tout de suite et donner mes informations",
           "protective": false,
-          "outcome": "Mme Dossou te félicite aussitôt et demande ton nom complet, ton adresse et ta date de naissance.",
-          "advice": "Avoir envie de ce poste est normal. Remarque simplement qu'on te demande déjà des informations sans t'avoir rien prouvé."
+          "outcome": "Mme Dossou te félicite et te demande ton adresse et ton âge, sans rien dire de l'entreprise.",
+          "advice": "L'envie de travailler est légitime. Avant de donner tes informations, vérifie qui te contacte."
         },
         {
-          "label": "Où avez-vous eu mon numéro ?",
+          "label": "Chercher le nom du cabinet et de l'hôtel",
           "protective": true,
-          "outcome": "Elle répond : « Par notre base de données. » Aucun nom de site, aucune annonce à laquelle tu aurais répondu.",
-          "advice": "Bonne question : un vrai recruteur sait dire où tu as postulé."
+          "outcome": "Tu ne trouves ni adresse, ni site, ni avis. L'hôtel n'a publié aucune offre.",
+          "advice": "Une vraie entreprise laisse des traces vérifiables. L'absence de traces est un signal d'alarme."
         },
         {
-          "label": "Je vérifie d'abord si ce cabinet existe",
+          "label": "Montrer l'offre à une personne de confiance",
           "protective": true,
-          "outcome": "Tu cherches le nom du cabinet : pas d'adresse, pas de site officiel, seulement d'autres personnes qui se plaignent.",
-          "advice": "Vérifier par toi-même, en dehors de la conversation, est le meilleur réflexe."
+          "outcome": "Ta cousine fronce les sourcils : « Un salaire pareil, sans diplôme ni entretien ? Méfie-toi. »",
+          "advice": "Un deuxième avis aide à voir ce que l'enthousiasme cache.",
+          "reflexes": [
+            5
+          ]
         }
       ],
-      "feedback": "Un salaire élevé, aucun entretien et une seule place : ces trois promesses réunies servent à te faire décider vite."
+      "feedback": "Une offre trop belle, urgente et centrée sur l'apparence doit alerter. Vérifie toujours qui recrute."
     },
     {
-      "chapter": "2 · Le dossier en ligne",
+      "chapter": "2 · Les photos",
       "messages": [
         [
           "Mme Dossou",
-          "Pour finaliser, remplissez votre dossier de candidature sur ce lien."
+          "Pour le dossier, envoie trois photos de toi en pied, en tenue moulante."
+        ],
+        [
+          "Mme Dossou",
+          "Le client choisit les filles sur photos. C'est normal dans l'hôtellerie."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Envoyer les photos pour ne pas rater le poste",
+          "protective": false,
+          "outcome": "Elle répond : « Parfait, le client est intéressé. » Tes photos sont maintenant entre des mains inconnues.",
+          "advice": "Tu as voulu saisir une chance, ce n'est pas une faute. Garde la conversation : elle prouve ce qu'on t'a demandé."
+        },
+        {
+          "label": "Refuser : on ne recrute pas sur le physique",
+          "protective": true,
+          "outcome": "Elle insiste : « Sinon, ta candidature est perdue. » La pression confirme le piège.",
+          "advice": "Un employeur sérieux juge tes compétences, pas ton corps. Tu as le droit de dire non.",
+          "reflexes": [
+            3
+          ]
+        },
+        {
+          "label": "Faire des captures de ces demandes",
+          "protective": true,
+          "outcome": "Tu gardes le nom du compte, les messages et la date.",
+          "advice": "Ces captures pourront servir si tu signales le compte ou portes plainte.",
+          "reflexes": [
+            4
+          ]
+        }
+      ],
+      "feedback": "Demander des photos du corps pour un emploi n'est pas normal. C'est souvent la porte d'entrée de l'exploitation."
+    },
+    {
+      "chapter": "3 · Le dossier en ligne",
+      "messages": [
+        [
+          "Mme Dossou",
+          "Remplis ton dossier ici, avec ta pièce d'identité."
         ]
       ],
       "attachment": {
         "label": "Dossier de candidature",
-        "url": "soleil-carriere.example-emploi.com",
+        "url": "hotesses-recrutement.example-emploi.com",
         "cta": "Remplir le dossier",
-        "pageUrl": "dossier-emploi-login.net",
+        "pageUrl": "dossier-hotesse-login.net",
         "pageTitle": "Finalise ton dossier",
-        "pageText": "Connecte-toi avec ton adresse e-mail pour envoyer ta candidature.",
-        "clue": "Tu n'avais postulé à aucune offre de ce cabinet."
+        "pageText": "Connecte-toi avec ton adresse e-mail et ton mot de passe, puis ajoute ta pièce d'identité.",
+        "clue": "Une candidature ne demande jamais le mot de passe de ta messagerie."
       },
       "choices": [],
       "feedback": ""
     },
     {
-      "chapter": "3 · Les frais de dossier",
+      "chapter": "4 · L'entretien à l'hôtel",
       "messages": [
         [
           "Mme Dossou",
-          "Votre dossier est validé ! Il reste 15 000 F de frais de dossier à envoyer par mobile money."
+          "Ton entretien est ce soir à 21 h, chambre 12. Viens seule."
         ],
         [
           "Mme Dossou",
-          "Le paiement doit arriver avant 18 h, sinon la place sera donnée à quelqu'un d'autre."
+          "N'en parle à personne, d'autres filles attendent ta place."
         ]
       ],
       "choices": [
         {
-          "label": "Payer les frais",
+          "label": "Y aller seule pour ne pas perdre le poste",
           "protective": false,
-          "outcome": "Tu envoies l'argent. Le lendemain, on te réclame 10 000 F de « frais de badge ». Puis le numéro ne répond plus.",
-          "advice": "Si cela t'arrive, ce n'est pas ta faute : ces arnaques sont faites pour paraître sérieuses. Garde les reçus et les messages, ils serviront de preuves."
+          "outcome": "Dans le taxi, tu hésites et tu écris à ta cousine. Elle te supplie de faire demi-tour.",
+          "advice": "Tu n'as rien fait de mal en espérant ce travail. Mais un entretien seule, le soir, dans une chambre, met en danger."
         },
         {
-          "label": "Proposer de payer sur place, le jour de l'embauche",
+          "label": "Refuser : un entretien a lieu dans un bureau, en journée",
           "protective": true,
-          "outcome": "Elle refuse : « Impossible, le paiement se fait uniquement à distance et aujourd'hui. » Elle ne veut pas te rencontrer.",
-          "advice": "Proposer une autre façon de faire révèle le piège : un vrai employeur accepte de te recevoir."
+          "outcome": "Elle ne propose aucun bureau. Elle répète seulement : « Ce soir ou jamais. »",
+          "advice": "Un vrai recruteur accepte un rendez-vous en journée, dans un lieu public ou professionnel."
         },
         {
-          "label": "Refuser : un vrai emploi ne se paie pas",
+          "label": "Tout montrer à un proche et garder les preuves",
           "protective": true,
-          "outcome": "Le ton change : « Vous ratez la chance de votre vie. » Puis plus rien. Tu as gardé ton argent.",
-          "advice": "Dire non suffit. Tu n'as pas à te justifier auprès de quelqu'un qui te presse de payer."
+          "outcome": "Ta tante lit les messages et t'accompagne pour signaler le compte.",
+          "advice": "« N'en parle à personne » est un signe de piège. En parler te protège.",
+          "reflexes": [
+            4,
+            5
+          ]
         }
       ],
-      "feedback": "Un recrutement sérieux ne demande pas d'argent pour un dossier, une formation ou un badge. Le délai sert à t'empêcher de demander conseil."
-    },
-    {
-      "chapter": "4 · Les papiers",
-      "messages": [
-        [
-          "Mme Dossou",
-          "Envoyez aussi une photo de votre carte d'identité, recto verso."
-        ],
-        [
-          "Mme Dossou",
-          "Et un selfie en tenant la carte, pour vérification."
-        ]
-      ],
-      "choices": [
-        {
-          "label": "Envoyer la carte et le selfie",
-          "protective": false,
-          "outcome": "Tes papiers sont maintenant chez un inconnu. Ils peuvent servir à ouvrir des comptes ou à tromper d'autres personnes en ton nom.",
-          "advice": "Si c'est déjà fait, préviens ton entourage, garde la conversation comme preuve et parles-en à une personne de confiance."
-        },
-        {
-          "label": "Demander l'adresse du bureau pour déposer le dossier",
-          "protective": true,
-          "outcome": "On te répond que « tout se fait en ligne ». Aucune adresse, aucun nom que tu puisses vérifier.",
-          "advice": "Demander un lieu et un nom vérifiables est un très bon test."
-        },
-        {
-          "label": "Ne rien envoyer et bloquer le numéro",
-          "protective": true,
-          "outcome": "Tu fais des captures de la conversation, tu bloques le numéro et tu préviens une amie qui cherche aussi du travail.",
-          "advice": "Garder les preuves puis bloquer te protège, et prévenir une amie la protège aussi."
-        }
-      ],
-      "feedback": "Une pièce d'identité et un selfie suffisent pour se faire passer pour toi. Ne les envoie qu'à un organisme que tu as vérifié toi-même."
+      "feedback": "Le secret, l'urgence, le soir et l'hôtel : ensemble, ce sont les signes d'un piège qui peut mener à l'exploitation."
     },
     {
       "chapter": "5 · La menace",
@@ -177,38 +187,41 @@
       "messages": [
         [
           "Mme Dossou",
-          "Nous avons votre CV, votre numéro et votre adresse."
+          "Tu nous as fait perdre un client. Nous avons tes photos et ton adresse."
         ],
         [
           "Mme Dossou",
-          "Payez les frais aujourd'hui ou votre nom sera inscrit sur la liste noire des employeurs."
+          "Viens demain, ou tes photos circuleront avec ton nom."
         ]
       ],
       "choices": [
         {
-          "label": "Payer pour être tranquille",
+          "label": "Céder et y aller pour que ça s'arrête",
           "protective": false,
-          "outcome": "Après le paiement, une nouvelle somme est réclamée. La menace revient, plus forte.",
-          "advice": "Payer n'arrête pas la pression. Tu peux arrêter à tout moment, garder les preuves et demander de l'aide."
+          "outcome": "Céder ne garantit rien : la menace peut recommencer et te mettre en danger.",
+          "advice": "Ta peur est normale. Tu peux encore t'arrêter et demander de l'aide à tout moment."
         },
         {
-          "label": "Répondre pour se justifier",
-          "protective": false,
-          "outcome": "Chaque réponse relance la discussion et les menaces. On cherche à te fatiguer jusqu'à ce que tu paies.",
-          "advice": "Tu ne leur dois aucune explication. Le plus protecteur est de ne plus répondre."
-        },
-        {
-          "label": "Garder les preuves, bloquer et en parler",
+          "label": "Bloquer, garder les preuves et porter plainte",
           "protective": true,
+          "outcome": "Avec tes captures, tu portes plainte, accompagnée. Le compte est signalé.",
+          "advice": "Menacer de diffuser des photos est puni par la loi. Porter plainte est gratuit.",
           "reflexes": [
             4,
             5
-          ],
-          "outcome": "Tu conserves les messages, tu bloques le numéro et tu en parles à une personne de confiance. La menace reste sans effet.",
-          "advice": "C'est le réflexe le plus protecteur : preuves, blocage, soutien."
+          ]
+        },
+        {
+          "label": "Appeler l'Institut National de la Femme",
+          "protective": true,
+          "outcome": "Au 114, une conseillère t'écoute, t'explique tes droits et t'oriente.",
+          "advice": "Tu n'as pas à affronter ça seule. Des structures gratuites existent pour t'accompagner.",
+          "reflexes": [
+            5
+          ]
         }
       ],
-      "feedback": "Cette « liste noire » est une invention pour te faire payer. Tu n'as rien fait de mal en cherchant du travail."
+      "feedback": "Les fausses offres d'emploi servent parfois à piéger des femmes. Ne cède pas : garde les preuves et fais-toi accompagner."
     }
   ]
 }

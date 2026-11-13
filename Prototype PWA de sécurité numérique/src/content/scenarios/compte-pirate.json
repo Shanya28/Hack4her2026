@@ -3,7 +3,7 @@
   "order": 3,
   "title": "Le code de trop",
   "profile": "Commerçante",
-  "summary": "Une « amie » qui a changé de numéro te demande un code reçu par SMS.",
+  "summary": "Une « amie » te demande un code reçu par SMS. Celui qui prend ton compte s'en sert pour te faire chanter.",
   "source": "ia",
   "relu": false,
   "mot": {
@@ -138,86 +138,92 @@
       "feedback": ""
     },
     {
-      "chapter": "4 · L'alerte dans le groupe",
-      "header": {
-        "name": "Groupe des vendeuses",
-        "status": "12 membres",
-        "portrait": "afi"
-      },
+      "chapter": "4 · Ton compte entre ses mains",
       "messages": [
         [
           "Awa · Groupe",
-          "Les filles, attention ! Quelqu'un utilise le nom de Chantal pour demander de l'argent."
+          "C'est toi qui envoies des messages gênants aux clients du groupe ? Ça ne te ressemble pas."
         ],
         [
           "Awa · Groupe",
-          "Trois personnes ont déjà reçu une demande de 20 000 F ce matin."
+          "Ton compte propose des rendez-vous à des hommes en ton nom."
         ]
       ],
       "choices": [
         {
-          "label": "Envoyer quand même l'argent, au cas où",
+          "label": "Ne rien dire, j'ai trop honte",
           "protective": false,
-          "outcome": "L'argent part vers un numéro inconnu. La vraie Chantal n'a jamais rien demandé.",
-          "advice": "Avant d'envoyer de l'argent, un appel à la personne suffit pour vérifier. Si c'est déjà fait, garde le reçu et les messages."
+          "outcome": "Les messages continuent en ton nom. Des clients commencent à parler de toi.",
+          "advice": "La honte est celle de la personne qui t'usurpe, pas la tienne. Parler vite limite les dégâts."
         },
         {
-          "label": "Ne rien dire, cela ne me concerne pas",
-          "protective": false,
-          "outcome": "D'autres vendeuses du groupe reçoivent la même demande dans la journée, et l'une d'elles paie.",
-          "advice": "Un mot de ta part peut éviter à une autre de se faire piéger."
-        },
-        {
-          "label": "Prévenir le groupe et appeler la vraie Chantal",
+          "label": "Prévenir le groupe : mon compte a été piraté",
           "protective": true,
-          "outcome": "Tu confirmes l'alerte dans le groupe et tu appelles Chantal : elle n'a jamais changé de numéro. Elle prévient ses contacts.",
-          "advice": "Prévenir et vérifier par appel, c'est ce qui arrête la chaîne."
+          "outcome": "Tu écris depuis le téléphone d'Awa : « Ce n'est pas moi. » Le groupe arrête de répondre au faux compte.",
+          "advice": "Avertir tes contacts protège ta réputation et coupe la manipulation.",
+          "reflexes": [
+            5
+          ]
+        },
+        {
+          "label": "Récupérer mon compte et activer la vérification en deux étapes",
+          "protective": true,
+          "outcome": "Tu te reconnectes avec ton numéro, tu changes ton mot de passe et tu actives la double vérification.",
+          "advice": "La vérification en deux étapes empêche quelqu'un de reprendre ton compte avec un simple code.",
+          "reflexes": [
+            1,
+            2
+          ]
         }
       ],
-      "feedback": "Ces arnaques se propagent de contact en contact. Avertir son entourage protège tout le monde."
+      "feedback": "Celui qui prend ton compte peut te faire dire n'importe quoi. Préviens tes contacts et sécurise ton compte."
     },
     {
-      "chapter": "5 · La menace",
+      "chapter": "5 · Le chantage",
       "header": {
-        "status": "Messages à conserver"
+        "name": "Compte inconnu",
+        "status": "Messages à conserver",
+        "portrait": "kevin"
       },
       "danger": true,
       "messages": [
         [
-          "Chantal",
-          "Tu parles trop."
+          "Inconnu",
+          "J'ai eu le temps de lire tes conversations et de voir tes photos privées."
         ],
         [
-          "Chantal",
-          "Si tu continues, j'envoie tes conversations privées à tous tes contacts."
+          "Inconnu",
+          "Envoie-m'en d'autres, sinon je publie tout sur ta page de vente."
         ]
       ],
       "choices": [
         {
-          "label": "Supprimer mon compte dans la panique",
+          "label": "Envoyer ce qu'il demande pour qu'il se taise",
           "protective": false,
-          "outcome": "Le compte disparaît, mais les messages de menace aussi : il ne reste plus aucune preuve.",
-          "advice": "Ta peur est légitime. Avant de supprimer quoi que ce soit, fais des captures d'écran avec la date."
+          "outcome": "Il en redemande le lendemain. Chaque envoi lui donne plus de pouvoir.",
+          "advice": "Ce n'est pas ta faute : tu as été piégée. Tu peux arrêter à tout moment et demander de l'aide."
         },
         {
-          "label": "Négocier pour qu'il arrête",
-          "protective": false,
-          "outcome": "Il demande de l'argent pour « oublier ». Chaque réponse lui donne une nouvelle prise.",
-          "advice": "On ne négocie pas avec une menace. Le plus protecteur est de ne plus répondre."
-        },
-        {
-          "label": "Garder les preuves, sécuriser mon compte et demander de l'aide",
+          "label": "Ne plus répondre, garder les preuves et porter plainte",
           "protective": true,
+          "outcome": "Tu fais des captures et tu portes plainte. Le Centre National d'Investigations Numériques traite ces affaires.",
+          "advice": "Le chantage aux images intimes est puni par la loi. Garde tout avant de bloquer.",
           "reflexes": [
-            2,
             4,
             5
-          ],
-          "outcome": "Tu fais des captures, tu changes ton mot de passe, tu actives la vérification en deux étapes et tu en parles à une personne de confiance.",
-          "advice": "C'est le réflexe le plus protecteur : preuves, compte sécurisé, soutien."
+          ]
+        },
+        {
+          "label": "Prévenir mes clients et faire bloquer la page",
+          "protective": true,
+          "outcome": "Tu publies que ton compte a été piraté et tu signales la page. Tes clientes te soutiennent.",
+          "advice": "Prendre la parole la première retire au maître-chanteur son arme.",
+          "reflexes": [
+            5
+          ]
         }
       ],
-      "feedback": "Tu n'es pas responsable de la menace. Sécurise ton compte, garde les preuves sans te mettre en danger et ne reste pas seule."
+      "feedback": "Un compte piraté peut devenir un outil de chantage. Ne cède pas : preuves, plainte, soutien."
     }
   ]
 }

@@ -1,0 +1,217 @@
+{
+  "id": "chantage-ex",
+  "order": 7,
+  "title": "La photo d’avant",
+  "profile": "Jeune femme, 19 ans",
+  "summary": "Après la rupture, ton ex menace de diffuser une photo privée si tu ne reviens pas avec lui.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "chantage",
+    "lecon": "Menacer de diffuser une image intime pour te forcer est un chantage puni par la loi. La honte doit changer de camp.",
+    "indices": [
+      "C'est une menace pour te forcer à faire quelque chose.",
+      "« Fais ce que je dis, sinon… »",
+      "Il commence par C et compte 8 lettres."
+    ],
+    "chaud": [
+      "menace",
+      "extorsion",
+      "sextorsion",
+      "pression",
+      "ultimatum",
+      "racket",
+      "intimidation"
+    ],
+    "tiede": [
+      "ex",
+      "rupture",
+      "photo",
+      "image",
+      "diffusion",
+      "peur",
+      "secret",
+      "honte",
+      "plainte",
+      "copain"
+    ]
+  },
+  "contact": {
+    "name": "Rodrigue",
+    "status": "ton ex",
+    "portrait": "kevin"
+  },
+  "steps": [
+    {
+      "chapter": "1 · La rupture",
+      "messages": [
+        [
+          "Rodrigue",
+          "Tu me manques. Reviens, on oublie tout."
+        ],
+        [
+          "Rodrigue",
+          "Je n'accepte pas que tu partes comme ça."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Lui expliquer longuement pourquoi je pars",
+          "protective": false,
+          "outcome": "Il conteste chaque phrase. La discussion dure toute la nuit et tu te sens coupable.",
+          "advice": "Tu n'as pas à te justifier pour partir. Une décision claire suffit."
+        },
+        {
+          "label": "Lui dire calmement que c'est fini",
+          "protective": true,
+          "outcome": "« C'est terminé, je te souhaite le meilleur. » Tu poses ton téléphone.",
+          "advice": "Un message court et ferme évite d'ouvrir une négociation."
+        },
+        {
+          "label": "En parler à une amie",
+          "protective": true,
+          "outcome": "Ta meilleure amie te rappelle : « Tu as le droit de partir. Je suis là. »",
+          "advice": "Ne pas rester seule face à une rupture difficile te protège.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Partir est un droit. Personne ne peut t'obliger à rester, ni en face ni en ligne."
+    },
+    {
+      "chapter": "2 · Le lien",
+      "messages": [
+        [
+          "Rodrigue",
+          "Regarde ce que les gens disent de toi sur ce site."
+        ]
+      ],
+      "attachment": {
+        "label": "Ce qu'on dit de toi",
+        "url": "rumeurs-quartier.example-site.com",
+        "cta": "Voir la page",
+        "pageUrl": "rumeurs-quartier-login.net",
+        "pageTitle": "Connecte-toi pour lire",
+        "pageText": "Entre ton numéro et ton mot de passe pour voir les commentaires.",
+        "clue": "Il veut te faire peur pour que tu cliques sans réfléchir."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "3 · La menace voilée",
+      "messages": [
+        [
+          "Rodrigue",
+          "Tu te souviens de la photo que tu m'as envoyée ? Elle est toujours dans mon téléphone."
+        ],
+        [
+          "Rodrigue",
+          "Ce serait dommage que ta famille la voie."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Le supplier de la supprimer",
+          "protective": false,
+          "outcome": "Il répond : « Ça dépend de toi. » Tes supplications lui montrent qu'il a du pouvoir.",
+          "advice": "Ta peur est compréhensible. Mieux vaut garder ses messages que lui répondre."
+        },
+        {
+          "label": "Faire des captures de ses messages",
+          "protective": true,
+          "outcome": "Tu gardes son nom, son numéro et ses messages, avec la date et l'heure.",
+          "advice": "Ces captures prouvent la menace. Elles serviront si tu portes plainte.",
+          "reflexes": [
+            4
+          ]
+        },
+        {
+          "label": "Montrer les messages à une personne de confiance",
+          "protective": true,
+          "outcome": "Ta grande sœur lit tout et te dit : « Ce n'est pas toi la fautive. On va agir. »",
+          "advice": "Parler brise l'isolement que le chantage cherche à créer.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Une photo envoyée par confiance ne donne aucun droit. La diffuser sans accord est une violence punie par la loi."
+    },
+    {
+      "chapter": "4 · L'ultimatum",
+      "messages": [
+        [
+          "Rodrigue",
+          "Viens chez moi ce soir. Sinon, je l'envoie au groupe du quartier."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Y aller pour le calmer",
+          "protective": false,
+          "outcome": "Céder ne fait que repousser la menace. Il saura qu'elle fonctionne.",
+          "advice": "Personne ne mérite d'être forcée. Tu peux encore demander de l'aide à tout moment."
+        },
+        {
+          "label": "Ne pas y aller et ne plus répondre",
+          "protective": true,
+          "outcome": "Tu ne réponds plus. Tu gardes tes captures et tu restes entourée.",
+          "advice": "Ne plus répondre coupe la prise qu'il a sur toi."
+        },
+        {
+          "label": "Appeler l'Institut National de la Femme",
+          "protective": true,
+          "outcome": "Au 114, on t'écoute sans te juger et on t'explique comment porter plainte.",
+          "advice": "Des structures gratuites et confidentielles existent pour t'accompagner.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Un chantage ne s'arrête pas quand on cède. Il s'arrête quand on est entourée et protégée."
+    },
+    {
+      "chapter": "5 · La photo publiée",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Rodrigue",
+          "Je l'ai envoyée. Maintenant tout le monde sait qui tu es."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Supprimer tous mes comptes et m'isoler",
+          "protective": false,
+          "outcome": "Tu disparais, mais la photo continue de circuler et tu restes seule avec ta peine.",
+          "advice": "Ce que tu ressens est violent. Avant de tout supprimer, garde les preuves et parle à quelqu'un."
+        },
+        {
+          "label": "Signaler la publication et demander son retrait",
+          "protective": true,
+          "outcome": "Tes amies signalent aussi. La plateforme retire l'image et bloque le compte.",
+          "advice": "Plusieurs signalements font retirer une image intime plus vite.",
+          "reflexes": [
+            5
+          ]
+        },
+        {
+          "label": "Porter plainte avec mes preuves",
+          "protective": true,
+          "outcome": "Accompagnée de ta sœur, tu portes plainte. Diffuser une image intime sans accord est puni.",
+          "advice": "Porter plainte est gratuit. La loi protège ton identité pendant la procédure.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "La honte doit changer de camp : la faute est à celui qui diffuse, jamais à toi."
+    }
+  ]
+}
