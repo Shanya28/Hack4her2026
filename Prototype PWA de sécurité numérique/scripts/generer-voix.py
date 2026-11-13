@@ -1,7 +1,7 @@
 """Génère la voix française des messages des histoires avec Piper (voix neuronales).
 
 Chaque message de l'interlocuteur devient un fichier
-src/content/audio/fr/<scénario>/<situation>-<message>.mp3, que l'application
+src/content/audio/fr/<scénario>/m<situation>-<message>.mp3, que l'application
 joue à la place de la voix de synthèse du téléphone.
 
 Préparation (une fois) :
@@ -59,7 +59,7 @@ def main() -> None:
                 if who == "moi":
                     continue
                 kind = "male" if who.split(" · ")[0] in MALE else "female"
-                target = out_dir / f"{s}-{m}.mp3"
+                target = out_dir / f"m{s}-{m}.mp3"
                 with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
                     with wave.open(tmp.name, "wb") as wav:
                         voices[kind].synthesize_wav(spoken(text), wav)

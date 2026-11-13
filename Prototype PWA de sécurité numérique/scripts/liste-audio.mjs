@@ -27,7 +27,7 @@ scenario.steps.forEach((step, s) => {
   console.log(step.chapter);
   step.messages.forEach(([who, text], m) => {
     if (who === "moi") return; // seule la voix de l'interlocuteur est lue
-    const name = `${s + 1}-${m + 1}`;
+    const name = `m${s + 1}-${m + 1}`;
     const has = recorded.some((f) => f.startsWith(`${name}.`));
     total++;
     if (has) done++;

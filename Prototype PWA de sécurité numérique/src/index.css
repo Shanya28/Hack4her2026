@@ -4331,3 +4331,130 @@ button.pulse {
 .vop-card.today-card > span:not(.eyebrow):not(.vop-card-cta) {
   max-width: 100%;
 }
+
+/* Local languages: translated text with the French original, numbered
+   answers that can be listened to */
+.said {
+  display: inline;
+}
+.said > small.fr-gloss {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.62;
+}
+.story-choice-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 7px;
+}
+.story-choice-row .story-choice {
+  margin-top: 0;
+  flex: 1;
+  gap: 10px;
+}
+.story-choice .said {
+  flex: 1;
+  text-align: left;
+}
+.choice-number {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--navy);
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+}
+.choice-listen {
+  flex: none;
+  width: 46px;
+  border: 1px solid #d9c9c0;
+  border-radius: 14px;
+  background: white;
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+}
+.story-choice-row.reading .story-choice {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px #ee8c6b55;
+}
+.story-choice-row.reading .choice-number {
+  background: var(--coral);
+}
+.learning-card > div.outcome {
+  color: var(--plum);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+.learning-card > div.advice {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 10px 0;
+}
+.learning-card > div.lesson {
+  background: var(--sand);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 10px 0;
+}
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.segmented button {
+  flex: 1 1 0;
+  min-width: 72px;
+  min-height: 48px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+}
+.segmented button.on {
+  border-color: var(--navy);
+  background: var(--sand);
+}
+.segmented button:disabled {
+  opacity: 0.5;
+}
+.segmented button small {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.setting-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 2px 2px 12px;
+}
+.chat-header .icon-button.audio-on,
+.chat-header .icon-button.audio-on:hover {
+  background: var(--navy);
+  color: white;
+}
