@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche technique et de risques – Ayidote</title>
+<!-- Source du PDF : ouvrir dans Chrome, Imprimer > Enregistrer au format PDF (A4, sans en-têtes). -->
+<style>
+  @page { size: A4; margin: 14mm 13mm 15mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Noto Sans", "DejaVu Sans", Arial, sans-serif; font-size: 9.3pt; line-height: 1.42; color: #2a2228; }
+  .kicker { font-size: 7.6pt; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #b0613f; margin: 0; }
+  h1 { font-size: 19pt; color: #49213d; margin: 2pt 0 1pt; }
+  .meta { font-size: 8.5pt; color: #6b5f66; margin: 0 0 10pt; }
+  h2 { display: flex; align-items: center; gap: 6pt; font-size: 11.3pt; color: #49213d; margin: 12pt 0 5pt; break-after: avoid; }
+  h2 span { width: 15pt; height: 15pt; border-radius: 50%; background: #49213d; color: #fff; font-size: 8.4pt; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  h3 { font-size: 9.6pt; color: #49213d; margin: 7pt 0 3pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul, ol { margin: 0 0 5pt; padding-left: 15pt; }
+  li { margin-bottom: 2pt; }
+  .pitch { background: #f6efe6; border-left: 3pt solid #b0613f; padding: 7pt 9pt; margin-bottom: 6pt; }
+  .note { background: #fbf0d9; border: .75pt solid #e3c88f; border-radius: 3pt; padding: 6pt 9pt; margin: 4pt 0 6pt; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 3pt 0 6pt; font-size: 8.5pt; }
+  th { background: #49213d; color: #fff; text-align: left; padding: 3.5pt 5pt; font-weight: 600; }
+  td { border-bottom: .6pt solid #e3d9cc; padding: 3.5pt 5pt; vertical-align: top; }
+  tr { break-inside: avoid; }
+  .ok { color: #3f6b3c; font-weight: 700; }
+  .mid { color: #9a6a12; font-weight: 700; }
+  .ko { color: #a23b2f; font-weight: 700; }
+  .cols { display: flex; gap: 12pt; }
+  .cols > div { flex: 1; }
+  .box { break-inside: avoid; }
+  .page-break { break-before: page; }
+  footer { margin-top: 9pt; font-size: 7.8pt; color: #7a6a74; border-top: .6pt solid #e3d9cc; padding-top: 4pt; }
+</style>
+</head>
+<body>
+
+<p class="kicker">HACK4HER 2026 – Tech for Her Safety • Défi 4 : Hygiène numérique</p>
+<h1>Fiche technique et de risques – Ayidote</h1>
+<p class="meta">Version du vendredi 13 novembre 2026 • Epitech Bénin • Équipe : Idvaresse, Aichath, Shanya, Christelle, Imane • Démonstration : https://shanya28.github.io/Hack4her2026/</p>
+
+<h2><span>1</span>Le besoin et le public</h2>
+<div class="pitch">
+  Pour <b>les jeunes femmes de 15 à 30 ans</b>, qui ont besoin de <b>reconnaître les pièges numériques et de savoir comment réagir</b>, Ayidote les <b>entraîne par des histoires interactives, des jeux et des conseils</b>, afin qu'elles <b>sachent se protéger, conserver les preuves et ne restent pas seules</b>.
+</div>
+<p>Une partie des violences faites aux femmes passe par le téléphone : chantage aux images intimes, comptes piratés, contrôle dans le couple, faux profils, harcèlement en groupe. Beaucoup de jeunes ne connaissent ni les signes ni les bons réflexes. Ayidote agit <b>avant</b> la violence : on s'entraîne sur des situations fictives pour reconnaître le piège le jour où il arrive.</p>
+<p><b>Public principal :</b> jeunes femmes de 15 à 30 ans, téléphone Android d'entrée de gamme, connexion limitée. <b>Public élargi :</b> groupes en séance animée (classes, centres sociaux) ; personnes qui lisent peu ou mal, ou malvoyantes, grâce au mode écoute en français, fon et yoruba.</p>
+
+<h2><span>2</span>La structure publique utilisatrice</h2>
+<p><b>Structure porteuse proposée : l'Institut National de la Femme (INF)</b>, qui diffuserait Ayidote dans ses actions de sensibilisation et vers laquelle l'application oriente (appel gratuit au 114). <b>Relais de terrain :</b> Centres de Promotion Sociale, établissements scolaires et universitaires, avec les jeux de groupe animés sur un seul écran. Ayidote renvoie aussi vers la plateforme officielle VBG-FT du Gouvernement (adovbg-ft.social.gouv.bj).</p>
+<div class="note"><b>À valider</b> avec le mentor et l'INF. Ayidote ne reçoit aucune plainte et ne remplace aucun service : il prépare et oriente vers les structures compétentes.</div>
+
+<h2><span>3</span>Les fonctions</h2>
+<table>
+  <tr><th style="width:23%">Fonction</th><th>Ce qu'elle fait</th><th style="width:12%">État</th></tr>
+  <tr><td>Histoires interactives</td><td>6 histoires fictives de 5 situations : sextorsion, faux recrutement, compte piraté, contrôle dans le couple et application espion, faux profil et photo truquée, harcèlement en meute. Messages en direct, jauge de pression, une conséquence et un conseil par choix, sans jugement.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Fausse page de connexion</td><td>Dans chaque histoire, un lien piégé ouvre une fausse page : l'utilisatrice touche les 3 indices. Aucun vrai champ, aucune saisie possible. Réflexe « mot de passe » à la fin.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Mode écoute</td><td>Un bouton par langue dès le premier écran : l'histoire démarre à voix haute (messages, réponses numérotées, conséquences, consignes), gros boutons, sans réglage.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Langues locales</td><td>Fon et yoruba : textes et voix des 6 histoires, avec le français en petit dessous.</td><td class="mid">À l'essai</td></tr>
+  <tr><td>Jeux de groupe</td><td>« Le grand quiz » en équipes sur un seul écran (chrono, points, classement, podium) ; « Vrai ou piège ? » (13 messages, vote collectif).</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Jeux en solo</td><td>Mot du jour (avec indices) qui ouvre l'histoire du jour ; quiz sans jugement ; 6 réflexes à débloquer.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Aide et droits</td><td>Personne de confiance, numéros courts (117, 114, 138, 160, 150, 151), lois béninoises (2011-26, 2021-11, 2017-20, 2020-35) et sites officiels, bons gestes, aider une amie.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Discrétion et contrôle</td><td>Écran d'entrée neutre, sortie rapide sur chaque écran (et touche Échap), « Tout effacer », alerte discrète simulée déguisée en page de notes.</td><td class="ok">Fonctionne</td></tr>
+  <tr><td>Installation, hors ligne</td><td>Application installable (PWA), guide pas à pas, utilisable sans réseau après la première visite.</td><td class="ok">Fonctionne</td></tr>
+</table>
+
+<h2><span>4</span>L'architecture technique</h2>
+<div class="cols">
+  <div class="box">
+    <ul>
+      <li><b>Type :</b> application web installable (PWA), React 19 + Vite, sans serveur applicatif ni base de données.</li>
+      <li><b>Hors ligne :</b> service worker ; les voix d'une langue sont gardées sur le téléphone dès qu'on active la voix.</li>
+      <li><b>Données :</b> uniquement dans le stockage local du navigateur (progression, réglages). Aucun compte, aucune statistique, aucun cookie.</li>
+      <li><b>Contenus :</b> fichiers JSON séparés du code (histoires, quiz, jeux), contrôlés par un script de vérification.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <ul>
+      <li><b>Voix :</b> générées à l'avance (Piper pour le français ; modèles MMS de Meta pour le fon et le yoruba), donc aucune voix calculée en ligne.</li>
+      <li><b>Traductions :</b> Google Traduction, faites une fois à la préparation, jamais depuis le téléphone.</li>
+      <li><b>Sécurité web :</b> politique de sécurité du contenu (CSP), aucun référent transmis, police de caractères fournie avec l'application.</li>
+      <li><b>Hébergement :</b> GitHub Pages (HTTPS). Poids : environ 650 Ko d'application, plus 4 à 6 Mo de voix par langue.</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span>5</span>Les tests réalisés</h2>
+<p>Tests automatisés dans Chrome, en simulant des téléphones (largeurs de 320 à 414 pixels), sur la version du 13 novembre au matin.</p>
+<table>
+  <tr><th style="width:17%">Axe</th><th>Ce qui a été testé</th><th style="width:26%">Résultat</th></tr>
+  <tr><td>Fonctionnalité</td><td>Parcours complet des nouveautés : mode écoute (dans les 3 langues), 6 histoires, fausse page, mot du jour, quiz, grand quiz en équipes (réponses, temps écoulé, classement).</td><td class="ok">19 contrôles sur 19</td></tr>
+  <tr><td>Fonctionnalité</td><td>Histoires en fon et en yoruba : textes traduits, ordre de lecture, surlignage de la réponse lue, réécoute, retour au français.</td><td class="ok">13 sur 13 par langue</td></tr>
+  <tr><td>Hors ligne</td><td>Première visite en ligne, puis serveur coupé : ouverture, histoires, jeux, aide, paramètres, alerte, voix fon.</td><td class="ok">Tout fonctionne ; voix disponibles si activées en ligne</td></tr>
+  <tr><td>Accessibilité</td><td>21 écrans à 4 largeurs : débordements, textes coupés, chevauchements, barre du bas visible, champs à 16 px (pas de zoom sur iPhone). Mode écoute pour lecture difficile ou malvoyance.</td><td class="ok">Défauts trouvés et corrigés</td></tr>
+  <tr><td>Sécurité</td><td>Aucune requête vers un autre serveur que l'hébergeur ; aucune saisie possible sur la fausse page ; liens externes ouverts sans transmettre la page d'origine ; « Tout effacer ».</td><td class="ok">Vérifié</td></tr>
+  <tr><td>Données fictives</td><td>Script de contrôle sur les 6 histoires et les 13 messages du jeu : structure, aucune marque réelle, aucun numéro ni lien réel, pas de ton culpabilisant, pas de contenu explicite.</td><td class="ok">Tous conformes</td></tr>
+  <tr><td>Biais</td><td>Profils variés (étudiante, lycéenne, commerçante, vendeuse en ligne, chercheuse d'emploi, en couple) ; jamais de faute rejetée sur la victime. Aucun classement automatique de messages, donc pas de biais de détection. Qualité des traductions probablement inégale entre fon et yoruba.</td><td class="mid">Revu par l'équipe ; non testé avec des utilisatrices</td></tr>
+  <tr><td>Test utilisatrice</td><td>Test avec une personne extérieure (prévu par l'équipe).</td><td class="mid">À compléter</td></tr>
+</table>
+<div class="note"><b>Limite des tests :</b> ils ont tous été faits dans un navigateur d'ordinateur qui simule un téléphone. Installation, vibration, son et raccourci « Mon carnet » restent à essayer sur de vrais téléphones Android et iPhone.</div>
+
+<h2><span>6</span>Safety by Design : les quatre piliers</h2>
+<table>
+  <tr><th style="width:21%">Pilier</th><th>Ce qu'Ayidote fait</th></tr>
+  <tr><td>Confidentialité</td><td>Aucun compte, aucune collecte, aucune donnée réelle ; tout reste sur le téléphone ; police de caractères et voix fournies avec l'application ; politique de confidentialité dans l'application.</td></tr>
+  <tr><td>Sécurité par défaut</td><td>Écran d'entrée et icône neutres ; sortie rapide partout ; raccourci au nom anodin ; aucune vraie saisie sur la fausse page ; alerte toujours affichée comme simulée.</td></tr>
+  <tr><td>Accessibilité</td><td>Application légère et hors ligne pour téléphones d'entrée de gamme ; mode écoute en français, fon et yoruba ; gros boutons numérotés ; adapté dès 320 pixels de large.</td></tr>
+  <tr><td>Recours et contrôle humain</td><td>Orientation vers une personne de confiance, l'INF, la police et les autres structures ; liens vers les lois et la plateforme VBG-FT ; contenus écrits avec l'IA contrôlés puis à relire par l'équipe et des spécialistes.</td></tr>
+</table>
+
+<h2><span>7</span>L'analyse des risques</h2>
+<table>
+  <tr><th style="width:24%">Risque pour l'utilisatrice</th><th style="width:9%">Niveau</th><th>Ce que fait Ayidote</th><th style="width:23%">Risque restant</th></tr>
+  <tr><td>Un agresseur découvre l'application sur son téléphone</td><td class="ko">Élevé</td><td>Nom et écran neutres, sortie rapide, « Tout effacer », icône rangeable, aucune donnée sensible stockée.</td><td>Un proche qui fouille peut quand même la trouver.</td></tr>
+  <tr><td>Croire que l'alerte discrète prévient vraiment quelqu'un</td><td class="ko">Élevé</td><td>« Simulation, aucune alerte envoyée » affiché à chaque étape ; renvoi au 117 en cas de danger.</td><td>Mauvaise lecture possible ; à présenter clairement.</td></tr>
+  <tr><td>Un mauvais conseil (histoires écrites avec l'IA)</td><td class="mid">Moyen</td><td>Script de contrôle ; marquage « à relire » ; conseils prudents et généraux.</td><td>Relecture par des spécialistes non faite.</td></tr>
+  <tr><td>Traduction ou prononciation fausse en fon ou yoruba</td><td class="mid">Moyen</td><td>Mention « traduction automatique, à l'essai » ; français affiché sous chaque texte ; le français fait foi.</td><td>Non relu par des locutrices.</td></tr>
+  <tr><td>Une situation réveille un vécu douloureux</td><td class="mid">Moyen</td><td>Images masquées, ton non culpabilisant, « Besoin de souffler ? », aide à portée de main, personne n'est obligée de raconter.</td><td>Accompagnement humain conseillé en séance.</td></tr>
+  <tr><td>Un numéro ou un lien d'aide devient faux</td><td class="mid">Moyen</td><td>Sources officielles datées (ARCEP, sites du Gouvernement, INF).</td><td>Mise à jour régulière nécessaire.</td></tr>
+  <tr><td>Les liens et appels laissent des traces</td><td class="mid">Moyen</td><td>Avertissement avant d'ouvrir un lien ou d'appeler ; conseil d'utiliser le téléphone d'une personne sûre.</td><td>Historique du navigateur et des appels.</td></tr>
+  <tr><td>Pas de voix sans connexion au premier usage</td><td class="ok">Faible</td><td>Voix gardées hors ligne dès l'activation en ligne ; textes toujours disponibles.</td><td>Activer la voix une fois avec Internet.</td></tr>
+  <tr><td>Fausse impression de sécurité totale</td><td class="ok">Faible</td><td>« Aucune détection parfaite n'est promise », dans les conditions d'utilisation et à l'écran.</td><td>—</td></tr>
+</table>
+
+<h2><span>8</span>Les limites</h2>
+<ul>
+  <li>Ayidote <b>prévient et oriente</b> : il ne détecte pas les dangers, ne reçoit pas de plainte et ne remplace ni les secours ni un accompagnement professionnel.</li>
+  <li>L'alerte discrète est une <b>simulation</b>, conformément au règlement : une vraie alerte demanderait un serveur ou une application native.</li>
+  <li>Fon et yoruba : <b>traduction et voix automatiques</b>, une seule voix par langue ; le mina n'est pas encore disponible.</li>
+  <li>Cinq histoires sur six et les questions du quiz en équipes ont été <b>écrites avec l'aide d'une IA</b> et attendent une relecture humaine.</li>
+  <li>Les voix fon et yoruba (licence CC BY-NC 4.0) et l'une des voix françaises (données sous licence AGPL v3) limitent un <b>usage commercial</b>.</li>
+  <li>Aucun test avec de vraies utilisatrices ni sur de vrais téléphones à ce stade.</li>
+</ul>
+
+<h2><span>9</span>Les conditions avant un usage réel</h2>
+<ol>
+  <li><b>Validation des contenus</b> (histoires, conseils, quiz) par l'INF, des juristes et des psychologues spécialistes des violences.</li>
+  <li><b>Langues locales :</b> relecture des traductions et enregistrement de vraies voix par des locutrices ; ajout du mina et d'autres langues.</li>
+  <li><b>Tests avec des utilisatrices</b> du public cible, en séance encadrée, sur des téléphones d'entrée de gamme.</li>
+  <li><b>Audit de sécurité</b> et revue juridique (Code du numérique, APDP), avec un hébergement validé par l'institution porteuse.</li>
+  <li><b>Accord de l'institution porteuse</b> et d'un service pour mettre à jour les numéros, les liens et les contenus.</li>
+  <li><b>Licences :</b> remplacer les voix non commerciales par des voix enregistrées ou sous licence adaptée.</li>
+  <li>Pour une vraie alerte : application native, contacts réels et protocole défini avec les structures d'aide.</li>
+</ol>
+
+<footer>Ayidote est un prototype pédagogique réalisé pendant le hackathon HACK4HER 2026, avec uniquement des scénarios fictifs et des données synthétiques. Il ne contacte pas les secours et ne garantit pas la détection d'un danger.</footer>
+
+</body>
+</html>

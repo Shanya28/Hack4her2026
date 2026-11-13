@@ -1538,7 +1538,7 @@ function Home({
               <strong>Mode écoute · {langNames[lang]}</strong>
               Tout est lu à voix haute.
             </p>
-            <button onClick={stopListening}>Quitter</button>
+            <button onClick={stopListening}>Arrêter l’écoute</button>
           </div>
         )}
         {listen && (
