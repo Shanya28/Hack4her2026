@@ -45,6 +45,7 @@ type IconName =
   | "download"
   | "exit"
   | "headphones"
+  | "learn"
   | "eye"
   | "help"
   | "home"
@@ -160,6 +161,12 @@ const icons: Record<IconName, React.ReactNode> = {
     <>
       <path d="M12 3 2.5 20h19z" />
       <path d="M12 9v5m0 3h.01" />
+    </>
+  ),
+  learn: (
+    <>
+      <path d="M2 9.5 12 5l10 4.5-10 4.5z" />
+      <path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9.5V15" />
     </>
   ),
   headphones: (
@@ -1022,10 +1029,6 @@ function App() {
         daily={dailyScenario()}
         showInstall={!installed && !installHidden}
         install={install}
-        hideInstall={() => {
-          setInstallHidden(true);
-          localStorage.setItem("naya-install", "hidden");
-        }}
         wordOpen={wordGame.found || wordGame.revealed}
         listen={listen}
         lang={lang}
@@ -1533,7 +1536,6 @@ function Home({
   daily,
   showInstall,
   install,
-  hideInstall,
   listen,
   lang,
   startListening,
@@ -1552,7 +1554,6 @@ function Home({
   daily: Scenario;
   showInstall: boolean;
   install: () => void;
-  hideInstall: () => void;
   listen: boolean;
   lang: Lang;
   startListening: (l: Lang) => void;
@@ -1577,9 +1578,6 @@ function Home({
             Bienvenue sur <strong>Ayìdótɛ́</strong>
           </p>
         </div>
-        <button className="carnet-button" onClick={() => go("help")} aria-label="Trouver de l’aide">
-          <Icon name="help" size={20} />
-        </button>
         <QuickExitButton />
         <button className="carnet-button" onClick={openCarnet} aria-label="Mon carnet">
           <Icon name="book" size={20} />
@@ -1663,9 +1661,6 @@ function Home({
                 <small>Une icône sur ton téléphone, même sans réseau</small>
               </span>
               <Icon name="chevron" />
-            </button>
-            <button className="install-hide" onClick={hideInstall}>
-              Plus tard
             </button>
           </div>
         )}
@@ -1951,7 +1946,7 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <span>Jouer</span>
       </button>
       <button className={active === "learn" ? "active" : ""} onClick={() => go("learn")}>
-        <Icon name="book" />
+        <Icon name="learn" />
         <span>S’éduquer</span>
       </button>
       <button className={active === "settings" ? "active" : ""} onClick={() => go("settings")}>
@@ -4627,7 +4622,7 @@ function Learn({ go, unlocked }: { go: (s: Screen) => void; unlocked: number }) 
         </button>
         <button className="wide-link" onClick={() => go("help")}>
           <span className="link-icon">
-            <Icon name="book" />
+            <Icon name="help" />
           </span>
           <span>
             <strong>Tes droits et l’aide au Bénin</strong>
@@ -5140,6 +5135,16 @@ function Settings({
           </div>
           <Icon name="chevron" />
         </button>
+        <button className="setting-row" onClick={() => go("alert")}>
+          <span>
+            <Icon name="warning" />
+          </span>
+          <div>
+            <strong>Alerte discrète</strong>
+            <small>Simulation · aucune alerte envoyée</small>
+          </div>
+          <Icon name="chevron" />
+        </button>
         <button className="setting-row" onClick={() => go("legal")}>
           <span>
             <Icon name="book" />
@@ -5157,16 +5162,6 @@ function Settings({
           <div>
             <strong>Nos engagements</strong>
             <small>Safety by Design</small>
-          </div>
-          <Icon name="chevron" />
-        </button>
-        <button className="setting-row" onClick={() => go("alert")}>
-          <span>
-            <Icon name="warning" />
-          </span>
-          <div>
-            <strong>Alerte discrète</strong>
-            <small>Simulation · aucune alerte envoyée</small>
           </div>
           <Icon name="chevron" />
         </button>

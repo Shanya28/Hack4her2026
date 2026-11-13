@@ -6011,6 +6011,7 @@ textarea {
 .results-stories small {
   color: var(--muted);
 }
-.home-header {
-  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+/* The install card no longer has a « Plus tard » link under it. */
+.install-card .wide-link {
+  padding-bottom: 14px;
 }
