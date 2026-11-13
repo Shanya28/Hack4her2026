@@ -22,6 +22,8 @@ type Screen =
   | "guide"
   | "progress"
   | "privacy"
+  | "legal"
+  | "install"
   | "settings"
   | "alert"
   | "carnet"
@@ -578,6 +580,19 @@ function stopSpeaking() {
   player = null;
 }
 
+// Installation as an app (PWA). Android/Chrome offers a native prompt; other
+// browsers need the steps of the install guide.
+type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+const isInstalled = () =>
+  window.matchMedia?.("(display-mode: standalone)").matches ||
+  (navigator as Navigator & { standalone?: boolean }).standalone === true;
+const devicePlatform = (): "android" | "ios" | "other" => {
+  const ua = navigator.userAgent;
+  if (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1))
+    return "ios";
+  return /android/i.test(ua) ? "android" : "other";
+};
+
 function App() {
   const [screen, setScreen] = useState<Screen>(() => {
     // Opened from the home-screen shortcut (long press on the app icon).
@@ -632,6 +647,34 @@ function App() {
   const total = scenario.steps.length;
   const [story, setStory] = useState(Number(localStorage.getItem("naya-story") || 0));
   const [done, setDone] = useState<string[]>(readDone);
+  const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(null);
+  const [installed, setInstalled] = useState(isInstalled);
+  const [installHidden, setInstallHidden] = useState(
+    () => localStorage.getItem("naya-install") === "hidden",
+  );
+  useEffect(() => {
+    const offer = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as InstallPrompt);
+    };
+    const done = () => {
+      setInstalled(true);
+      setInstallPrompt(null);
+    };
+    window.addEventListener("beforeinstallprompt", offer);
+    window.addEventListener("appinstalled", done);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", offer);
+      window.removeEventListener("appinstalled", done);
+    };
+  }, []);
+  const install = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice.outcome === "accepted") setInstalled(true);
+    setInstallPrompt(null);
+  };
   const [wordGame, setWordGameState] = useState<WordGame>(readWordGame);
   const setWordGame = (game: WordGame) => {
     setWordGameState(game);
@@ -798,6 +841,11 @@ function App() {
         go={go}
         openCarnet={openCarnet}
         daily={dailyScenario()}
+        showInstall={!installed && !installHidden}
+        hideInstall={() => {
+          setInstallHidden(true);
+          localStorage.setItem("naya-install", "hidden");
+        }}
         wordOpen={wordGame.found || wordGame.revealed}
         onPick={startScenario}
         unlocked={unlocked.length}
@@ -945,6 +993,16 @@ function App() {
       />
     );
   else if (screen === "privacy") content = <Privacy onBack={() => go("settings")} />;
+  else if (screen === "legal") content = <Legal onBack={() => go("settings")} />;
+  else if (screen === "install")
+    content = (
+      <Install
+        installed={installed}
+        canPrompt={!!installPrompt}
+        install={install}
+        onBack={() => go("home")}
+      />
+    );
   else if (screen === "alert")
     content = (
       <AlertSetup
@@ -1242,6 +1300,8 @@ function Home({
   go,
   openCarnet,
   daily,
+  showInstall,
+  hideInstall,
   wordOpen,
   onPick,
   unlocked,
@@ -1252,6 +1312,8 @@ function Home({
   go: (s: Screen) => void;
   openCarnet: () => void;
   daily: Scenario;
+  showInstall: boolean;
+  hideInstall: () => void;
   wordOpen: boolean;
   onPick: (id: string) => void;
   unlocked: number;
@@ -1329,6 +1391,23 @@ function Home({
             </span>
           </div>
         </section>
+        {showInstall && (
+          <div className="install-card">
+            <button className="wide-link" onClick={() => go("install")}>
+              <span className="link-icon">
+                <Icon name="download" />
+              </span>
+              <span>
+                <strong>Installer Ayidote</strong>
+                <small>Une icône sur ton téléphone, même sans réseau</small>
+              </span>
+              <Icon name="chevron" />
+            </button>
+            <button className="install-hide" onClick={hideInstall}>
+              Plus tard
+            </button>
+          </div>
+        )}
         <button className="wide-link" onClick={() => go("play")}>
           <span className="link-icon orange">
             <Icon name="spark" />
@@ -2909,6 +2988,52 @@ const helpContacts = [
   },
 ] as { icon: IconName; name: string; number: string; when: string; what: string }[];
 
+// Official texts, on the Government's site (Secrétariat Général du
+// Gouvernement) and on the sites of the bodies concerned. Links checked on
+// 13 November 2026; the summaries are ours and do not replace the texts.
+const rights = [
+  {
+    icon: "shield",
+    title: "Les violences faites aux femmes sont punies",
+    text: "Une loi spéciale définit les violences faites aux femmes et aux filles, les punit et prévoit la protection des victimes.",
+    law: "Loi n° 2011-26 portant prévention et répression des violences faites aux femmes",
+    url: "https://sgg.gouv.bj/doc/loi-2011-26/",
+    cta: "Lire la loi (site du Gouvernement)",
+  },
+  {
+    icon: "warning",
+    title: "Être visée parce que tu es une femme est une infraction",
+    text: "Cette loi renforce la répression des infractions commises contre une personne à cause de son sexe et la protection des femmes.",
+    law: "Loi n° 2021-11 portant dispositions spéciales de répression des infractions commises à raison du sexe des personnes et de protection de la femme",
+    url: "https://sgg.gouv.bj/doc/loi-2021-11/",
+    cta: "Lire la loi (site du Gouvernement)",
+  },
+  {
+    icon: "lock",
+    title: "En ligne aussi, tu as des droits",
+    text: "Le Code du numérique réprime la cybercriminalité et protège tes données personnelles : ton image, ton numéro et tes informations ne peuvent pas être utilisés n’importe comment.",
+    law: "Loi n° 2017-20 portant code du numérique en République du Bénin",
+    url: "https://sgg.gouv.bj/doc/loi-2017-20/",
+    cta: "Lire le Code du numérique",
+  },
+  {
+    icon: "user",
+    title: "Faire respecter tes données",
+    text: "L’Autorité de Protection des Données à caractère Personnel (APDP) reçoit les plaintes quand tes informations sont utilisées sans ton accord.",
+    law: "Autorité de Protection des Données à caractère Personnel",
+    url: "https://apdp.bj/",
+    cta: "Site de l’APDP",
+  },
+  {
+    icon: "help",
+    title: "Être écoutée et accompagnée",
+    text: "L’Institut National de la Femme écoute, oriente et accompagne les femmes victimes de violences. Appel gratuit au 114.",
+    law: "Institut National de la Femme (INF)",
+    url: "https://inf.bj/",
+    cta: "Site de l’INF",
+  },
+] as { icon: IconName; title: string; text: string; law: string; url: string; cta: string }[];
+
 function Help({ go }: { go: (s: Screen) => void }) {
   return (
     <section className="screen with-nav resources">
@@ -2960,6 +3085,36 @@ function Help({ go }: { go: (s: Screen) => void }) {
             </p>
           </div>
         </article>
+        <h2>Tes droits au Bénin</h2>
+        <p className="help-intro">
+          Ce que tu vis est puni par la loi. Ces textes officiels le disent : l’INF ou un
+          commissariat peut t’aider à les faire valoir.
+        </p>
+        {rights.map((r) => (
+          <article className="help-contact right" key={r.law}>
+            <span className="resource-icon">
+              <Icon name={r.icon} />
+            </span>
+            <div>
+              <strong>{r.title}</strong>
+              <p>{r.text}</p>
+              <p className="help-when">{r.law}</p>
+              <a className="help-link" href={r.url} target="_blank" rel="noopener noreferrer">
+                {r.cta} <Icon name="arrow" size={14} />
+              </a>
+            </div>
+          </article>
+        ))}
+        <div className="tip">
+          <Icon name="eye" />
+          <p>
+            <strong>Avant d’ouvrir un lien</strong>
+            <br />
+            Les sites que tu visites restent dans l’historique de ton navigateur. Si quelqu’un
+            surveille ton téléphone, utilise la navigation privée ou le téléphone d’une personne
+            sûre.
+          </p>
+        </div>
         <div className="tip">
           <Icon name="eye" />
           <p>
@@ -3413,6 +3568,26 @@ function Settings({
           </span>
         </button>
         <h3>Sécurité et confidentialité</h3>
+        <button className="setting-row" onClick={() => go("install")}>
+          <span>
+            <Icon name="download" />
+          </span>
+          <div>
+            <strong>Installer l’application</strong>
+            <small>Le guide pas à pas</small>
+          </div>
+          <Icon name="chevron" />
+        </button>
+        <button className="setting-row" onClick={() => go("legal")}>
+          <span>
+            <Icon name="book" />
+          </span>
+          <div>
+            <strong>Informations légales</strong>
+            <small>Confidentialité, conditions, mentions, crédits</small>
+          </div>
+          <Icon name="chevron" />
+        </button>
         <button className="setting-row" onClick={() => go("privacy")}>
           <span>
             <Icon name="shield" />
@@ -3452,6 +3627,222 @@ function Settings({
           </p>
         </div>
         <p className="version">Ayidote · Prototype 1.0</p>
+      </div>
+    </section>
+  );
+}
+
+// Legal information. Plain language, written for a hackathon prototype: to
+// review with a legal adviser before any real distribution.
+const LEGAL_DATE = "13 novembre 2026";
+const legalSections: { title: string; intro: string; body: (string | [string, string])[] }[] = [
+  {
+    title: "Politique de confidentialité",
+    intro: "Ayidote ne collecte aucune donnée sur toi.",
+    body: [
+      ["Aucun compte, aucune collecte", "Tu n’as pas de compte à créer. Ayidote n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages."],
+      ["Ce qui reste sur ton téléphone", "Pour que tu retrouves ta progression, l’application garde sur ton téléphone (stockage local du navigateur) : ta langue, ton personnage, ta progression dans les histoires et le quiz, tes réflexes débloqués, le mot du jour, tes réglages (voix, compte à rebours) et les réglages fictifs de l’alerte. Ces informations ne quittent jamais ton téléphone."],
+      ["Tout effacer", "Paramètres › Tout effacer supprime immédiatement toutes ces informations. Désinstaller l’application ou effacer les données du navigateur les supprime aussi."],
+      ["Ce que voit l’hébergeur", "Pour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayidote n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application."],
+      ["Liens et appels", "Quand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayidote : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels."],
+      ["Tes droits", "La protection des données personnelles est encadrée au Bénin par le Code du numérique (loi n° 2017-20). Si un service utilise tes données sans ton accord, tu peux saisir l’Autorité de Protection des Données à caractère Personnel (APDP)."],
+    ],
+  },
+  {
+    title: "Conditions d’utilisation",
+    intro: "Ayidote est un prototype pédagogique, gratuit.",
+    body: [
+      ["À quoi sert Ayidote", "Ayidote aide à reconnaître les pièges numériques (chantage, arnaques, piratage de compte) par des histoires fictives, des jeux et des conseils. Les personnages, messages et situations sont inventés ; toute ressemblance est fortuite."],
+      ["Ce qu’Ayidote ne fait pas", "Ayidote ne remplace ni les secours, ni la police, ni un accompagnement professionnel, juridique ou médical. Il ne détecte pas les dangers à ta place. En cas de danger immédiat, appelle le 117."],
+      ["Alerte discrète", "L’alerte discrète est une simulation : elle ne prévient personne et n’envoie aucun message, appel ou position. Ne compte pas sur elle en cas de danger."],
+      ["Langues locales", "Les textes et voix en fon et en yoruba sont traduits et générés automatiquement, sans relecture par une personne qui parle ces langues : ils peuvent contenir des erreurs. Le français fait foi."],
+      ["Conseils", "Les conseils sont généraux. Les numéros et liens d’aide ont été vérifiés à la date indiquée, mais ils peuvent changer : vérifie-les auprès des sources officielles."],
+      ["Usage", "Ayidote est mis à disposition gratuitement, pour un usage personnel et non commercial, sans garantie de disponibilité. Il convient aux personnes de tout âge ; les plus jeunes peuvent l’utiliser avec un adulte de confiance."],
+    ],
+  },
+  {
+    title: "Mentions légales",
+    intro: "Qui publie Ayidote, et où il est hébergé.",
+    body: [
+      ["Éditeur", "Équipe Ayidote, prototype réalisé dans le cadre du hackathon HACK4HER 2026 « Tech for Her Safety » (Cotonou, 12 et 13 novembre 2026). Ayidote n’est pas un service officiel de l’État ni des organisateurs du hackathon."],
+      ["Contact", "Par l’intermédiaire des organisateurs du hackathon HACK4HER 2026."],
+      ["Hébergement", "GitHub Pages, service de GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis."],
+      ["Statut", "Prototype en phase de test. Toute utilisation réelle nécessitera des vérifications techniques, juridiques et de sécurité, et l’accord des institutions compétentes."],
+    ],
+  },
+  {
+    title: "Crédits et licences",
+    intro: "Les outils et contenus libres utilisés par Ayidote.",
+    body: [
+      ["Voix françaises", "Générées avec Piper. Voix « siwis » (jeu de données SIWIS, licence CC BY 4.0) et voix « tom » (jeu de données sous licence AGPL v3)."],
+      ["Voix en fon et en yoruba", "Générées avec les modèles MMS de Meta (facebook/mms-tts-fon et facebook/mms-tts-yor), licence CC BY-NC 4.0 : usage non commercial uniquement."],
+      ["Traductions", "Traductions automatiques produites avec Google Traduction, non relues."],
+      ["Police de caractères", "Nunito, licence SIL Open Font License 1.1."],
+      ["Logiciels", "React et Vite, licence MIT."],
+      ["Histoires", "Rédigées par l’équipe, dont certaines avec l’aide d’une intelligence artificielle puis contrôlées."],
+    ],
+  },
+];
+
+function Legal({ onBack }: { onBack: () => void }) {
+  const [open, setOpen] = useState(0);
+  return (
+    <section className="screen resources">
+      <TopBar title="Informations légales" onBack={onBack} />
+      <div className="page-content">
+        <p className="help-intro">Version du {LEGAL_DATE}.</p>
+        {legalSections.map((section, i) => (
+          <article className={`resource-card ${open === i ? "open" : ""}`} key={section.title}>
+            <button onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i}>
+              <span className="resource-icon">
+                <Icon name={["lock", "check", "book", "spark"][i] as IconName} />
+              </span>
+              <span>
+                <strong>{section.title}</strong>
+                <small>{section.intro}</small>
+              </span>
+              <Icon name="chevron" />
+            </button>
+            {open === i && (
+              <div className="legal-body">
+                {section.body.map((item) =>
+                  typeof item === "string" ? (
+                    <p key={item}>{item}</p>
+                  ) : (
+                    <div key={item[0]}>
+                      <strong>{item[0]}</strong>
+                      <p>{item[1]}</p>
+                    </div>
+                  ),
+                )}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const installSteps: Record<"android" | "ios" | "other", { name: string; steps: [string, string][] }> = {
+  android: {
+    name: "Android (Chrome)",
+    steps: [
+      ["Ouvre le lien dans Chrome", "Le lien d’Ayidote, partagé par l’animatrice ou une amie."],
+      ["Touche les trois points ⋮", "En haut à droite de l’écran."],
+      ["Choisis « Installer l’application »", "Ou « Ajouter à l’écran d’accueil », selon ton téléphone."],
+      ["Confirme avec « Installer »", "L’icône Ayidote apparaît avec tes autres applications."],
+    ],
+  },
+  ios: {
+    name: "iPhone (Safari)",
+    steps: [
+      ["Ouvre le lien dans Safari", "L’installation ne marche qu’avec Safari sur iPhone."],
+      ["Touche le bouton Partager", "Le carré avec une flèche vers le haut, en bas de l’écran."],
+      ["Choisis « Sur l’écran d’accueil »", "Fais défiler la liste si tu ne le vois pas."],
+      ["Touche « Ajouter »", "L’icône Ayidote apparaît sur ton écran d’accueil."],
+    ],
+  },
+  other: {
+    name: "Autre navigateur",
+    steps: [
+      ["Samsung Internet", "Menu ≡ › « Ajouter la page à » › « Écran d’accueil »."],
+      ["Ordinateur (Chrome ou Edge)", "L’icône d’installation apparaît à droite de la barre d’adresse."],
+      ["Sinon", "Ouvre le lien dans Chrome sur Android ou dans Safari sur iPhone."],
+    ],
+  },
+};
+
+function Install({
+  installed,
+  canPrompt,
+  install,
+  onBack,
+}: {
+  installed: boolean;
+  canPrompt: boolean;
+  install: () => void;
+  onBack: () => void;
+}) {
+  const platform = devicePlatform();
+  const order = [platform, ...(["android", "ios", "other"] as const).filter((p) => p !== platform)];
+  return (
+    <section className="screen resources">
+      <TopBar title="Installer Ayidote" onBack={onBack} />
+      <div className="page-content">
+        <div className="resource-title">
+          <span>
+            <Icon name="download" size={30} />
+          </span>
+          <h1>{installed ? "Ayidote est installée." : "Garde Ayidote sur ton téléphone."}</h1>
+          <p>
+            {installed
+              ? "Tu peux l’ouvrir depuis son icône, même sans réseau."
+              : "Une icône comme une application, sans passer par un magasin d’applications, et qui marche sans réseau."}
+          </p>
+        </div>
+        {!installed && canPrompt && (
+          <Button onClick={install} icon="download">
+            Installer maintenant
+          </Button>
+        )}
+        {!installed &&
+          order.map((p, n) => (
+            <article className="install-guide" key={p}>
+              <h2>
+                {n === 0 && p !== "other" ? "Sur ton téléphone · " : ""}
+                {installSteps[p].name}
+              </h2>
+              <ol>
+                {installSteps[p].steps.map(([title, text], i) => (
+                  <li key={title}>
+                    <span>{i + 1}</span>
+                    <p>
+                      <strong>{title}</strong>
+                      <br />
+                      {text}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </article>
+          ))}
+        <h2>Bon à savoir</h2>
+        <ol className="demo-steps">
+          <li>
+            <span>
+              <Icon name="offline" size={15} />
+            </span>
+            <p>
+              <strong>Ouvre-la une fois avec Internet</strong>
+              <br />
+              Ensuite, elle fonctionne sans réseau. La voix en fon ou en yoruba se télécharge quand
+              tu choisis la langue.
+            </p>
+          </li>
+          <li>
+            <span>
+              <Icon name="book" size={15} />
+            </span>
+            <p>
+              <strong>Le raccourci « Mon carnet »</strong>
+              <br />
+              Sur Android, garde le doigt sur l’icône d’Ayidote : « Mon carnet » apparaît. Tu peux le
+              glisser sur ton écran.
+            </p>
+          </li>
+          <li>
+            <span>
+              <Icon name="eye" size={15} />
+            </span>
+            <p>
+              <strong>Reste discrète</strong>
+              <br />
+              Tu peux ranger l’icône dans un dossier. Pour tout supprimer : Paramètres › Tout
+              effacer, puis désinstalle l’application.
+            </p>
+          </li>
+        </ol>
       </div>
     </section>
   );

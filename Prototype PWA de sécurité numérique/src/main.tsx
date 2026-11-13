@@ -19,12 +19,7 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
         const urls = performance
           .getEntriesByType("resource")
           .map((entry) => entry.name)
-          .filter(
-            (url) =>
-              url.startsWith(window.location.origin) ||
-              url.startsWith("https://fonts.googleapis.com/") ||
-              url.startsWith("https://fonts.gstatic.com/"),
-          );
+          .filter((url) => url.startsWith(window.location.origin));
         registration.active?.postMessage({ type: "precache", urls });
       }, 2500);
     });
