@@ -3267,6 +3267,46 @@ function Resources({ go }: { go: (s: Screen) => void }) {
         "Active la double authentification.",
         "Ne partage jamais un code reçu par SMS.",
         "Vérifie les sessions et paramètres de confidentialité.",
+        "WhatsApp : Paramètres → Compte → Vérification en deux étapes → Activer.",
+      ],
+    },
+    {
+      icon: "eye" as IconName,
+      title: "Régler qui voit quoi",
+      intro: "Cinq minutes pour fermer les portes.",
+      items: [
+        "Facebook : Paramètres → Confidentialité → Qui peut voir mes publications → « Amis ».",
+        "WhatsApp : Paramètres → Confidentialité → Photo de profil → « Mes contacts ».",
+        "TikTok : Profil → Paramètres → Confidentialité → Compte privé.",
+        "Ne laisse pas ton numéro visible par tout le monde.",
+        "Coupe le partage de ta position dans les applications.",
+        "Tape ton nom dans un moteur de recherche de temps en temps.",
+      ],
+    },
+    {
+      icon: "message" as IconName,
+      title: "Bloquer et signaler",
+      intro: "Couper le contact sans te justifier.",
+      items: [
+        "Capture d’abord les preuves, puis bloque.",
+        "Facebook : ouvre le profil → « Bloquer » → « Signaler » → choisis la raison.",
+        "WhatsApp : appui long sur le message → « Signaler » → « Bloquer le contact ».",
+        "TikTok : appui long sur le commentaire → « Signaler » → choisis la catégorie.",
+        "Si un message t’énerve, attends avant de répondre : la réponse à chaud nourrit l’escalade.",
+        "Ne repartage pas un contenu haineux, même pour le dénoncer.",
+      ],
+    },
+    {
+      icon: "check" as IconName,
+      title: "Les réflexes du quotidien",
+      intro: "Comme se laver les mains, mais en ligne.",
+      items: [
+        "Verrouille ton téléphone avec un code ou ton empreinte.",
+        "Sur un téléphone prêté ou au cybercafé, déconnecte tes comptes avant de partir.",
+        "Pas de compte sensible ni de Mobile Money sur un Wi-Fi public.",
+        "Fais les mises à jour : elles réparent des failles.",
+        "N’installe des applications que depuis le store officiel.",
+        "N’accepte en ami que des personnes que tu connais vraiment.",
       ],
     },
   ];
@@ -3329,8 +3369,9 @@ function Resources({ go }: { go: (s: Screen) => void }) {
 }
 
 // Who to turn to in Benin. The short numbers come from the official list
-// published by ARCEP Bénin (June 2026); they must be checked again before
-// each release. Ayidote never calls or writes to anyone itself.
+// published by ARCEP Bénin (June 2026), cross-checked with the Government's
+// VBG-FT platform (adovbg-ft.social.gouv.bj) and the UNFPA Bénin digital
+// hygiene training; they must be checked again before each release. Ayidote never calls or writes to anyone itself.
 const helpContacts = [
   {
     icon: "warning",
@@ -3345,6 +3386,13 @@ const helpContacts = [
     number: "114",
     when: "Tu subis un chantage, du harcèlement ou une violence parce que tu es une fille ou une femme, y compris en ligne.",
     what: "Écoute, orientation et accompagnement pour porter plainte.",
+  },
+  {
+    icon: "user",
+    name: "Ligne d’assistance aux enfants",
+    number: "138",
+    when: "Tu as moins de 18 ans et tu as besoin d’en parler, ou tu t’inquiètes pour une mineure.",
+    what: "Écoute et orientation gratuites, relayées par le Guichet Unique de Protection Sociale.",
   },
   {
     icon: "user",
@@ -3363,7 +3411,7 @@ const helpContacts = [
   {
     icon: "search",
     name: "Centre National d’Investigations Numériques (CNIN)",
-    number: "",
+    number: "151",
     when: "Arnaque en ligne, compte piraté, chantage à la photo ou à la vidéo.",
     what: "Service d’enquête spécialisé. Le dépôt de plainte est gratuit : passe par un commissariat ou par ses canaux officiels, jamais par un inconnu qui dit le représenter.",
   },
@@ -3393,7 +3441,7 @@ const rights = [
     icon: "lock",
     title: "En ligne aussi, tu as des droits",
     text: "Le Code du numérique réprime la cybercriminalité et protège tes données personnelles : ton image, ton numéro et tes informations ne peuvent pas être utilisés n’importe comment.",
-    law: "Loi n° 2017-20 portant code du numérique en République du Bénin",
+    law: "Loi n° 2017-20 portant code du numérique en République du Bénin, modifiée par la loi n° 2020-35 du 6 janvier 2021",
     url: "https://sgg.gouv.bj/doc/loi-2017-20/",
     cta: "Lire le Code du numérique",
   },
@@ -3414,6 +3462,32 @@ const rights = [
     cta: "Site de l’INF",
   },
 ] as { icon: IconName; title: string; text: string; law: string; url: string; cta: string }[];
+
+// What the law guarantees to a victim during the procedure, as presented by the
+// Government's VBG-FT platform (adovbg-ft.social.gouv.bj/texte-de-loi).
+const victimRights = [
+  ["Être informée", "On doit t’expliquer tes droits et chaque étape de la procédure."],
+  ["Être protégée", "Des mesures peuvent tenir l’auteur à distance et assurer ta sécurité."],
+  ["Être accompagnée", "Une aide juridique et psychologique gratuite existe."],
+  ["Obtenir réparation", "Le préjudice que tu as subi peut être indemnisé."],
+  ["Rester anonyme", "Ton identité peut être protégée pendant la procédure."],
+  ["Faire appel", "Tu peux contester une décision qui ne te paraît pas juste."],
+];
+
+// How to support a friend, from the same platform's "Prise en charge" page.
+const helpFriendDo = [
+  "La croire.",
+  "Respecter son rythme.",
+  "L’encourager à chercher de l’aide.",
+  "L’aider à garder les preuves, si c’est sans danger.",
+  "Veiller à sa sécurité.",
+];
+const helpFriendDont = [
+  "Minimiser ce qu’elle vit.",
+  "La rendre responsable.",
+  "La forcer à porter plainte.",
+  "Faire circuler les images, même pour la défendre.",
+];
 
 function Help({ go }: { go: (s: Screen) => void }) {
   return (
@@ -3466,6 +3540,26 @@ function Help({ go }: { go: (s: Screen) => void }) {
             </p>
           </div>
         </article>
+        <article className="help-contact">
+          <span className="resource-icon">
+            <Icon name="search" />
+          </span>
+          <div>
+            <strong>La plateforme officielle VBG-FT</strong>
+            <p>
+              Le ministère des Affaires sociales y explique les violences en ligne, liste les
+              structures de prise en charge et permet de signaler un cas.
+            </p>
+            <a
+              className="help-link"
+              href="https://adovbg-ft.social.gouv.bj/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              adovbg-ft.social.gouv.bj <Icon name="arrow" size={14} />
+            </a>
+          </div>
+        </article>
         <h2>Tes droits au Bénin</h2>
         <p className="help-intro">
           Ce que tu vis est puni par la loi. Ces textes officiels le disent : l’INF ou un
@@ -3486,6 +3580,39 @@ function Help({ go }: { go: (s: Screen) => void }) {
             </div>
           </article>
         ))}
+        <h2>Tes droits de victime</h2>
+        <p className="help-intro">
+          La honte doit changer de camp : ce n’est jamais la faute de la victime. Si tu portes
+          plainte, la loi te garantit :
+        </p>
+        <ul className="help-list">
+          {victimRights.map(([t, d]) => (
+            <li key={t}>
+              <Icon name="check" size={16} />
+              <span>
+                <strong>{t}.</strong> {d}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <h2>Une amie te confie qu’elle est victime ?</h2>
+        <ul className="help-list">
+          {helpFriendDo.map((x) => (
+            <li key={x}>
+              <Icon name="check" size={16} />
+              <span>{x}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="help-intro">À éviter :</p>
+        <ul className="help-list avoid">
+          {helpFriendDont.map((x) => (
+            <li key={x}>
+              <Icon name="warning" size={16} />
+              <span>{x}</span>
+            </li>
+          ))}
+        </ul>
         <div className="tip">
           <Icon name="eye" />
           <p>
@@ -3507,7 +3634,8 @@ function Help({ go }: { go: (s: Screen) => void }) {
         </div>
         <p className="disclaimer">
           Ayidote n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
-          de l’ARCEP Bénin (juin 2026) : ils peuvent changer.
+          de l’ARCEP Bénin (juin 2026) et de la plateforme VBG-FT du Gouvernement : ils peuvent
+          changer.
         </p>
         <Button variant="secondary" onClick={() => go("resources")} icon="shield">
           Voir les gestes à faire toi-même

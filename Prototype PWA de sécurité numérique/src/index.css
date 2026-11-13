@@ -4486,6 +4486,30 @@ button.pulse {
 }
 
 /* Help: rights, legal information, install guide */
+.help-list {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+  background: var(--white);
+  border-radius: 18px;
+}
+.help-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.help-list li > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--sage);
+}
+.help-list.avoid li > svg {
+  color: var(--brick);
+}
 .help-intro {
   font-size: 13px;
   line-height: 1.5;
