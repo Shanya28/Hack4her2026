@@ -247,11 +247,11 @@ function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 }
 
 const portraitColors: Record<string, string[]> = {
-  afi: ["#B96E56", "#49213D", "#799375"],
-  maya: ["#D58C72", "#49213D", "#E8B55A"],
-  kevin: ["#8FA58E", "#352331", "#C98167"],
-  rh: ["#A8705A", "#2F3A4A", "#C9B48A"],
-  chantal: ["#C17F63", "#5A2A3A", "#9DB0C4"],
+  afi: ["#B96E56", "#49372D", "#F58232"],
+  maya: ["#D58C72", "#49372D", "#FFB36B"],
+  kevin: ["#A8705A", "#49372d", "#E8DCCB"],
+  rh: ["#A8705A", "#49372d", "#E8DCCB"],
+  chantal: ["#C17F63", "#49372D", "#f5efe6"],
 };
 
 function Portrait({ person = "afi", small = false }: { person?: string; small?: boolean }) {
@@ -276,17 +276,17 @@ function Portrait({ person = "afi", small = false }: { person?: string; small?: 
         {person === "kevin" && (
           <path d="M34 33c8-25 50-29 57 7-18-8-38-10-57-7z" fill={colors[1]} />
         )}
-        <circle cx="50" cy="51" r="2" fill="#352331" />
-        <circle cx="70" cy="51" r="2" fill="#352331" />
+        <circle cx="50" cy="51" r="2" fill="#49372d" />
+        <circle cx="70" cy="51" r="2" fill="#49372d" />
         <path
           d="M54 63c4 3 8 3 12 0"
           fill="none"
-          stroke="#733F38"
+          stroke="#49372dd9"
           strokeWidth="2"
           strokeLinecap="round"
         />
         <path d="M18 120c2-30 18-44 42-44s40 14 42 44" fill={colors[1]} />
-        <path d="M51 76 60 91l9-15" fill="#F7F0E5" />
+        <path d="M51 76 60 91l9-15" fill="#f5efe6" />
       </svg>
     </div>
   );
@@ -2916,7 +2916,7 @@ const teamsAll = [
   { name: "Baobab", color: "var(--sage)" },
   { name: "Étoile", color: "var(--coral)" },
 ];
-const answerColors = ["var(--coral)", "var(--navy)", "var(--sage)", "#b98a2f"];
+const answerColors = ["#F58232", "#49372D", "#FFB36B", "#E8DCCB"];
 
 function QuizEquipes({ go }: { go: (s: Screen) => void }) {
   const [phase, setPhase] = useState<"setup" | "question" | "reveal" | "scores" | "podium">("setup");
