@@ -1,0 +1,184 @@
+[
+  {
+    "name": "01-Fiche-technique-et-risques-Ayidote",
+    "pages": 7,
+    "overflow": [],
+    "sizes": [
+      {
+        "page": 1,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 2,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 3,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 4,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 5,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 6,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 7,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      }
+    ]
+  },
+  {
+    "name": "02-Support-de-pitch-Ayidote",
+    "pages": 11,
+    "overflow": [],
+    "sizes": [
+      {
+        "page": 1,
+        "height": 543,
+        "scroll": 545,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 2,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 3,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 4,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 5,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 6,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 7,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 8,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 9,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 10,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      },
+      {
+        "page": 11,
+        "height": 543,
+        "scroll": 543,
+        "width": 1168,
+        "scrollWidth": 1168
+      }
+    ]
+  },
+  {
+    "name": "03-Demonstration-et-tests-Ayidote",
+    "pages": 5,
+    "overflow": [],
+    "sizes": [
+      {
+        "page": 1,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 2,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 3,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 4,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      },
+      {
+        "page": 5,
+        "height": 933,
+        "scroll": 933,
+        "width": 673,
+        "scrollWidth": 673
+      }
+    ]
+  }
+]

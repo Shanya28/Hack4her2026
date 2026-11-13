@@ -1,0 +1,95 @@
+PAGE 1
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+ 
+MINISTÈRE DE LA TRANSFORMATION
+DIGITALE ET DE L'INNOVATION
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+RÉPUBLIQUE DU BÉNIN
+Cité Ministérielle - Bât.E
+Tél: 01 21 30 79 39
+mtdi.contact@gouv.bj
+www.innovation.gouv.bj
+HACK4HER 2026 – Tech for Her Safety :
+Tech Anti-VBG-FT
+« Coder aujourd’hui, protéger demain. »
+PLANNING DES ACTIVITÉS
+Benin Digital & Innovation Week 2026
+Dates Jeudi 12 et vendredi 13 novembre 2026
+Lieu Mezzanine d’Epitech Bénin
+À apporter Ordinateur portable et chargeur
+Contact Point focal : Enagnon Gloria – 01 61 85 48 48 – litygloria@gmail.com
+Jour 1 – jeudi 12 novembre 2026
+Comprendre et concevoir
+Horaire Activité Ce qui se passe
+09:00 – 09:20 Accueil, installation et 
+orientation
+Émargement, remise des badges et des kits ; présentation 
+des équipes, du concept, des objectifs, des lieux et des 
+consignes de protection.
+09:20 – 10:10 Module 1 : Comprendre 
+les VBG-FT
+VBG-FT, consentement, besoins de prévention et de 
+détection, approche centrée sur les survivantes.
+10:10 – 10:25 Pause-café
+10:25 – 11:15 Module 2 : Concevoir un 
+outil numérique utile et 
+sûr
+Fonctionnalités, données fictives, protection des 
+données, accessibilité, Safety by Design et tests.
+11:15 – 11:45 Consignes et défis Présentation des 6 défis, du règlement, des critères du 
+jury, de la charte et des exigences de sécurité ; choix des 
+sujets ; questions-réponses.
+11:45 – 13:00 Icebreaker et cadrage en 
+équipes
+Moment d’échange pour faire connaissance ; définition 
+du problème ciblé, du service public utilisateur, du 
+parcours d’usage et de la fonctionnalité minimale à 
+développer.
+13:00 – 14:00 Pause-déjeuner
+14:00 – 15:45 Prototypage I Architecture, interfaces, codage et essais des premières 
+fonctionnalités ; passage des mentors (environ 20 min 
+par équipe).
+Ministère de la Transformation Digitale et de l'Innovation
+[Direction en charge du dossier]
+Novembre 2026
+
+PAGE 2
+Horaire Activité Ce qui se passe
+15:45 – 16:00 Pause-café
+16:00 – 17:30 Prototypage II Développement encadré, intégration et revue préliminaire 
+des risques.
+17:30 – 18:00 Point de suivi n° 1 État d’avancement, obstacles, validation de la fiche de 
+cadrage de votre équipe et plan de travail du lendemain.
+Jour 2 – vendredi 13 novembre 2026
+Tester, démontrer et évaluer
+Horaire Activité Ce qui se passe
+09:00 – 09:20 Point de suivi n° 2 Rappel des consignes et validation des priorités 
+techniques de votre prototype.
+09:20 – 10:30 Prototypage III Finalisation d’au moins une fonction démontrable par 
+équipe.
+10:30 – 10:45 Pause-café
+10:45 – 12:15 Tests de sécurité et 
+finalisation
+Tests de fonctionnalité, d’accessibilité, de sécurité 
+(check-list Safety by Design), de biais et de respect des 
+données fictives ; rédaction de la fiche d’analyse des 
+risques.
+12:15 – 13:00 Gel des développements 
+et préparation des pitchs
+Dépôt des livrables : démonstration, fiche technique et de 
+risques, support de pitch. Préparation du pitch et tirage 
+au sort de l’ordre de passage.
+13:00 – 14:00 Pause-déjeuner
+14:00 – 15:30 Démonstrations et pitchs Présentation des six prototypes : 15 min par équipe, 
+démonstration et échanges avec le jury inclus.
+15:30 – 15:45 Pause-café
+15:45 – 16:30 Délibérations du jury Pendant les délibérations : finalisation des fiches 
+techniques et de risques ; retours des mentors aux 
+équipes.
+16:30 – 17:15 Restitution du jury Retours du jury sur les solutions présentées.
+17:15 – 18:00 Clôture du hackathon Clôture officielle et consignes aux équipes distinguées 
+pour la suite.
+Horaires indicatifs, susceptibles d’être ajustés par l’organisation.
+Ministère de la Transformation Digitale et de l'Innovation
+[Direction en charge du dossier]
+Novembre 2026

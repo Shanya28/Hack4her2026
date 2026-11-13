@@ -1,0 +1,77 @@
+PAGE 1
+       
+NOTE EXPLICATIVE À L’ATTENTION DES ÉCOLES ET DES PARTICIPANTES
+Hackathon « Tech Anti-VBG-FT »  |  Cotonou, 12 et 13 novembre 2026
+Dans le cadre du programme Making All Spaces Safe (MASS), mis en œuvre avec l’appui de l’UNFPA et le soutien 
+financier du Gouvernement du Canada, le Ministère de la Transformation Digitale et de l’Innovation (MTDI) 
+prévoit un hackathon mobilisant six établissements. Son objectif est de faire émerger des solutions 
+technologiques utiles aux institutions publiques pour prévenir ou détecter les violences basées sur le genre 
+facilitées par la technologie (VBG-FT).
+1. Que signifie « VBG-FT » ?
+Les VBG-FT sont des actes de violence fondés sur le genre commis, facilités, amplifiés ou prolongés grâce aux 
+technologies numériques : téléphones, applications, réseaux sociaux, messageries, sites Internet ou outils 
+d’intelligence artificielle. Elles peuvent commencer en ligne et avoir des conséquences dans la vie réelle, ou 
+inversement.
+Exemples faciles à reconnaître : messages insistants ou menaçants visant une femme ; cyberharcèlement ; 
+chantage à la diffusion d’images intimes (sextorsion) ; partage d’images intimes sans consentement ; création de 
+faux contenus ou images manipulées ; usurpation d’identité ; surveillance abusive d’un téléphone ou de comptes ; 
+divulgation malveillante d’informations personnelles.
+Pourquoi cela compte : ces violences peuvent entraîner peur, exclusion des espaces numériques, atteinte à la 
+réputation, rupture scolaire ou professionnelle, préjudices psychologiques et risques pour la sécurité physique. 
+Aucune personne ne doit être obligée de raconter une expérience personnelle pendant l’activité.
+2. Qui participe et dans quel but ?
+30 jeunes femmes, réparties en six équipes de cinq, représenteront six universités ou écoles différentes. Les 
+équipes participeront à une compétition de conception technologique. Des institutions publiques et des 
+organisations de la société civile contribueront séparément à un travail sur les enjeux juridiques et politiques ; 
+cette tâche n’est pas demandée aux équipes étudiantes.
+3. Ce que nous attendons de chaque équipe
+•  Un problème concret — Choisir une difficulté précise de prévention ou de détection des VBG-FT et identifier 
+une structure publique susceptible d’utiliser la solution.
+•  Une technologie qui fonctionne — Développer un prototype démontrable (application mobile, outil web, 
+assistant numérique, prototype d’IA, quiz interactif, etc.) comportant au moins une fonctionnalité réellement 
+testée.
+•  Une démonstration claire — Montrer comment l’outil fonctionne, à qui il sert, ce qu’il apporte et quelles sont 
+ses limites ; une présentation PowerPoint seule ne suffit pas.
+•  Un produit responsable — Prévoir confidentialité, sécurité, accessibilité, contrôle humain et prévention des 
+erreurs ou abus ; présenter les risques identifiés.
+•  Une fiche de solution — Remettre une courte description du besoin, de l’utilisateur cible, des fonctions, des 
+tests réalisés et des conditions nécessaires à un usage ultérieur.
+4. Quelques exemples de solutions possibles
+•  Un outil pédagogique interactif qui aide les jeunes à identifier le cyberharcèlement et à adopter des réflexes de 
+sécurité.
+1
+
+PAGE 2
+       
+•  Un démonstrateur de détection de messages abusifs, entraîné et testé uniquement sur des données fictives, 
+avec vérification humaine.
+•  Une application d’orientation vers les services publics compétents, sans réception de plaintes réelles.
+•  Un outil qui aide les institutions ou plateformes à vérifier si leurs fonctionnalités respectent les principes de « 
+sécurité dès la conception » (Safety by Design).
+•  Un parcours de conseils pour renforcer la protection des comptes et la conservation prudente d’éléments 
+numériques, sans téléversement de preuves réelles.
+5. Deux modules de formation prévus pour les participantes
+Module 1 — Comprendre les VBG-FT et les besoins de protection : formes de violence, conséquences, 
+besoins des survivantes, prévention, signalement sûr, consentement, confidentialité et principe de ne pas nuire.
+Module 2 — Concevoir une solution technologique sûre et utile : formulation du problème, conception 
+centrée sur l’utilisatrice, prototypage rapide, Safety by Design, protection des données, tests sur scénarios fictifs 
+et préparation de la démonstration.
+Ces deux intitulés sont proposés pour le cadrage pédagogique et pourront être précisés dans le programme de 
+formation transmis aux établissements.
+6. Règles de protection impératives
+•  Aucune collecte de données personnelles réelles de survivantes, de plaintes ou de témoignages ; aucun 
+contenu intime réel.
+•  Aucun accès non autorisé à des comptes, aucune surveillance de personnes et aucune connexion à des 
+systèmes d’alerte ou services d’urgence réels.
+•  Utilisation exclusive de scénarios fictifs et de données synthétiques pour les tests et démonstrations.
+•  Toute utilisation réelle après le hackathon nécessitera des vérifications techniques, juridiques et de sécurité, 
+ainsi que l’accord des institutions compétentes.
+7. Ce que les établissements doivent préparer
+Chaque établissement est invité à identifier cinq apprenantes motivées présentant, si possible, des compétences 
+complémentaires (développement, design, données/IA, communication et analyse des usages), et à s’assurer 
+qu’elles disposent des moyens de travail essentiels, notamment d’un ordinateur et des outils nécessaires au 
+prototypage. Les modalités définitives de sélection, d’organisation et d’évaluation seront communiquées par les 
+organisateurs.
+NB : Le défi n’est pas seulement d’imaginer une idée : il est de montrer une technologie utile, testable 
+et respectueuse des droits humains, qui pourrait ensuite être étudiée par les institutions publiques.
+2

@@ -1,0 +1,2914 @@
+{
+  "url": "https://shanya28.github.io/Hack4her2026/",
+  "date": "13/11/2026 11:03:57",
+  "environment": {
+    "browser": "157.0.8103.50",
+    "viewport": "390 × 844, DPR 2",
+    "method": "Navigation automatisée sur le site déployé ; profils de test isolés ; données fictives uniquement."
+  },
+  "tests": [
+    {
+      "id": "T01",
+      "name": "Chargement HTTPS et ressources",
+      "status": "Réussi",
+      "details": {
+        "http": 200,
+        "title": "Ayidote",
+        "errors": 0
+      },
+      "durationMs": 2533
+    },
+    {
+      "id": "T02",
+      "name": "Premiers pas et personnage Maya",
+      "status": "Réussi",
+      "details": "Parcours complet sans création de compte ; choix de Maya conservé.",
+      "durationMs": 1002
+    },
+    {
+      "id": "T03",
+      "name": "Paramètres et compte à rebours désactivable",
+      "status": "Réussi",
+      "details": {
+        "valeurInitiale": "true",
+        "apres": "false"
+      },
+      "durationMs": 629
+    },
+    {
+      "id": "T04",
+      "name": "Vrai ou piège : partie de 5 messages jusqu'au bilan",
+      "status": "Réussi",
+      "details": {
+        "messages": 5,
+        "pieges": 3,
+        "scoreAttendu": 50,
+        "bilan": "Progression du groupe\n\nPARTIE TERMINÉE\n\nÉquipe sentinelle\n\nSans faute. Transmettez ces réflexes autour de vous.\n\n50\npoints de vigilance\n5/5\nmessages bien lus\nLes signes que vous savez repérer\nUrgence et menace\nDemande d'argent\nInformation personnelle\n\n3 signes repérés en 1 partie · meilleur score : 50 points\n\nRejouer avec d’autres messages\nVivre une histoire\nBesoin d’aide ?"
+      },
+      "durationMs": 3306
+    },
+    {
+      "id": "T05",
+      "name": "Vrai ou piège : partie de 8 messages jusqu'au bilan",
+      "status": "Réussi",
+      "details": {
+        "messages": 8,
+        "pieges": 6,
+        "scoreAttendu": 80,
+        "bilan": "Progression du groupe\n\nPARTIE TERMINÉE\n\nÉquipe sentinelle\n\nSans faute. Transmettez ces réflexes autour de vous.\n\n80\npoints de vigilance\n8/8\nmessages bien lus\nLes signes que vous savez repérer\nInformation personnelle\nFaux compte\nLien frauduleux\nManipulation affective\nDemande d'argent\nFaux cadeau\n\n7 signes repérés en 2 parties · meilleur score : 80 points\n\nRejouer avec d’autres messages\nVivre une histoire\nBesoin d’aide ?"
+      },
+      "durationMs": 2737
+    },
+    {
+      "id": "T06",
+      "name": "Quiz individuel : correction puis résultat 4/5",
+      "status": "Réussi",
+      "details": "5 questions parcourues, erreur volontaire corrigée, résultat 4/5.",
+      "durationMs": 1190
+    },
+    {
+      "id": "T07",
+      "name": "Grand quiz : 2 équipes, 6 questions, classement et podium",
+      "status": "Réussi",
+      "details": {
+        "questions": 6,
+        "podium": "Le podium\n1\nSoleil\n6000 pts\n2\nLune\n0 pts\nBravo à toutes les équipes.\n\nChaque bonne réponse est un réflexe de plus pour se protéger, et pour protéger les autres.\n\nRejouer\nOù trouver de l’aide"
+      },
+      "durationMs": 2414
+    },
+    {
+      "id": "H1",
+      "name": "Histoire complète : La rencontre en ligne",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "équipe",
+        "reluLocal": true,
+        "choix": [
+          "Je préfère ne pas répondre",
+          "Chasse aux 3 indices, sans saisie",
+          "Demander pourquoi",
+          "Refuser et soutenir la victime",
+          "Garder les preuves et demander de l'aide"
+        ],
+        "done": [
+          "sextorsion"
+        ]
+      },
+      "durationMs": 2514
+    },
+    {
+      "id": "H2",
+      "name": "Histoire complète : L’offre trop belle",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "ia",
+        "reluLocal": false,
+        "choix": [
+          "Je vérifie d'abord si ce cabinet existe",
+          "Chasse aux 3 indices, sans saisie",
+          "Refuser : un vrai emploi ne se paie pas",
+          "Ne rien envoyer et bloquer le numéro",
+          "Garder les preuves, bloquer et en parler"
+        ],
+        "done": [
+          "sextorsion",
+          "faux-recrutement"
+        ]
+      },
+      "durationMs": 1085
+    },
+    {
+      "id": "H3",
+      "name": "Histoire complète : Le code de trop",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "ia",
+        "reluLocal": false,
+        "choix": [
+          "Envoie-moi un message vocal pour que je reconnaisse ta voix",
+          "Garder le code pour moi",
+          "Chasse aux 3 indices, sans saisie",
+          "Prévenir le groupe et appeler la vraie Chantal",
+          "Garder les preuves, sécuriser mon compte et demander de l'aide"
+        ],
+        "done": [
+          "sextorsion",
+          "faux-recrutement",
+          "compte-pirate"
+        ]
+      },
+      "durationMs": 1025
+    },
+    {
+      "id": "H4",
+      "name": "Histoire complète : Il veut tout voir",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "ia",
+        "reluLocal": false,
+        "choix": [
+          "Lui dire que mon téléphone reste à moi",
+          "En parler à une amie de confiance",
+          "Chasse aux 3 indices, sans saisie",
+          "Vérifier les applications et changer mes mots de passe",
+          "Garder les preuves et appeler le 114"
+        ],
+        "done": [
+          "sextorsion",
+          "faux-recrutement",
+          "compte-pirate",
+          "controle-couple"
+        ]
+      },
+      "durationMs": 1029
+    },
+    {
+      "id": "H5",
+      "name": "Histoire complète : Le faux profil",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "ia",
+        "reluLocal": false,
+        "choix": [
+          "Faire des captures du faux compte",
+          "Écrire à la victime pour la soutenir",
+          "Chasse aux 3 indices, sans saisie",
+          "Montrer les messages à un adulte de confiance",
+          "Garder les preuves, signaler et porter plainte"
+        ],
+        "done": [
+          "sextorsion",
+          "faux-recrutement",
+          "compte-pirate",
+          "controle-couple",
+          "faux-profil"
+        ]
+      },
+      "durationMs": 1450
+    },
+    {
+      "id": "H6",
+      "name": "Histoire complète : La vidéo de trop",
+      "status": "Réussi",
+      "details": {
+        "situations": 5,
+        "source": "ia",
+        "reluLocal": false,
+        "choix": [
+          "Faire des captures avant de masquer",
+          "Demander à des amies de signaler avec moi",
+          "Chasse aux 3 indices, sans saisie",
+          "Signaler et aller à la police",
+          "Garder les preuves et porter plainte"
+        ],
+        "done": [
+          "sextorsion",
+          "faux-recrutement",
+          "compte-pirate",
+          "controle-couple",
+          "faux-profil",
+          "harcelement-meute"
+        ]
+      },
+      "durationMs": 1266
+    },
+    {
+      "id": "T08",
+      "name": "Fiche de réflexes et ressources",
+      "status": "Réussi",
+      "details": {
+        "reflexesDebloques": 6,
+        "contenu": "Les bons gestes\nLes bons gestes, étape par étape.\n\nCe que tu peux faire toi-même, dès maintenant.\n\nConserver les preuves\nDocumenter sans faire circuler.\n1\n\nFais des captures d’écran avec la date et l’heure.\n\n2\n\nGarde le numéro, le profil et les liens concernés.\n\n3\n\nNe supprime pas la conversation trop vite.\n\n4\n\nNe transfère jamais une image intime.\n\nNe prends pas de risques pour conserver une preuve. Ta sécurité passe avant tout.\n\nProtéger ses comptes\nReprendre le contrôle étape par étape.\n\nBESOIN DE SOUFFLER ?\n\nPose le téléphone si tu peux.\n\nRespire, rapproche-toi d’une personne sûre et avance une étape à la fois.\n\nVoir mes 6 réflexes\nTrouver de l’aide\nAccueil\nJouer\nRéflexes\nAide"
+      },
+      "durationMs": 874
+    },
+    {
+      "id": "T09",
+      "name": "Mot du jour : essais et révélation",
+      "status": "Réussi",
+      "details": "Le mot du jour\n\nLE MOT ÉTAIT\n\nMontage\nLA LEÇON DU JOUR\n\nUne image truquée ou un faux profil à ton nom peut être signalé et retiré. Ce qui est faux ne dit rien de ta valeur.\n\nJouer l’histoire du jour\n\n« Le faux profil » · un nouveau mot demain\n\nTes essais · 3\ncahier\nPas encore\nvelo\nPas encore\nnuage\nPas encore",
+      "durationMs": 711
+    },
+    {
+      "id": "T10",
+      "name": "Aide, informations légales et engagements",
+      "status": "Réussi",
+      "details": "Pages accessibles ; liens d’appel relevés sans déclencher d’appel ; contenu juridique non validé par ce test.",
+      "durationMs": 1835
+    },
+    {
+      "id": "T11",
+      "name": "Alerte discrète : simulation seulement",
+      "status": "Réussi",
+      "details": {
+        "requêtesPendantSimulation": [],
+        "precision": "Aucune alerte réelle, aucun SMS ni appel déclenché par le test."
+      },
+      "durationMs": 3842
+    },
+    {
+      "id": "T12",
+      "name": "Persistance après rechargement",
+      "status": "Réussi",
+      "details": {
+        "personnage": "maya",
+        "histoiresTerminees": 6,
+        "reflexes": 6
+      },
+      "durationMs": 911
+    },
+    {
+      "id": "T13",
+      "name": "Manifeste et guide d’installation",
+      "status": "Réussi",
+      "details": {
+        "manifest": {
+          "name": "Ayidote — Mon espace",
+          "short_name": "Ayidote",
+          "description": "Une expérience pédagogique pour développer ses réflexes numériques.",
+          "start_url": ".",
+          "display": "standalone",
+          "background_color": "#5f7584",
+          "theme_color": "#5f7584",
+          "lang": "fr",
+          "icons": [
+            {
+              "src": "icon-192.png",
+              "sizes": "192x192",
+              "type": "image/png",
+              "purpose": "any"
+            },
+            {
+              "src": "icon-512.png",
+              "sizes": "512x512",
+              "type": "image/png",
+              "purpose": "any"
+            },
+            {
+              "src": "icon-maskable-512.png",
+              "sizes": "512x512",
+              "type": "image/png",
+              "purpose": "maskable"
+            },
+            {
+              "src": "icon.svg",
+              "sizes": "any",
+              "type": "image/svg+xml",
+              "purpose": "any"
+            }
+          ],
+          "shortcuts": [
+            {
+              "name": "Mon carnet",
+              "short_name": "Carnet",
+              "url": "./?carnet=1",
+              "icons": [
+                {
+                  "src": "carnet-96.png",
+                  "sizes": "96x96",
+                  "type": "image/png"
+                },
+                {
+                  "src": "carnet-192.png",
+                  "sizes": "192x192",
+                  "type": "image/png"
+                }
+              ]
+            }
+          ],
+          "scope": "."
+        },
+        "guide": "Installer Ayidote\nGarde Ayidote sur ton téléphone.\n\nUne icône comme une application, sans passer par un magasin d’applications, et qui marche sans réseau.\n\nAutre navigateur\n1\n\nSamsung Internet\nMenu ≡ › « Ajouter la page à » › « Écran d’accueil ».\n\n2\n\nOrdinateur (Chrome ou Edge)\nL’icône d’installation apparaît à droite de la barre d’adresse.\n\n3\n\nSinon\nOuvre le lien dans Chrome sur Android ou dans Safari sur iPhone.\n\nAndroid (Chrome)\n1\n\nOuvre le lien dans Chrome\nLe lien d’Ayidote, partagé par l’animatrice ou une amie.\n\n2\n\nTouche les trois points ⋮\nEn haut à droite de l’écran.\n\n3\n\nChoisis « Installer l’application »\nOu « Ajouter à l’écran d’accueil », selon ton téléphone.\n\n4\n\nConfirme avec « Installer »\nL’icône Ayidote apparaît avec tes autres applications.\n\niPhone (Safari)\n1\n\nOuvre le lien dans Safari\nL’installation ne marche qu’avec Safari sur iPhone.\n\n2\n\nTouche le bouton Partager\nLe carré avec une flèche vers le haut, en bas de l’écran.\n\n3\n\nChoisis « Sur l’écran d’accueil »\nFais défiler la liste si tu ne le vois pas.\n\n4\n\nTouche « Ajouter »\nL’icône Ayidote apparaît sur ton écran d’accueil.\n\nBon à savoir\n\nOuvre-la une fois avec Internet\nEnsuite, elle fonctionne sans réseau. La voix en fon ou en yoruba se télécharge quand tu choisis la langue.\n\nLe raccourci « Mon carnet »\nSur Android, garde le doigt sur l’icône d’Ayidote : « Mon carnet » apparaît. Tu peux le glisser sur ton écran.\n\nReste discrète\nTu peux ranger l’icône dans un dossier. Pour tout supprimer : Paramètres › Tout effacer, puis désinstalle l’application.",
+        "limite": "Installation native Android/iOS non exécutée dans Chrome de bureau."
+      },
+      "durationMs": 1612
+    },
+    {
+      "id": "T14",
+      "name": "Hors ligne : rechargement et quiz",
+      "status": "Réussi",
+      "details": {
+        "ressourcesEnCache": 7,
+        "cache": [
+          "https://shanya28.github.io/Hack4her2026/manifest.webmanifest",
+          "https://shanya28.github.io/Hack4her2026/icon.svg",
+          "https://shanya28.github.io/Hack4her2026/favicon.png",
+          "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+          "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+          "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+          "https://shanya28.github.io/Hack4her2026/"
+        ],
+        "parcours": "Accueil rechargé puis première question du quiz corrigée, réseau désactivé."
+      },
+      "durationMs": 1602
+    },
+    {
+      "id": "T15",
+      "name": "Affichage : 320, 390, 768 et 1440 pixels",
+      "status": "Réussi",
+      "details": [
+        {
+          "viewport": 320,
+          "largeurDocument": 320
+        },
+        {
+          "viewport": 390,
+          "largeurDocument": 390
+        },
+        {
+          "viewport": 768,
+          "largeurDocument": 768
+        },
+        {
+          "viewport": 1440,
+          "largeurDocument": 1440
+        }
+      ],
+      "durationMs": 863
+    },
+    {
+      "id": "T16",
+      "name": "Clavier : accès au bouton et focus visible",
+      "status": "Réussi",
+      "details": {
+        "focus": {
+          "tag": "BUTTON",
+          "name": "Paramètres",
+          "outline": "solid",
+          "width": "3px"
+        },
+        "limite": "Contrôle ponctuel, sans lecteur d’écran ni audit WCAG complet."
+      },
+      "durationMs": 52
+    },
+    {
+      "id": "T17",
+      "name": "Effacement et confirmation",
+      "status": "Réussi",
+      "details": {
+        "annulationRespectee": true,
+        "apres": {
+          "storage": {},
+          "caches": [
+            "ayidote-v3"
+          ]
+        },
+        "observation": "Tout le localStorage de l’origine est vidé, y compris la clé témoin de test ; le cache applicatif reste présent."
+      },
+      "durationMs": 580
+    },
+    {
+      "id": "T18",
+      "name": "Mode écoute français : démarrage et fichier audio",
+      "status": "Réussi",
+      "details": {
+        "audio": [
+          {
+            "src": "https://shanya28.github.io/Hack4her2026/assets/bienvenue-I1x08Ce3.mp3",
+            "ready": true
+          }
+        ],
+        "langue": "fr",
+        "ecoute": "yes",
+        "limite": "Lecture technique observée ; compréhension et qualité vocale non évaluées par une utilisatrice."
+      },
+      "durationMs": 3786
+    },
+    {
+      "id": "T19",
+      "name": "Sélection Fon et Yoruba : présence et avertissement",
+      "status": "Réussi",
+      "details": {
+        "labels": [
+          "Français",
+          "FonTextes et voix traduits automatiquement · à l’essai",
+          "YorubaTextes et voix traduits automatiquement · à l’essai",
+          "MinaEn préparation"
+        ],
+        "texte": "Tes préférences\n\n1 SUR 3\n\nComment veux-tu explorer ?\n\nTu pourras changer ces choix plus tard.\n\nLANGUE\nFrançais\nFon\nTextes et voix traduits automatiquement · à l’essai\nYoruba\nTextes et voix traduits automatiquement · à l’essai\nMina\nEn préparation\nAUDIO\nVoix des messages\nActivée · tu entends la voix de la personne qui t’écrit\nContinuer en fon",
+        "limite": "Disponibilité des choix vérifiée ; traductions et prononciation non validées."
+      },
+      "durationMs": 495
+    }
+  ],
+  "requests": [
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/sw.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/manifest.webmanifest",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/icon.svg",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/index-DFoII8TD.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/nunito-latin-BzFMHfZw.woff2",
+      "method": "GET",
+      "type": "font"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/favicon.png",
+      "method": "GET",
+      "type": "other"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-CqrAi4vW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-CFrlKv-k.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-DS_9Qryw.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-1-Cbeh_HU_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-2-D4rYAbT7.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-3-vv5Kzi3L.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-CWhbubp-.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-Bad_pOpW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-DkizHuAj.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-ipu5J439.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-Bu69xsW3.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-Ruh7L-Eu.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-D3QpPN54.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-D43YYriw.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-D_7e0UFC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-1-mQy0wzKh.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-2-SBBdd-jQ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-3-Dg16PBaG.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-hbAcLK6_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-B3A-Kyms.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-Dge2iEK8.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-BtdVsV50.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-D5Vie2gR.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-YONVf-d_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta3-DcNXptYC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-Dl3aOiU_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f2-CDskYYKW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-FtMl-UlB.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-CHsA_IfA.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-DwkvN9RD.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-2-nNdkQE6H.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-BI3piblN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-2-Di4-4St1.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-BJnN1sgX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-1-D19kSVrQ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-C7qx2HBg.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-BrVewUd5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-msbrAzFk.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-B-rSkabs.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-CSAJO9qj.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3--JU0yDdR.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-1-D7GhgyNv.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-2-CjfzcfjY.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-3-U81FBykf.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-R0_K-tKm.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-DdEN72of.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-DK8RmFYL.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-QvIN8XIv.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-bAWDXmdW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-DZ16nhLB.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-eK-P0u2j.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-nxEhEBEW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-DKWfQbz4.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-1-BqZAa9gi.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-2-BKqr7ech.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-3-Cc0g-XLd.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-CAjTLZ6q.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-CHtHeUXM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-LcXBvNDC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-DQH0t7Nw.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-LD1YeTAG.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-CwRF_3QD.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-B8ubz57Q.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-BUAk_F1I.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-ByYw5tOE.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-1-CjjTB3LU.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-2-CLlpxlqE.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-3-Bwo5FDhC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-BMU3zM_J.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-HEyTz01H.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-BQpQjSJa.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-PMZKNqwN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-DjxGMdL4.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-D45-37XT.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta3-D1txPhp9.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-CqgJ9r3I.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f2-BDPfr-es.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-BXs_QmNZ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-CT7cBW5r.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-CoBoDk-p.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-2-CYwighZz.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-CEN2EUGb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-BRcotCVb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-CDiimn2W.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-D4amBhLV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-C_SF01mr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-ph_8foXM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-YdDcr0vF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3-BNvIPQuU.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-1-BnzCrfgM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-2-Bd0QsmQ_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-3-cMUY9ipl.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-dJ_V5_lY.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-DC1SdfnV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-BbB2i-hq.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-CQV_uemI.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-A9ZwxsQx.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-CF_cHea0.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-D58hLXlC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-CFVVTPwP.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-Dt7iG7_u.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-1--pFeEKA-.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-2-C5uDmGXI.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-3-CH77t1C7.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-ION5kxv7.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-DDXjv7_J.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-gVVx5DZH.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-BuAbAz95.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-Ds4NnmFo.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-CzPgDqHC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-DeFRxKot.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-BPHIbTtt.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-Npe5eiO0.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-1-CovSBmIp.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-2-uLtWDxgY.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-3-C4oJEE6L.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-UDuHRIFl.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-ChDt5esI.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-DAOhi4vA.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-Bc2dbnye.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-CjUf1I2J.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-nTqRub6c.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta3-BEBgFdve.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-GeE07uNK.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f2-N0Vr4_HX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-DSXJBjRH.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-DVluBisi.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-DZGBUvhW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-2-C6iwDHwm.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-tngoQ0I4.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-2-DEzXDlPw.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-X5Il2NbX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-1-pRq2hsjr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-CjNjZ8i5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-D_oQZOrG.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-BShDcOIF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-svNEoK_U.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-vqqALfho.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3-DsRMKkhV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-1-BIvrcJma.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-2-uzhBRJGO.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-3-lhv4f8mH.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-DYtfKgUM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-BWqklxHD.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-Bg_EqcBb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-iIqWz9p9.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-7GPXUj13.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-D3oSBjeh.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-BskYjOz5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-B-amZ61t.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-BtbPT7aI.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-1-CZ29bL5W.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-2-ClfPzsrt.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-3-DaR4bphU.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-Ccx-_4fH.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-DN3uOlD2.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-3GPRr8Uk.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-4W9HEdGK.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-D55w9M8b.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-hcdb100g.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-Z3w_Vdjr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-DnG8A-u6.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-Bo6cw-my.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c3-1-CH5eOlxL.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c3-2-BjKAJj-X.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c3-3-BRe8soEq.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-CYj43imZ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-CyyDbRW1.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-BdMao8-S.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-smg4Dit1.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-DNhdbdU-.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-D6jwVkxg.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta2-BjewPWl0.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-BH7JPy4O.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f3-WObijSCr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-CmxWpame.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-DWhFljJ5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-KKMMJvH_.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-2-mAFPHt2G.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-SDIUCs0v.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-5jf2d1ya.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-2-BVCMsLzF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-1-Bj95vHxQ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-DdEzW5Zp.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-BOv10g92.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-Lkkh6o0W.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-CNa4LxsA.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-P98hdCAT.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3-GTjQ83Cr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-1-DiEaCvN3.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-2-Cs3BIOvY.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-3-C1dHFwBW.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-7nk2I5fz.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-BF6L3tnV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-Bi3jLWN6.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-CHG0cdZt.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-B_1kISIX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-BT4n_M3h.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-BUvyRPuX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-Lb-WbF52.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-D1HwV-vV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-1-TxNGtSpQ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-2-krY7N44N.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a2-3-CzxJHVRC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-BBiUAp5V.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-CoiTjObk.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-C_cur2Ev.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-hv1XI8fV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-Co8QSU0c.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-BCfLdcfw.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-DPHbABTV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-J-m0TQDm.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-BhAEjB1X.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-1-B51vbKk0.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-2-uCkqKbEG.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c2-3-CsMQCqYO.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-CBfKSzVZ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-CK0kFTov.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-CL4AtAe7.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-DdTAw2a9.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-Ck0I-l4-.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-CO8z0-hh.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta3-BIHB9WiX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-BX5fnBtb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f2-Dq1Wy6VC.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-CleE6qtR.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-BZjuk9JJ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-BeWIE6Wp.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-2-RM1SbzXn.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-D_l3ad0O.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-2-BnmObnJu.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-BchXcoxY.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-1-CqBb-0D5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-Br9XzsEN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-EsvtaBMJ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-BVvP7XwD.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-v55Sy71u.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-Q_9XVnDF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3-CwUJT1R2.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-1-C7hiQfH5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-2-CQarTe7T.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o2-3-DIx1nHYM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-V5XoPwFJ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-D9mLQelu.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-C6--qP0l.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-BM_K6cCN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-B6k-4Tr8.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-CCzKG0gf.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-1-Bm-DoeZB.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-2-CWSMy-Qt.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a1-3-CntK-Jax.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-1-Bb48eY1C.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-2-CwFVlikE.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a3-3-DUhyWIyx.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-1-CDBCNeFp.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-2-C7ckOtfA.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a4-3-CmFkD5XK.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-1-C7l9YTnb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-2-DLsWThRr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/a5-3-Cbk6SXOf.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-1-BzQ3PXp2.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-2-B0TsP-S7.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c1-3-CIoy_wqe.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c3-3-b_AWfyWd.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-1-BeEQV0DK.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-2-_zTAyV0e.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c4-3-BJLVcsfO.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-1-DwGCbnNt.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-2-CpdU7QLT.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/c5-3-B-oI_bGi.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/cta2-BhOIP15T.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f1-CLa5SUef.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f3-t-BCzryr.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f4-BT8tpWeF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/f5-p94pHa_u.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-1-B6WG4kBX.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m1-3-C2SyQ1Iy.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m2-1-DD53MgjF.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-1-BJKFAMnV.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m3-2-B29L4quM.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-1-BHPuQU8T.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m4-2-DxE1PDNk.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-1-D1GXNfPK.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-2-BSjJdrR5.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/m5-3-DqhZCFAN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-1-CDXMDq-v.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-2-CtLw13aN.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o1-3-DJeWlouZ.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-1-BEqAlcs-.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-2-BVPSMBkh.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o3-3-CwjYeDbI.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-1-DfbGV269.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-2-C_CtW6a8.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o4-3-4IPcVRMz.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-1-BM6FZtiS.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-2-S_ByMD0l.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/o5-3-BB97sS8t.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/bienvenue-IUmdnxLm.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/choisis-C7zz8S5S.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/continuer-C0zDDH5m.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/lien-1bxmaaSD.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/piege-CyNvqZAb.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/r1-v0gLlltG.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/r2-BVzqgLZg.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/r3-SzzRe9VR.mp3",
+      "method": "GET",
+      "type": "fetch"
+    },
+    {
+      "url": "https://shanya28.github.io/Hack4her2026/assets/retenir-zTB6Zjgq.mp3",
+      "method": "GET",
+      "type": "fetch"
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "screens": [
+    "01-accueil.png",
+    "02-preferences.png",
+    "03-accueil-personnage.png",
+    "04-parametres.png",
+    "05-jeu-collectif.png",
+    "06-vote.png",
+    "07-indices.png",
+    "08-bilan-collectif.png",
+    "05-jeu-collectif.png",
+    "09-quiz-correction.png",
+    "10-quiz-resultat.png",
+    "11-quiz-equipes-configuration.png",
+    "12-quiz-equipes-correction.png",
+    "13-podium-equipes.png",
+    "14-histoire.png",
+    "15-fausse-page.png",
+    "16-indices-fausse-page.png",
+    "17-bilan-histoire.png",
+    "18-fiche-reflexes.png",
+    "19-ressources.png",
+    "20-mot-du-jour.png",
+    "21-aide.png",
+    "22-informations-legales.png",
+    "23-engagements.png",
+    "24-carnet.png",
+    "25-alerte-simulee.png",
+    "26-installation.png",
+    "27-hors-ligne.png",
+    "28-ordinateur.png",
+    "29-confirmation-effacement.png",
+    "31-langues-a-lessai.png"
+  ],
+  "observations": [],
+  "build": {
+    "htmlLastModified": "Fri, 13 Nov 2026 09:38:23 GMT",
+    "scripts": [
+      "https://shanya28.github.io/Hack4her2026/assets/index-DyZjo4Vb.js"
+    ]
+  },
+  "helpLinks": [
+    {
+      "text": "Appeler le 117",
+      "href": "tel:117"
+    },
+    {
+      "text": "Appeler le 114",
+      "href": "tel:114"
+    },
+    {
+      "text": "Appeler le 160",
+      "href": "tel:160"
+    },
+    {
+      "text": "Appeler le 150",
+      "href": "tel:150"
+    },
+    {
+      "text": "Lire la loi (site du Gouvernement)",
+      "href": "https://sgg.gouv.bj/doc/loi-2011-26/"
+    },
+    {
+      "text": "Lire la loi (site du Gouvernement)",
+      "href": "https://sgg.gouv.bj/doc/loi-2021-11/"
+    },
+    {
+      "text": "Lire le Code du numérique",
+      "href": "https://sgg.gouv.bj/doc/loi-2017-20/"
+    },
+    {
+      "text": "Site de l’APDP",
+      "href": "https://apdp.bj/"
+    },
+    {
+      "text": "Site de l’INF",
+      "href": "https://inf.bj/"
+    }
+  ],
+  "legalText": "Informations légales\n\nVersion du 13 novembre 2026.\n\nPolitique de confidentialité\nAyidote ne collecte aucune donnée sur toi.\nAucun compte, aucune collecte\n\nTu n’as pas de compte à créer. Ayidote n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages.\n\nCe qui reste sur ton téléphone\n\nPour que tu retrouves ta progression, l’application garde sur ton téléphone (stockage local du navigateur) : ta langue, ton personnage, ta progression dans les histoires et le quiz, tes réflexes débloqués, le mot du jour, tes réglages (voix, compte à rebours) et les réglages fictifs de l’alerte. Ces informations ne quittent jamais ton téléphone.\n\nTout effacer\n\nParamètres › Tout effacer supprime immédiatement toutes ces informations. Désinstaller l’application ou effacer les données du navigateur les supprime aussi.\n\nCe que voit l’hébergeur\n\nPour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayidote n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application.\n\nLiens et appels\n\nQuand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayidote : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels.\n\nTes droits\n\nLa protection des données personnelles est encadrée au Bénin par le Code du numérique (loi n° 2017-20). Si un service utilise tes données sans ton accord, tu peux saisir l’Autorité de Protection des Données à caractère Personnel (APDP).\n\nConditions d’utilisation\nAyidote est un prototype pédagogique, gratuit.\nMentions légales\nQui publie Ayidote, et où il est hébergé.\nCrédits et licences\nLes outils et contenus libres utilisés par Ayidote.",
+  "privacyText": "Sécurité par conception\nTa sécurité n’est pas une option.\n\nNos choix de conception réduisent la collecte et te laissent le contrôle.\n\nCONFIDENTIALITÉ\nAucun compte obligatoire.\n\nMINIMISATION\nAucune collecte de messages personnels.\n\nSTOCKAGE LOCAL\nLa progression reste sur le téléphone.\n\nCONTRÔLE UTILISATRICE\n“Tout effacer” reste accessible.\n\nCONSENTEMENT\nRien n’est envoyé en ligne sans ton accord.\n\nTRANSPARENCE\nAucune détection parfaite n’est promise.\n\nPROTECTION DES MINEURES\nAucune nudité ni collecte d’images intimes.\n\nGrille Safety by Design\nRisque\nPrévention\nLimite\nRegard indiscret\nNom et entrée neutres\nNe masque pas l’écran système\nFuite de message\nAucun message personnel n’est demandé\nLes histoires restent fictives\nMauvais conseil\nLangage prudent\nNe remplace pas une aide experte\nPerte du téléphone\nEffacement facile\nPas de verrouillage matériel\n\nCe prototype est pédagogique. Il ne contacte pas les secours, ne remplace pas un accompagnement professionnel et ne garantit jamais l’identification d’un danger.",
+  "networkSummary": {
+    "requêtes": 475,
+    "methodes": [
+      "GET"
+    ],
+    "origines": [
+      "https://shanya28.github.io"
+    ],
+    "erreursJS": [],
+    "failed": []
+  },
+  "summary": {
+    "passed": 25,
+    "failed": 0,
+    "total": 25
+  }
+}
