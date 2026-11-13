@@ -1,0 +1,229 @@
+{
+  "id": "harcelement-meute",
+  "order": 6,
+  "title": "La vidéo de trop",
+  "profile": "Vendeuse en ligne",
+  "summary": "Après une vidéo de ta boutique, des inconnus t'insultent en groupe, publient ton adresse et te menacent.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "harcèlement",
+    "lecon": "Des attaques répétées en ligne, c'est du harcèlement : ce n'est pas « juste internet ». Tu peux bloquer, signaler et porter plainte.",
+    "indices": [
+      "Des attaques qui se répètent, encore et encore.",
+      "En ligne, il vient souvent en groupe, sous une photo ou une vidéo.",
+      "Il commence par H et compte 11 lettres."
+    ],
+    "chaud": [
+      "cyberharcèlement",
+      "harceler",
+      "harceleur",
+      "acharnement",
+      "intimidation",
+      "insultes",
+      "moqueries",
+      "meute"
+    ],
+    "tiede": [
+      "commentaires",
+      "vidéo",
+      "réseaux",
+      "insulte",
+      "haine",
+      "menace",
+      "boutique",
+      "adresse",
+      "peur",
+      "bloquer"
+    ]
+  },
+  "contact": {
+    "name": "Commentaires",
+    "status": "ta vidéo",
+    "portrait": "kevin"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Les premières moqueries",
+      "messages": [
+        [
+          "Ablo",
+          "Toi, tu vends des pagnes ? Avec cette tête ?"
+        ],
+        [
+          "Fifamè",
+          "Retourne à la cuisine 😂"
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Répondre sur le même ton",
+          "protective": false,
+          "outcome": "Ta réponse est partagée et les moqueries redoublent.",
+          "advice": "Répondre nourrit les attaques. Ce n'est pas à toi de les faire taire seule."
+        },
+        {
+          "label": "Masquer les commentaires et bloquer",
+          "protective": true,
+          "outcome": "Les commentaires disparaissent de ta vidéo. Tes clientes ne voient plus les insultes.",
+          "advice": "Masquer et bloquer protège ton espace sans entrer dans la bagarre."
+        },
+        {
+          "label": "Faire des captures avant de masquer",
+          "protective": true,
+          "outcome": "Tu gardes les noms, les messages et la date.",
+          "advice": "Les captures prouvent la répétition si les attaques continuent.",
+          "reflexes": [
+            4
+          ]
+        }
+      ],
+      "feedback": "Les insultes contre une femme parce qu'elle est une femme ne sont pas de l'humour."
+    },
+    {
+      "chapter": "2 · La meute",
+      "messages": [
+        [
+          "Ablo",
+          "Partagez sa vidéo, on va bien rire."
+        ],
+        [
+          "Compte anonyme",
+          "Elle mérite qu'on lui donne une leçon."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Supprimer mon compte tout de suite",
+          "protective": false,
+          "outcome": "Ta boutique disparaît avec tes clientes. Les harceleurs, eux, continuent ailleurs.",
+          "advice": "Tu n'as pas à disparaître. Des réglages existent pour te protéger sans tout perdre."
+        },
+        {
+          "label": "Limiter qui peut commenter",
+          "protective": true,
+          "outcome": "Seules tes abonnées peuvent commenter. Le flot s'arrête net.",
+          "advice": "Les réglages de confidentialité sont faits pour ça."
+        },
+        {
+          "label": "Demander à des amies de signaler avec moi",
+          "protective": true,
+          "outcome": "Plusieurs signalements font retirer les pires messages en une journée.",
+          "advice": "Ensemble, on pèse plus. Tu n'as pas à gérer ça seule.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Quand les attaques viennent en groupe, signaler ensemble et limiter les commentaires coupe la meute."
+    },
+    {
+      "chapter": "3 · « Ton compte va fermer »",
+      "header": {
+        "name": "Admin Boutique Pro",
+        "status": "compte inconnu",
+        "portrait": "rh"
+      },
+      "messages": [
+        [
+          "Admin",
+          "Ton compte va être fermé pour signalements abusifs. Connecte-toi ici pour faire appel."
+        ]
+      ],
+      "attachment": {
+        "label": "Faire appel",
+        "url": "appel-compte.example-pro.net",
+        "cta": "Faire appel",
+        "pageUrl": "appel-compte-login.net",
+        "pageTitle": "Fais appel de la fermeture",
+        "pageText": "Connecte-toi avec ton numéro et ton mot de passe pour garder ton compte.",
+        "clue": "Une menace de fermeture qui pousse à se connecter vite est faite pour te faire peur."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · Ton adresse publiée",
+      "messages": [
+        [
+          "Compte anonyme",
+          "Voici où elle habite : le quartier, la rue, la maison bleue."
+        ],
+        [
+          "Compte anonyme",
+          "Allez lui dire bonjour."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Attendre que ça se calme",
+          "protective": false,
+          "outcome": "D'autres partagent l'adresse. Tu as peur de sortir.",
+          "advice": "Publier ton adresse pour qu'on vienne te voir est grave. N'attends pas pour te protéger."
+        },
+        {
+          "label": "Prévenir mes proches et ne pas rester seule",
+          "protective": true,
+          "outcome": "Ta cousine vient dormir chez toi et ton grand frère garde un œil sur la rue.",
+          "advice": "Ta sécurité physique passe d'abord. Entoure-toi.",
+          "reflexes": [
+            5
+          ]
+        },
+        {
+          "label": "Signaler et aller à la police",
+          "protective": true,
+          "outcome": "Tu signales la publication et tu vas au commissariat avec tes captures.",
+          "advice": "Diffuser l'adresse de quelqu'un pour l'exposer est une infraction. En danger immédiat, appelle le 117.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Publier l'adresse d'une personne pour l'exposer la met en danger réel. Protège-toi d'abord, puis signale."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Compte anonyme",
+          "On sait où te trouver."
+        ],
+        [
+          "Compte anonyme",
+          "Ferme ta boutique ou on vient."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Fermer ma boutique",
+          "protective": false,
+          "outcome": "Tu perds ton revenu et la peur reste. Les menaces ne s'arrêtent pas.",
+          "advice": "Céder ne garantit rien. Tu as le droit de travailler en sécurité."
+        },
+        {
+          "label": "Menacer en retour",
+          "protective": false,
+          "outcome": "Ton message est utilisé contre toi pour dire que tu provoques.",
+          "advice": "Ta colère est légitime. Le plus sûr reste de ne pas répondre et de garder les preuves."
+        },
+        {
+          "label": "Garder les preuves et porter plainte",
+          "protective": true,
+          "outcome": "Avec tes captures, la plainte est enregistrée. L'INF t'accompagne, au 114.",
+          "advice": "Les menaces en ligne sont punies par la loi. Tu as le droit d'être protégée.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Une menace en ligne est une vraie menace. Garde tout, porte plainte et ne reste pas seule."
+    }
+  ]
+}

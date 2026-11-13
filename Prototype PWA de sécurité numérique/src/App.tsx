@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
+import teamQuizContent from "./content/quiz-equipes.json";
 import vopContent from "./content/vrai-ou-piege.json";
 
 type Screen =
@@ -12,6 +13,7 @@ type Screen =
   | "scenarios"
   | "play"
   | "vop"
+  | "equipes"
   | "mot"
   | "fake-login"
   | "phishing"
@@ -611,6 +613,7 @@ function App() {
     if (!next) stopSpeaking();
   };
   const [lang, setLangState] = useState<Lang>(readLang);
+  const [listen, setListenState] = useState(() => localStorage.getItem("naya-ecoute") === "yes");
   const setLang = (next: Lang) => {
     stopSpeaking();
     setLangState(next);
@@ -619,17 +622,26 @@ function App() {
     if (next !== "fr") setAudio(true);
   };
   useEffect(() => {
-    // Keep the voice clips (chosen language, French as fallback) available
-    // offline, once the listener has turned the voice on.
+    // Keep the voice clips that can be played available offline, once the
+    // voice is on: the chosen language, French only where a clip is missing,
+    // and the narration only when it is used (local language or listening).
     if (!audio || !("serviceWorker" in navigator)) return;
+    const narrating = listen || lang !== "fr";
+    const wanted = (key: string) => {
+      const cut = key.indexOf("/");
+      const [from, rest] = [key.slice(0, cut), key.slice(cut + 1)];
+      if (!narrating && !/\.m\d/.test(rest)) return false;
+      if (from === lang) return true;
+      return from === "fr" && !clips[`${lang}/${rest}`];
+    };
     const urls = Object.entries(clips)
-      .filter(([key]) => key.startsWith(`${lang}/`) || key.startsWith("fr/"))
+      .filter(([key]) => wanted(key))
       .map(([, url]) => new URL(url, window.location.href).href)
       .filter((url) => url.startsWith("http"));
     navigator.serviceWorker.ready.then((registration) =>
       registration.active?.postMessage({ type: "precache", urls }),
     );
-  }, [lang, audio]);
+  }, [lang, audio, listen]);
   const [person, setPersonState] = useState<"afi" | "maya">(() =>
     localStorage.getItem("naya-person") === "maya" ? "maya" : "afi",
   );
@@ -740,6 +752,29 @@ function App() {
     localStorage.setItem("naya-started", "yes");
     go("home");
   };
+  // Listening mode, for people who cannot read the screen (sight, reading):
+  // one button, and the story starts aloud in the chosen language, with every
+  // answer, consequence and instruction said and big numbered buttons.
+  const startListening = (l: Lang) => {
+    setLangState(l);
+    localStorage.setItem("naya-lang", l);
+    setAudio(true);
+    setListenState(true);
+    localStorage.setItem("naya-ecoute", "yes");
+    localStorage.setItem("naya-started", "yes");
+    playClips([{ url: clipOf(l, "ui.bienvenue") }], true);
+    startScenario(scenario.id);
+  };
+  const stopListening = () => {
+    setListenState(false);
+    localStorage.setItem("naya-ecoute", "no");
+    stopSpeaking();
+  };
+  useEffect(() => {
+    // The trap page is the one screen with no story text: say what it is.
+    if (listen && audio && screen === "fake-login")
+      playClips([{ url: clipOf(lang, "ui.piege") }], true);
+  }, [screen, listen, audio]);
   const chooseStory = (choice: number) => {
     const step = scenario.steps[Math.min(story, total - 1)];
     const picked = step.choices[choice];
@@ -788,6 +823,7 @@ function App() {
     stopSpeaking();
     setWordGameState(readWordGame());
     setAudioState(false);
+    setListenState(false);
     setLangState("fr");
     setPersonState("afi");
     setScenarioId(scenarios[0].id);
@@ -810,7 +846,8 @@ function App() {
   };
 
   let content: React.ReactNode;
-  if (screen === "welcome") content = <Welcome onNext={() => go("language")} />;
+  if (screen === "welcome")
+    content = <Welcome onNext={() => go("language")} onListen={startListening} />;
   else if (screen === "language")
     content = (
       <Language
@@ -847,6 +884,10 @@ function App() {
           localStorage.setItem("naya-install", "hidden");
         }}
         wordOpen={wordGame.found || wordGame.revealed}
+        listen={listen}
+        lang={lang}
+        startListening={startListening}
+        stopListening={stopListening}
         onPick={startScenario}
         unlocked={unlocked.length}
       />
@@ -864,6 +905,7 @@ function App() {
   else if (screen === "play")
     content = <Play go={go} story={story} scenario={scenario} />;
   else if (screen === "vop") content = <VraiOuPiege go={go} timer={timer} />;
+  else if (screen === "equipes") content = <QuizEquipes go={go} />;
   else if (screen === "scenarios")
     content = (
       <Scenarios
@@ -882,6 +924,7 @@ function App() {
       <Story
         key={`${scenario.id}-${Math.min(story, total - 1)}`}
         lang={lang}
+        listen={listen}
         pressure={pressure}
         fresh={fresh}
         timer={timer}
@@ -1037,6 +1080,9 @@ function App() {
   else
     content = (
       <Settings
+        listen={listen}
+        startListening={() => startListening(lang)}
+        stopListening={stopListening}
         lang={lang}
         setLang={setLang}
         person={person}
@@ -1053,7 +1099,7 @@ function App() {
 
   return (
     <div className="app-bg">
-      <main className="phone-shell">
+      <main className={`phone-shell ${listen ? "listen-mode" : ""}`}>
         {content}
         {toast && (
           <div className="toast">
@@ -1086,7 +1132,7 @@ function App() {
   );
 }
 
-function Welcome({ onNext }: { onNext: () => void }) {
+function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang) => void }) {
   return (
     <section className="screen welcome">
       <div className="welcome-mark">
@@ -1104,9 +1150,32 @@ function Welcome({ onNext }: { onNext: () => void }) {
         <Button onClick={onNext} icon="arrow">
           Continuer
         </Button>
+        <ListenChooser onListen={onListen} />
         <p className="microcopy">Aucun compte · Rien à partager</p>
       </div>
     </section>
+  );
+}
+
+/** One big button per language: the story starts aloud, no settings. */
+function ListenChooser({ onListen }: { onListen: (l: Lang) => void }) {
+  if (!canPlay) return null;
+  return (
+    <div className="listen-chooser">
+      <p>
+        <Icon name="play" size={16} /> Je préfère écouter
+      </p>
+      <div>
+        {(["fr", ...recordedLangs] as Lang[]).map((l) => (
+          <button key={l} onClick={() => onListen(l)} aria-label={`Écouter en ${langNames[l]}`}>
+            <span aria-hidden>
+              <Icon name="play" size={22} />
+            </span>
+            {langNames[l]}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -1302,6 +1371,10 @@ function Home({
   daily,
   showInstall,
   hideInstall,
+  listen,
+  lang,
+  startListening,
+  stopListening,
   wordOpen,
   onPick,
   unlocked,
@@ -1314,6 +1387,10 @@ function Home({
   daily: Scenario;
   showInstall: boolean;
   hideInstall: () => void;
+  listen: boolean;
+  lang: Lang;
+  startListening: (l: Lang) => void;
+  stopListening: () => void;
   wordOpen: boolean;
   onPick: (id: string) => void;
   unlocked: number;
@@ -1342,7 +1419,23 @@ function Home({
       <div className="page-content home-content">
         {/* One job per tab: the home screen only shows today's step and where
             she stands. Every game lives in "Jouer", the reflexes in "Réflexes". */}
-        {inStory ? (
+        {listen && (
+          <div className="listen-banner" role="status">
+            <Icon name="play" size={22} />
+            <p>
+              <strong>Mode écoute · {langNames[lang]}</strong>
+              Tout est lu à voix haute.
+            </p>
+            <button onClick={stopListening}>Quitter</button>
+          </div>
+        )}
+        {listen && (
+          <button className="big-listen" onClick={() => startListening(lang)}>
+            <Icon name="play" size={34} />
+            {inStory ? "Reprendre l’histoire" : "Écouter une histoire"}
+          </button>
+        )}
+        {!listen && inStory ? (
           <button className="vop-card today-card" onClick={() => go("story")}>
             <span className="eyebrow">Ton histoire en cours</span>
             <strong>{scenario.title}</strong>
@@ -1353,7 +1446,7 @@ function Home({
               Reprendre <Icon name="arrow" size={18} />
             </span>
           </button>
-        ) : daily.mot && !wordOpen ? (
+        ) : listen ? null : daily.mot && !wordOpen ? (
           <button className="vop-card today-card" onClick={() => go("mot")}>
             <span className="eyebrow">Aujourd’hui</span>
             <strong>Le mot du jour</strong>
@@ -1391,6 +1484,18 @@ function Home({
             </span>
           </div>
         </section>
+        {!listen && canPlay && (
+          <button className="wide-link" onClick={() => startListening(lang)}>
+            <span className="link-icon">
+              <Icon name="play" />
+            </span>
+            <span>
+              <strong>Écouter au lieu de lire</strong>
+              <small>Tout est dit à voix haute, en français, fon ou yoruba</small>
+            </span>
+            <Icon name="chevron" />
+          </button>
+        )}
         {showInstall && (
           <div className="install-card">
             <button className="wide-link" onClick={() => go("install")}>
@@ -1510,14 +1615,6 @@ function Scenarios({
   );
 }
 
-const heatLabels: Record<Heat, string> = {
-  found: "Trouvé",
-  hot: "Brûlant",
-  warm: "Tiède",
-  cold: "Froid",
-};
-const heatRank: Record<Heat, number> = { found: 0, hot: 1, warm: 2, cold: 3 };
-
 function MotDuJour({
   scenario,
   game,
@@ -1549,8 +1646,8 @@ function MotDuJour({
 
   const over = game.found || game.revealed;
   const rows = game.guesses
-    .map((guess, order) => ({ guess, order, heat: heatOf(guess, word) }))
-    .sort((a, b) => heatRank[a.heat] - heatRank[b.heat] || b.order - a.order);
+    .map((guess, order) => ({ guess, order, found: heatOf(guess, word) === "found" }))
+    .reverse();
   const submit = () => {
     const guess = draft.trim();
     if (!plainWord(guess)) return;
@@ -1562,13 +1659,7 @@ function MotDuJour({
     const heat = heatOf(guess, word);
     setGame({ ...game, guesses: [...game.guesses, guess], found: heat === "found" });
     setNote(
-      heat === "found"
-        ? ""
-        : heat === "hot"
-          ? "Brûlant ! Tu es tout près."
-          : heat === "warm"
-            ? "Tiède : tu es dans le bon sujet."
-            : "Froid. Essaie un autre mot, ou prends un indice.",
+      heat === "found" ? "" : `Ce n’est pas « ${guess} ». Relis l’indice, ou demande-en un autre.`,
     );
     setDraft("");
     if (heat === "found") vibrate([40, 40, 90]);
@@ -1588,7 +1679,7 @@ function MotDuJour({
             {game.found && (
               <p className="mot-tries">
                 en {game.guesses.length} essai{game.guesses.length > 1 ? "s" : ""}
-                {game.hints ? ` et ${game.hints} indice${game.hints > 1 ? "s" : ""}` : ""}
+                {` avec ${Math.max(1, game.hints)} indice${Math.max(1, game.hints) > 1 ? "s" : ""}`}
               </p>
             )}
             <div className="mot-lesson">
@@ -1604,10 +1695,14 @@ function MotDuJour({
           <>
             <p className="eyebrow">Un mot, une leçon</p>
             <h1>Quel est le mot du jour ?</h1>
-            <p className="lead">
-              C’est le thème de l’histoire du jour. Propose des mots : plus tu chauffes, plus tu es
-              proche.
-            </p>
+            <p className="lead">C’est le thème de l’histoire du jour. Lis l’indice et propose un mot.</p>
+            <ol className="mot-hints">
+              {word.indices.slice(0, Math.max(1, game.hints)).map((hint, i) => (
+                <li key={hint}>
+                  <strong>Indice {i + 1}</strong> {hint}
+                </li>
+              ))}
+            </ol>
             <form
               className="mot-form"
               onSubmit={(e) => {
@@ -1633,21 +1728,14 @@ function MotDuJour({
                 {note}
               </p>
             )}
-            {game.hints > 0 && (
-              <ol className="mot-hints">
-                {word.indices.slice(0, game.hints).map((hint) => (
-                  <li key={hint}>{hint}</li>
-                ))}
-              </ol>
-            )}
             <div className="mot-actions">
               <button
-                onClick={() => setGame({ ...game, hints: game.hints + 1 })}
-                disabled={game.hints >= word.indices.length}
+                onClick={() => setGame({ ...game, hints: Math.max(1, game.hints) + 1 })}
+                disabled={Math.max(1, game.hints) >= word.indices.length}
               >
-                {game.hints >= word.indices.length
-                  ? "Plus d’indice"
-                  : `Un indice (${game.hints}/${word.indices.length})`}
+                {Math.max(1, game.hints) >= word.indices.length
+                  ? "Tous les indices sont là"
+                  : `Un autre indice (${Math.max(1, game.hints) + 1}/${word.indices.length})`}
               </button>
               {game.guesses.length >= 3 && (
                 <button onClick={() => setGame({ ...game, revealed: true })}>Révéler le mot</button>
@@ -1662,12 +1750,12 @@ function MotDuJour({
             </h2>
             <ul className="mot-guesses">
               {rows.map((row) => (
-                <li key={row.guess} className={row.heat}>
+                <li key={row.guess} className={row.found ? "found" : "miss"}>
                   <strong>{row.guess}</strong>
-                  <i>
-                    <b />
-                  </i>
-                  <em>{heatLabels[row.heat]}</em>
+                  <em>
+                    <Icon name={row.found ? "check" : "warning"} size={14} />
+                    {row.found ? "Trouvé" : "Pas encore"}
+                  </em>
                 </li>
               ))}
             </ul>
@@ -1816,6 +1904,7 @@ const COUNTDOWN_S = 15;
 
 function Story({
   lang,
+  listen,
   scenario,
   step,
   choice,
@@ -1831,6 +1920,7 @@ function Story({
   openLink,
 }: {
   lang: Lang;
+  listen: boolean;
   scenario: Scenario;
   step: number;
   choice: number | null;
@@ -1885,7 +1975,7 @@ function Story({
   // can play without reading: the answers (numbered, highlighted while read),
   // then what her answer leads to.
   const key = scenario.id;
-  const local = lang !== "fr" && recordedLangs.includes(lang);
+  const local = listen || (lang !== "fr" && recordedLangs.includes(lang));
   const [reading, setReading] = useState<number | null>(null);
   const answerClips = (i: number) => [
     { url: clipOf(lang, `ui.r${i + 1}`, false), onStart: () => setReading(i) },
@@ -1916,6 +2006,7 @@ function Story({
           { url: clipOf(lang, `${key}.a${step + 1}-${choice + 1}`, false) },
           { url: clipOf(lang, "ui.retenir", false) },
           { url: clipOf(lang, `${key}.f${step + 1}`, false) },
+          ...(listen ? [{ url: clipOf(lang, "ui.continuer", false) }] : []),
         ],
         true,
       );
@@ -2150,7 +2241,10 @@ function FakeLogin({
   const clues = [
     ["Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
     ["Un lien inattendu", attachment?.clue ?? "Tu n’attendais pas ce lien."],
-    ["Une demande de connexion", "Le contenu promis est caché derrière un formulaire."],
+    [
+      "Elle demande ton mot de passe",
+      "Un vrai service ne te demande jamais ton mot de passe par un lien reçu dans une discussion. Ferme la page et ouvre toi-même l’application officielle.",
+    ],
   ];
   const [found, setFound] = useState<number[]>([]);
   const [last, setLast] = useState<number | null>(null);
@@ -2194,28 +2288,19 @@ function FakeLogin({
           <p>{attachment?.pageText ?? "Connecte-toi pour continuer."}</p>
         </button>
         <div className={`fake-form ${mark(2)}`}>
-          <label>
-            Adresse e-mail
-            <input
-              readOnly
-              onFocus={() => tap(2)}
-              onClick={() => tap(2)}
-              placeholder="tonadresse@email.com"
-            />
-          </label>
-          <label>
-            Mot de passe
-            <input
-              readOnly
-              onFocus={() => tap(2)}
-              onClick={() => tap(2)}
-              type="password"
-              placeholder="••••••••"
-            />
-          </label>
+          {/* Pictures of fields, not real ones: no cursor, no keyboard, nothing
+              to type. Touching them reveals the clue instead. */}
+          <button className="fake-field" onClick={() => tap(2)}>
+            <span>Adresse e-mail</span>
+            <i>tonadresse@email.com</i>
+          </button>
+          <button className="fake-field" onClick={() => tap(2)}>
+            <span>Mot de passe</span>
+            <i>••••••••</i>
+          </button>
           <Button onClick={() => tap(2)}>Se connecter</Button>
         </div>
-        <small>Page fictive créée pour cet exercice. Aucune information n’est saisie.</small>
+        <small>Page fictive créée pour cet exercice. Rien ne peut y être écrit.</small>
       </div>
       <div className="hunt-panel" aria-live="polite">
         {last !== null ? (
@@ -2708,6 +2793,283 @@ function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean })
   );
 }
 
+// ---------------------------------------------------------------------------
+// « Le grand quiz » : teams answer the same question on one shared screen
+// (phone or projector). The facilitator taps each team's answer as it is
+// called out; right answers score, and faster right answers score more.
+// ---------------------------------------------------------------------------
+type TeamQuestion = { q: string; a: string[]; correct: number; why: string };
+const teamQuestions = teamQuizContent as TeamQuestion[];
+const TEAM_TIME_S = 20;
+const teamsAll = [
+  { name: "Soleil", color: "var(--peach)" },
+  { name: "Lune", color: "var(--mist)" },
+  { name: "Baobab", color: "var(--sage)" },
+  { name: "Étoile", color: "var(--coral)" },
+];
+const answerColors = ["var(--coral)", "var(--navy)", "var(--sage)", "#b98a2f"];
+
+function QuizEquipes({ go }: { go: (s: Screen) => void }) {
+  const [phase, setPhase] = useState<"setup" | "question" | "reveal" | "scores" | "podium">("setup");
+  const [teamCount, setTeamCount] = useState(2);
+  const [length, setLength] = useState(6);
+  const [questions, setQuestions] = useState<TeamQuestion[]>([]);
+  const [index, setIndex] = useState(0);
+  const [answers, setAnswers] = useState<({ choice: number; at: number } | null)[]>([]);
+  const [scores, setScores] = useState<number[]>([]);
+  const [gained, setGained] = useState<number[]>([]);
+  const [startedAt, setStartedAt] = useState(0);
+  const [left, setLeft] = useState(TEAM_TIME_S);
+  const teams = teamsAll.slice(0, teamCount);
+  const question = questions[index];
+
+  const begin = () => {
+    setQuestions(shuffled(teamQuestions).slice(0, length));
+    setScores(teams.map(() => 0));
+    setIndex(0);
+    ask();
+  };
+  const ask = () => {
+    setAnswers(teamsAll.slice(0, teamCount).map(() => null));
+    setStartedAt(Date.now());
+    setLeft(TEAM_TIME_S);
+    setPhase("question");
+    window.scrollTo(0, 0);
+  };
+  const reveal = (final = answers) => {
+    const points = final.map((answer) => {
+      if (!answer || answer.choice !== question.correct) return 0;
+      const remaining = Math.max(0, TEAM_TIME_S - answer.at / 1000) / TEAM_TIME_S;
+      return Math.round((500 + 500 * remaining) / 10) * 10;
+    });
+    setGained(points);
+    setScores((current) => current.map((s, i) => s + points[i]));
+    vibrate([40, 40, 80]);
+    setPhase("reveal");
+  };
+  useEffect(() => {
+    if (phase !== "question") return;
+    if (left <= 0) {
+      reveal();
+      return;
+    }
+    const id = window.setTimeout(() => setLeft((value) => value - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [phase, left]);
+  const answer = (team: number, choice: number) => {
+    if (answers[team]) return;
+    const next = answers.map((a, i) => (i === team ? { choice, at: Date.now() - startedAt } : a));
+    setAnswers(next);
+    vibrate(25);
+    if (next.every(Boolean)) reveal(next);
+  };
+  const ranking = teams
+    .map((team, i) => ({ ...team, score: scores[i] ?? 0, gained: gained[i] ?? 0 }))
+    .sort((a, b) => b.score - a.score);
+  const best = Math.max(1, ...ranking.map((t) => t.score));
+
+  if (phase === "setup")
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Le grand quiz" onBack={() => go("play")} />
+        <div className="page-content">
+          <p className="eyebrow">En équipes · un seul écran</p>
+          <h1>Qui repère le mieux les pièges ?</h1>
+          <p className="lead">
+            Une question, quatre réponses, {TEAM_TIME_S} secondes. Chaque équipe annonce sa
+            réponse : l’animatrice la touche. Juste et rapide = plus de points.
+          </p>
+          <h2>Combien d’équipes ?</h2>
+          <div className="segmented">
+            {[2, 3, 4].map((n) => (
+              <button key={n} className={teamCount === n ? "on" : ""} onClick={() => setTeamCount(n)}>
+                {n} équipes
+              </button>
+            ))}
+          </div>
+          <div className="team-chips">
+            {teams.map((t) => (
+              <span key={t.name} style={{ background: t.color }}>
+                {t.name}
+              </span>
+            ))}
+          </div>
+          <h2>Combien de questions ?</h2>
+          <div className="segmented">
+            {[6, 10].map((n) => (
+              <button key={n} className={length === n ? "on" : ""} onClick={() => setLength(n)}>
+                {n} questions
+                <small>{n === 6 ? "environ 6 minutes" : "environ 10 minutes"}</small>
+              </button>
+            ))}
+          </div>
+          <div className="tip">
+            <Icon name="shield" />
+            <p>
+              <strong>Toutes les situations sont inventées.</strong>
+              <br />
+              On joue contre les pièges, pas les unes contre les autres : personne n’est jugé.
+            </p>
+          </div>
+        </div>
+        <div className="sticky-action">
+          <Button onClick={begin} icon="arrow">
+            Commencer
+          </Button>
+        </div>
+      </section>
+    );
+
+  if (phase === "podium")
+    return (
+      <section className="screen team-quiz">
+        <TopBar title="Le podium" onBack={() => go("play")} />
+        <div className="page-content">
+          <div className="podium">
+            {ranking.slice(0, 3).map((t, i) => (
+              <div key={t.name} className={`place place-${i + 1}`}>
+                <span style={{ background: t.color }}>{i + 1}</span>
+                <strong>{t.name}</strong>
+                <small>{t.score} pts</small>
+              </div>
+            ))}
+          </div>
+          <h1>Bravo à toutes les équipes.</h1>
+          <p className="lead">
+            Chaque bonne réponse est un réflexe de plus pour se protéger, et pour protéger les
+            autres.
+          </p>
+          <Button onClick={() => setPhase("setup")} icon="arrow">
+            Rejouer
+          </Button>
+          <Button variant="secondary" onClick={() => go("help")}>
+            Où trouver de l’aide
+          </Button>
+        </div>
+      </section>
+    );
+
+  if (phase === "scores")
+    return (
+      <section className="screen team-quiz">
+        <TopBar title={`Classement · ${index + 1}/${questions.length}`} onBack={() => go("play")} />
+        <div className="page-content">
+          <ol className="team-board">
+            {ranking.map((t, i) => (
+              <li key={t.name}>
+                <span className="team-rank">{i + 1}</span>
+                <div>
+                  <strong>{t.name}</strong>
+                  <i>
+                    <b style={{ width: `${(t.score / best) * 100}%`, background: t.color }} />
+                  </i>
+                </div>
+                <span className="team-score">
+                  {t.score}
+                  {t.gained > 0 && <small>+{t.gained}</small>}
+                </span>
+              </li>
+            ))}
+          </ol>
+          {index < questions.length - 1 ? (
+            <Button
+              onClick={() => {
+                setIndex(index + 1);
+                ask();
+              }}
+              icon="arrow"
+            >
+              Question suivante
+            </Button>
+          ) : (
+            <Button onClick={() => setPhase("podium")} icon="arrow">
+              Voir le podium
+            </Button>
+          )}
+        </div>
+      </section>
+    );
+
+  return (
+    <section className="screen team-quiz">
+      <header className="team-bar">
+        <button className="icon-button" onClick={() => go("play")} aria-label="Quitter la partie">
+          <Icon name="back" />
+        </button>
+        <strong>
+          Question {index + 1}/{questions.length}
+        </strong>
+        <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
+          {phase === "question" ? left : <Icon name="check" size={18} />}
+        </span>
+      </header>
+      {phase === "question" && (
+        <div className="team-time" aria-hidden>
+          <i style={{ width: `${(left / TEAM_TIME_S) * 100}%` }} />
+        </div>
+      )}
+      <div className="page-content">
+        <h1 className="team-question">{question.q}</h1>
+        <div className="team-answers">
+          {question.a.map((text, i) => (
+            <div
+              key={text}
+              className={`team-answer ${phase === "reveal" ? (i === question.correct ? "right" : "dim") : ""}`}
+              style={{ background: answerColors[i] }}
+            >
+              <b>{"ABCD"[i]}</b>
+              <span>{text}</span>
+            </div>
+          ))}
+        </div>
+        {phase === "question" ? (
+          <>
+            <p className="team-help">Quand une équipe annonce sa réponse, touche sa lettre :</p>
+            {teams.map((t, ti) => (
+              <div className="team-row" key={t.name}>
+                <span style={{ background: t.color }}>{t.name}</span>
+                <div>
+                  {[0, 1, 2, 3].map((c) => (
+                    <button
+                      key={c}
+                      className={answers[ti]?.choice === c ? "picked" : ""}
+                      disabled={!!answers[ti]}
+                      onClick={() => answer(ti, c)}
+                      aria-label={`${t.name} répond ${"ABCD"[c]}`}
+                    >
+                      {"ABCD"[c]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <Button variant="ghost" onClick={() => reveal()}>
+              Montrer la réponse
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="team-why">
+              <strong>Bonne réponse : {"ABCD"[question.correct]}</strong>
+              <p>{question.why}</p>
+            </div>
+            <div className="team-gains">
+              {teams.map((t, i) => (
+                <span key={t.name} style={{ background: t.color }}>
+                  {t.name} {gained[i] ? `+${gained[i]}` : "+0"}
+                </span>
+              ))}
+            </div>
+            <Button onClick={() => setPhase("scores")} icon="arrow">
+              Voir le classement
+            </Button>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** Two speech bubbles: one checked, one flagged. Dots show the group's score. */
 function VopArt({ lit, total }: { lit?: number; total?: number }) {
   return (
@@ -2755,14 +3117,23 @@ function Play({
     <section className="screen with-nav">
       <TopBar title="Jouer" onBack={() => go("home")} />
       <div className="page-content home-content">
-        <button className="vop-card" onClick={() => go("vop")}>
-          <VopArt />
-          <span className="eyebrow">À plusieurs · un seul téléphone</span>
-          <strong>Vrai ou piège ?</strong>
-          <span>Un message s’affiche, le groupe décide ensemble.</span>
+        <button className="vop-card team-card" onClick={() => go("equipes")}>
+          <span className="eyebrow">En équipes · un seul écran</span>
+          <strong>Le grand quiz</strong>
+          <span>Jusqu’à 4 équipes. Répondez juste et vite, le classement s’affiche à chaque question.</span>
           <span className="vop-card-cta">
-            Jouer en groupe <Icon name="arrow" size={18} />
+            Lancer une partie <Icon name="arrow" size={18} />
           </span>
+        </button>
+        <button className="wide-link" onClick={() => go("vop")}>
+          <span className="link-icon">
+            <Icon name="message" />
+          </span>
+          <span>
+            <strong>Vrai ou piège ?</strong>
+            <small>Un message s’affiche, le groupe décide ensemble</small>
+          </span>
+          <Icon name="chevron" />
         </button>
         <h2 className="section-title">Jouer seule</h2>
         <button className="wide-link" onClick={() => go("mot")}>
@@ -2790,8 +3161,8 @@ function Play({
             <Icon name="spark" />
           </span>
           <span>
-            <strong>Tester mes réflexes</strong>
-            <small>5 questions, sans jugement</small>
+            <strong>Quiz sans jugement</strong>
+            <small>5 questions sur les pièges en ligne</small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -2843,6 +3214,16 @@ function Phishing({
             <Icon name={i as IconName} />
           </div>
         ))}
+        <div className="password-reflex">
+          <p className="eyebrow">Le réflexe mot de passe</p>
+          <ol>
+            <li>Je ne tape jamais mon mot de passe sur une page ouverte depuis un lien reçu.</li>
+            <li>J’utilise un mot de passe différent pour chaque compte.</li>
+            <li>Je choisis une phrase longue plutôt qu’un mot court : « MaSœurAime3Mangues! ».</li>
+            <li>J’active la double vérification et je ne donne jamais le code reçu par SMS.</li>
+            <li>Personne n’a le droit d’exiger mes codes, même mon copain ou ma famille.</li>
+          </ol>
+        </div>
         <div className="tip">
           <Icon name="shield" />
           <p>
@@ -3154,7 +3535,7 @@ function Quiz({
   const item = quiz[index];
   return (
     <section className="screen quiz">
-      <TopBar title="Quiz réflexes" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
+      <TopBar title="Quiz sans jugement" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
       <div className="quiz-progress">
         {quiz.map((_, i) => (
           <i key={i} className={i <= index ? "done" : ""} />
@@ -3454,6 +3835,9 @@ function Progress({
 }
 
 function Settings({
+  listen,
+  startListening,
+  stopListening,
   lang,
   setLang,
   person,
@@ -3466,6 +3850,9 @@ function Settings({
   erase,
   notify,
 }: {
+  listen: boolean;
+  startListening: () => void;
+  stopListening: () => void;
   lang: Lang;
   setLang: (l: Lang) => void;
   person: "afi" | "maya";
@@ -3522,6 +3909,28 @@ function Settings({
             français en petit. Traduction et voix automatiques, à l’essai : pas encore relues par
             une personne qui parle {langNames[lang].toLowerCase()}.
           </p>
+        )}
+        {canPlay && (
+          <button
+            className="setting-row"
+            onClick={listen ? stopListening : startListening}
+            aria-pressed={listen}
+          >
+            <span>
+              <Icon name="play" />
+            </span>
+            <div>
+              <strong>Mode écoute</strong>
+              <small>
+                {listen
+                  ? "Activé · tout est lu, gros boutons numérotés"
+                  : "Pour jouer sans lire : tout est dit à voix haute"}
+              </small>
+            </div>
+            <span className={`toggle ${listen ? "on" : ""}`}>
+              <i />
+            </span>
+          </button>
         )}
         <h3>Personnage</h3>
         <div className="segmented" role="radiogroup" aria-label="Personnage">

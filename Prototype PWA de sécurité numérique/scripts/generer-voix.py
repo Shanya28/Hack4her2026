@@ -1,8 +1,10 @@
-"""Génère la voix française des messages des histoires avec Piper (voix neuronales).
+"""Génère les voix françaises avec Piper (voix neuronales).
 
-Chaque message de l'interlocuteur devient un fichier
-src/content/audio/fr/<scénario>/m<situation>-<message>.mp3, que l'application
-joue à la place de la voix de synthèse du téléphone.
+- Chaque message d'un interlocuteur devient src/content/audio/fr/<scénario>/
+  m<situation>-<message>.mp3, avec une voix d'homme ou de femme.
+- Tout le reste (réponses, conséquences, conseils, « à retenir », consignes)
+  est lu par la narratrice, pour le mode écoute : mêmes clés que
+  scripts/langue-locale.py.
 
 Préparation (une fois) :
     pip install piper-tts
@@ -26,7 +28,7 @@ from piper import PiperVoice
 
 ROOT = Path(__file__).resolve().parent.parent / "src" / "content"
 # Voix d'homme pour ces interlocuteurs, voix de femme pour tous les autres.
-MALE = {"Kevin"}
+MALE = {"Kevin", "Sèdjro", "Kader", "Ablo", "Inconnu", "Compte anonyme"}
 VOICES = {"male": "fr_FR-tom-medium", "female": "fr_FR-siwis-medium"}
 
 
@@ -39,37 +41,51 @@ def spoken(text: str) -> str:
     return text.replace("«", "").replace("»", "").replace("…", ".").strip()
 
 
+def narration() -> dict[str, str]:
+    """Textes lus par la narratrice (toutes les clés sauf les messages)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("langue_locale", Path(__file__).with_name("langue-locale.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return {k: v for k, v in module.story_texts().items() if ".m" not in k}
+
+
+def encode(voice, text: str, target: Path) -> None:
+    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
+        with wave.open(tmp.name, "wb") as wav:
+            voice.synthesize_wav(spoken(text), wav)
+        subprocess.run(
+            ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name,
+             "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ac", "1", "-ar", "22050",
+             "-b:a", "32k", str(target)],
+            check=True,
+        )
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     voices_dir = Path(sys.argv[1])
-    wanted = sys.argv[2:]
     voices = {kind: PiperVoice.load(voices_dir / f"{name}.onnx") for kind, name in VOICES.items()}
-
+    out_root = ROOT / "audio" / "fr"
+    for old in out_root.glob("*/*.mp3"):
+        old.unlink()
     for file in sorted((ROOT / "scenarios").glob("*.json")):
         scenario = json.loads(file.read_text(encoding="utf-8"))
-        if wanted and scenario["id"] not in wanted:
-            continue
-        out_dir = ROOT / "audio" / "fr" / scenario["id"]
+        out_dir = out_root / scenario["id"]
         out_dir.mkdir(parents=True, exist_ok=True)
-        for old in out_dir.glob("*.mp3"):
-            old.unlink()
         for s, step in enumerate(scenario["steps"], 1):
             for m, (who, text) in enumerate(step["messages"], 1):
                 if who == "moi":
                     continue
                 kind = "male" if who.split(" · ")[0] in MALE else "female"
-                target = out_dir / f"m{s}-{m}.mp3"
-                with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
-                    with wave.open(tmp.name, "wb") as wav:
-                        voices[kind].synthesize_wav(spoken(text), wav)
-                    subprocess.run(
-                        ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp.name,
-                         "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ac", "1", "-ar", "24000",
-                         "-b:a", "48k", str(target)],
-                        check=True,
-                    )
-                print(f"{scenario['id']}/{target.name}  [{kind}]  {spoken(text)}")
+                encode(voices[kind], text, out_dir / f"m{s}-{m}.mp3")
+    for key, text in narration().items():
+        folder, name = key.split(".", 1)
+        (out_root / folder).mkdir(parents=True, exist_ok=True)
+        encode(voices["female"], text, out_root / folder / f"{name}.mp3")
+    print(len(list(out_root.glob("*/*.mp3"))), "fichiers audio français")
 
 
 if __name__ == "__main__":

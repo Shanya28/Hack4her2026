@@ -1,0 +1,134 @@
+[
+  {
+    "q": "Ton copain exige ton mot de passe « pour prouver que tu n'as rien à cacher ». C'est…",
+    "a": [
+      "Une preuve d'amour",
+      "Normal dans un couple",
+      "Une forme de contrôle",
+      "Obligatoire si vous êtes fiancés"
+    ],
+    "correct": 2,
+    "why": "Exiger tes codes, c'est du contrôle. L'amour ne se prouve pas en donnant ses mots de passe."
+  },
+  {
+    "q": "« Envoie-moi d'autres photos, sinon je publie celles que j'ai. » C'est…",
+    "a": [
+      "De la sextorsion, punie par la loi",
+      "Une blague entre amis",
+      "Ta faute, tu as envoyé la première",
+      "Un simple malentendu"
+    ],
+    "correct": 0,
+    "why": "C'est du chantage. Ne paie pas, n'envoie rien, garde les preuves et demande de l'aide."
+  },
+  {
+    "q": "Quelqu'un publie une photo truquée de toi pour se moquer. Ton premier réflexe ?",
+    "a": [
+      "Répondre par des insultes",
+      "Supprimer ton compte tout de suite",
+      "Payer pour qu'il la retire",
+      "Faire des captures, puis signaler"
+    ],
+    "correct": 3,
+    "why": "Les captures prouvent ce qui s'est passé ; le signalement fait retirer l'image."
+  },
+  {
+    "q": "Une amie te transfère la vidéo intime d'une autre fille. Que fais-tu ?",
+    "a": [
+      "Je la transfère au groupe",
+      "Je ne la partage pas et je la supprime",
+      "Je la garde au cas où",
+      "Je réagis avec un emoji"
+    ],
+    "correct": 1,
+    "why": "Partager une image intime sans accord est une violence. Ne la fais pas circuler et soutiens la victime."
+  },
+  {
+    "q": "Ton copain sait toujours où tu es sans que tu le lui dises. Ça peut être…",
+    "a": [
+      "Une application espion sur ton téléphone",
+      "Une coïncidence",
+      "Une mise à jour normale",
+      "De la chance"
+    ],
+    "correct": 0,
+    "why": "Une application installée à ton insu peut partager ta position. Vérifie tes applications et fais-toi aider."
+  },
+  {
+    "q": "Quel mot de passe est le plus solide ?",
+    "a": [
+      "123456",
+      "Ton prénom et ton année de naissance",
+      "Le même long mot de passe partout",
+      "Une phrase longue, différente pour chaque compte"
+    ],
+    "correct": 3,
+    "why": "Une phrase longue et unique est difficile à deviner, et un piratage ne touche qu'un compte."
+  },
+  {
+    "q": "Un faux profil à ton nom demande de l'argent à tes proches. Que faire ?",
+    "a": [
+      "Rien, ça va passer",
+      "Signaler le profil et prévenir tes contacts",
+      "Créer un faux profil de lui",
+      "Payer quelqu'un pour le pirater"
+    ],
+    "correct": 1,
+    "why": "Signaler et prévenir protège tes proches. L'usurpation d'identité est une infraction."
+  },
+  {
+    "q": "Le consentement à envoyer une photo…",
+    "a": [
+      "Vaut pour toujours",
+      "Autorise à la partager",
+      "Peut être retiré à tout moment",
+      "N'existe pas en ligne"
+    ],
+    "correct": 2,
+    "why": "Dire oui une fois n'est pas dire oui pour toujours, ni dire oui au partage."
+  },
+  {
+    "q": "Au Bénin, quel numéro gratuit écoute les femmes victimes de violences ?",
+    "a": [
+      "Le 114 de l'Institut National de la Femme",
+      "Il n'y en a pas",
+      "Seulement un avocat payant",
+      "Le service client de l'application"
+    ],
+    "correct": 0,
+    "why": "L'INF écoute, oriente et accompagne, au 114, gratuitement."
+  },
+  {
+    "q": "Des inconnus t'insultent en masse sous ta vidéo. Le bon réflexe ?",
+    "a": [
+      "Répondre à chacun",
+      "Arrêter d'utiliser ton téléphone",
+      "Te dire que tu l'as mérité",
+      "Limiter les commentaires, bloquer, signaler et en parler"
+    ],
+    "correct": 3,
+    "why": "Les réglages coupent la meute, et en parler t'évite de rester seule. Ce n'est jamais ta faute."
+  },
+  {
+    "q": "Un message te demande le code reçu par SMS « par erreur ». Tu…",
+    "a": [
+      "Le donnes, c'est rendre service",
+      "Ne le donnes jamais",
+      "Donnes seulement la moitié",
+      "Le donnes si c'est une amie"
+    ],
+    "correct": 1,
+    "why": "Ce code ouvre ton compte. Personne n'en a besoin, même une amie."
+  },
+  {
+    "q": "Ton ex menace de publier vos conversations si tu ne reviens pas. C'est…",
+    "a": [
+      "Une preuve qu'il t'aime",
+      "Un chantage puni par la loi",
+      "Normal après une rupture",
+      "Ta responsabilité"
+    ],
+    "correct": 1,
+    "why": "Menacer de diffuser des échanges privés pour te forcer est une violence. Garde les preuves et demande de l'aide."
+  }
+]

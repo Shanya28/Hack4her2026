@@ -40,6 +40,9 @@ UI = {
     "ui.r3": "Troisième réponse.",
     "ui.retenir": "À retenir.",
     "ui.lien": "Un lien vient d'arriver. Tu peux l'ouvrir, ou vérifier le message.",
+    "ui.bienvenue": "Bienvenue. Écoute l'histoire. Pour répondre, touche le grand numéro de ta réponse.",
+    "ui.continuer": "Pour continuer, touche le grand bouton en bas de l'écran.",
+    "ui.piege": "Attention, cette page te demande ton mot de passe. C'est un piège : ne tape jamais ton mot de passe sur une page reçue par un lien.",
 }
 
 

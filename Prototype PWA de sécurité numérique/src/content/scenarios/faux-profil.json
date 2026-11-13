@@ -1,0 +1,236 @@
+{
+  "id": "faux-profil",
+  "order": 5,
+  "title": "Le faux profil",
+  "profile": "Lycéenne",
+  "summary": "Un compte se fait passer pour toi, publie une photo truquée, puis te fait chanter.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "montage",
+    "lecon": "Une image truquée ou un faux profil à ton nom peut être signalé et retiré. Ce qui est faux ne dit rien de ta valeur.",
+    "indices": [
+      "Une image truquée en est un.",
+      "On colle ton visage sur une autre photo.",
+      "Il commence par M et compte 7 lettres."
+    ],
+    "chaud": [
+      "trucage",
+      "photomontage",
+      "truquage",
+      "deepfake",
+      "faux",
+      "retouche",
+      "usurpation",
+      "fausse photo"
+    ],
+    "tiede": [
+      "photo",
+      "image",
+      "profil",
+      "compte",
+      "visage",
+      "réseaux",
+      "rumeur",
+      "honte",
+      "signalement",
+      "classe"
+    ]
+  },
+  "contact": {
+    "name": "Groupe de la classe",
+    "status": "38 membres",
+    "portrait": "maya"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Un compte à ton nom",
+      "header": {
+        "name": "Rachida",
+        "status": "ton amie",
+        "portrait": "afi"
+      },
+      "messages": [
+        [
+          "Rachida",
+          "C'est toi, ce nouveau compte avec ta photo ? Il demande de l'argent à tout le monde."
+        ],
+        [
+          "Rachida",
+          "Il a déjà écrit à ta tante."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Ignorer, ça va passer",
+          "protective": false,
+          "outcome": "Le faux compte continue et deux personnes envoient de l'argent en croyant t'aider.",
+          "advice": "Agir vite limite les dégâts, et ce n'est pas toi la fautive."
+        },
+        {
+          "label": "Signaler le compte et prévenir mes contacts",
+          "protective": true,
+          "outcome": "Tu publies : « Ce compte n'est pas moi, ne répondez pas. » Rachida et d'autres le signalent aussi.",
+          "advice": "Signaler et prévenir protège tes proches. Plusieurs signalements font retirer le compte plus vite.",
+          "reflexes": [
+            5
+          ]
+        },
+        {
+          "label": "Faire des captures du faux compte",
+          "protective": true,
+          "outcome": "Tu gardes son nom, son lien et ses messages, avec la date.",
+          "advice": "Ces captures prouvent l'usurpation si tu portes plainte.",
+          "reflexes": [
+            4
+          ]
+        }
+      ],
+      "feedback": "Se faire passer pour quelqu'un en ligne est une infraction. Signale, préviens tes proches et garde des preuves."
+    },
+    {
+      "chapter": "2 · La photo truquée",
+      "messages": [
+        [
+          "Kader · Groupe",
+          "Regardez la photo que ce compte vient de publier 😂"
+        ],
+        [
+          "Kader · Groupe",
+          "Image masquée · montage collant le visage d'une élève sur la photo d'une autre"
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Rire avec les autres",
+          "protective": false,
+          "outcome": "Ton message fait remonter la photo. Elle circule dans d'autres classes.",
+          "advice": "Même sans l'avoir créé, partager ou rire fait grandir la violence."
+        },
+        {
+          "label": "Dire que c'est un montage et demander de le supprimer",
+          "protective": true,
+          "outcome": "Deux élèves suppriment la photo. Kader se tait.",
+          "advice": "Dire que c'est faux casse l'effet du montage. Ton soutien compte."
+        },
+        {
+          "label": "Écrire à la victime pour la soutenir",
+          "protective": true,
+          "outcome": "Elle répond : « Merci, je me sentais seule. » Vous allez ensemble voir une enseignante.",
+          "advice": "Soutenir la personne visée est l'un des gestes les plus utiles.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Une image truquée humilie même quand tout le monde sait qu'elle est fausse. Ne la partage pas et soutiens la victime."
+    },
+    {
+      "chapter": "3 · « Vérifie ton compte »",
+      "header": {
+        "name": "Service Sécurité",
+        "status": "compte inconnu",
+        "portrait": "rh"
+      },
+      "messages": [
+        [
+          "Service Sécurité",
+          "Nous avons bloqué le faux compte. Confirme ton identité ici pour récupérer le tien."
+        ]
+      ],
+      "attachment": {
+        "label": "Vérification du compte",
+        "url": "verif-identite.example-secure.net",
+        "cta": "Confirmer mon identité",
+        "pageUrl": "verif-identite-login.net",
+        "pageTitle": "Confirme ton identité",
+        "pageText": "Entre ton adresse et ton mot de passe pour débloquer ton compte.",
+        "clue": "Profiter de ta panique pour te faire « vérifier » ton compte est un piège classique."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · Les commentaires",
+      "messages": [
+        [
+          "Kader · Groupe",
+          "Tout le monde dit que c'est vraiment elle sur la photo."
+        ],
+        [
+          "Kader · Groupe",
+          "Elle n'avait qu'à pas se montrer."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Répondre à chaque commentaire",
+          "protective": false,
+          "outcome": "Les réponses attirent encore plus de commentaires. Tu passes la nuit à te défendre.",
+          "advice": "Te justifier épuise. Tu n'as rien à prouver."
+        },
+        {
+          "label": "Quitter le groupe et bloquer les auteurs",
+          "protective": true,
+          "outcome": "Tu respires mieux. Une amie garde un œil sur le groupe et note ce qui s'y dit.",
+          "advice": "Te protéger, ce n'est pas fuir. Une personne de confiance peut surveiller pour toi."
+        },
+        {
+          "label": "Montrer les messages à un adulte de confiance",
+          "protective": true,
+          "outcome": "Ta tante t'accompagne voir le directeur, captures à l'appui.",
+          "advice": "Avec des preuves, l'école et les autorités peuvent agir.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Rejeter la faute sur la victime fait partie du harcèlement. Ce n'est jamais elle la responsable."
+    },
+    {
+      "chapter": "5 · Le chantage",
+      "header": {
+        "name": "Compte inconnu",
+        "status": "Messages à conserver",
+        "portrait": "kevin"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Inconnu",
+          "J'ai d'autres montages de toi. Envoie 20 000 F ou je les publie partout."
+        ],
+        [
+          "Inconnu",
+          "Tu as une heure."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Payer pour que ça s'arrête",
+          "protective": false,
+          "outcome": "Il réclame plus le lendemain. Les montages restent entre ses mains.",
+          "advice": "Payer n'arrête pas le chantage. Tu peux arrêter à tout moment et demander de l'aide."
+        },
+        {
+          "label": "Lui répondre que je vais porter plainte",
+          "protective": false,
+          "outcome": "Il change de compte et recommence ailleurs. Lui répondre lui donne de l'attention.",
+          "advice": "Mieux vaut ne plus répondre du tout, garder les preuves et agir avec un appui."
+        },
+        {
+          "label": "Garder les preuves, signaler et porter plainte",
+          "protective": true,
+          "outcome": "Tu gardes tout, tu signales les comptes et tu portes plainte avec ta tante. Tu n'es plus seule.",
+          "advice": "Le chantage et les montages sont punis par la loi. Porter plainte est gratuit.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Un montage reste une violence, même s'il est faux. Ne paie pas, garde les preuves et fais-toi accompagner."
+    }
+  ]
+}

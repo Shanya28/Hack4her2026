@@ -1,0 +1,220 @@
+{
+  "id": "controle-couple",
+  "order": 4,
+  "title": "Il veut tout voir",
+  "profile": "En couple",
+  "summary": "Ton copain exige ton code, ta position, puis installe une application pour te surveiller.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "contrôle",
+    "lecon": "Exiger tes codes, ta position ou tes messages, ce n'est pas de l'amour : c'est du contrôle. Tu as droit à ta vie privée, même en couple.",
+    "indices": [
+      "Ce n'est pas de l'amour, même s'il dit le contraire.",
+      "Il veut tes codes, ta position et tes messages.",
+      "Il commence par C et compte 8 lettres."
+    ],
+    "chaud": [
+      "surveillance",
+      "jalousie",
+      "emprise",
+      "possessif",
+      "espionnage",
+      "domination",
+      "pression",
+      "manipulation"
+    ],
+    "tiede": [
+      "couple",
+      "amour",
+      "code",
+      "position",
+      "téléphone",
+      "confiance",
+      "secret",
+      "copain",
+      "relation",
+      "vie privée"
+    ]
+  },
+  "contact": {
+    "name": "Sèdjro",
+    "status": "en ligne",
+    "portrait": "kevin"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Juste par amour",
+      "messages": [
+        [
+          "Sèdjro",
+          "Bébé, donne-moi ton code de téléphone. Entre nous il ne doit pas y avoir de secret."
+        ],
+        [
+          "Sèdjro",
+          "Si tu refuses, c'est que tu me caches quelque chose."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Lui donner le code",
+          "protective": false,
+          "outcome": "Le soir même, il lit tes conversations et te reproche un message d'un camarade de classe.",
+          "advice": "Ce n'est pas ta faute s'il en profite. Tu peux changer ton code à tout moment : il t'appartient."
+        },
+        {
+          "label": "Lui dire que mon téléphone reste à moi",
+          "protective": true,
+          "outcome": "Il boude, puis insiste. Tu restes calme : avoir un espace à toi, ce n'est pas tromper.",
+          "advice": "Garder ton code pour toi est un droit, pas une trahison.",
+          "reflexes": [
+            2
+          ]
+        },
+        {
+          "label": "Lui demander pourquoi il en a besoin",
+          "protective": true,
+          "outcome": "Il répond : « Pour être sûr de toi. » La confiance qu'il réclame passe par ta surveillance.",
+          "advice": "Questionner permet de voir le contrôle derrière les mots d'amour."
+        }
+      ],
+      "feedback": "Dans un couple sain, chacun garde ses codes et sa vie privée. Exiger ton téléphone est une forme de contrôle."
+    },
+    {
+      "chapter": "2 · Partage ta position",
+      "messages": [
+        [
+          "Sèdjro",
+          "Active le partage de position. Comme ça je sais toujours où tu es, c'est pour ta sécurité."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "L'activer pour avoir la paix",
+          "protective": false,
+          "outcome": "Il te demande pourquoi tu étais chez une amie au lieu de rentrer. Chaque sortie devient une dispute.",
+          "advice": "Tu peux arrêter le partage quand tu veux. Ta sécurité ne passe pas par sa surveillance."
+        },
+        {
+          "label": "Refuser et proposer de prévenir quand je rentre",
+          "protective": true,
+          "outcome": "Il trouve que ce n'est pas assez, mais tu gardes la main sur où tu vas et avec qui.",
+          "advice": "Prévenir quand tu le décides, c'est ton choix. Être suivie en permanence, non."
+        },
+        {
+          "label": "En parler à une amie de confiance",
+          "protective": true,
+          "outcome": "Ton amie te dit que son ex faisait pareil. Tu te sens moins seule pour y voir clair.",
+          "advice": "En parler aide à reconnaître le contrôle, qui s'installe souvent petit à petit.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Suivre la position de quelqu'un sans arrêt, même « par amour », c'est de la surveillance."
+    },
+    {
+      "chapter": "3 · L'application « pour nous deux »",
+      "messages": [
+        [
+          "Sèdjro",
+          "Installe cette appli, c'est pour qu'on soit plus proches. Clique, c'est rapide."
+        ]
+      ],
+      "attachment": {
+        "label": "Appli « Couple Proche »",
+        "url": "couple-proche.example-app.net",
+        "cta": "Installer l'appli",
+        "pageUrl": "couple-proche-login.net",
+        "pageTitle": "Relie vos deux téléphones",
+        "pageText": "Saisis ton numéro et ton mot de passe pour relier ton téléphone au sien.",
+        "clue": "Une application qui « relie » deux téléphones peut lui donner accès à tes messages, tes photos et ta position."
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "4 · Il sait tout",
+      "messages": [
+        [
+          "moi",
+          "Comment tu sais ce que j'ai dit à ma sœur hier ?"
+        ],
+        [
+          "Sèdjro",
+          "Je sais tout, ne cherche pas. Tu n'as rien à me cacher."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Faire comme si de rien n'était",
+          "protective": false,
+          "outcome": "Il continue de lire tes échanges. Tu commences à te taire avec tout le monde.",
+          "advice": "Ce n'est pas à toi de te taire. Il existe de l'aide pour vérifier ton téléphone et te protéger."
+        },
+        {
+          "label": "Vérifier les applications et changer mes mots de passe",
+          "protective": true,
+          "outcome": "Tu trouves une application inconnue, tu notes son nom, puis tu changes tes mots de passe depuis un téléphone sûr.",
+          "advice": "Note ce que tu trouves avant de supprimer : cela peut servir de preuve. Si tu crains sa réaction, demande conseil d'abord.",
+          "reflexes": [
+            2,
+            1
+          ]
+        },
+        {
+          "label": "Demander conseil à une structure d'aide",
+          "protective": true,
+          "outcome": "On t'explique comment vérifier ton téléphone sans le mettre en colère, et comment te protéger.",
+          "advice": "Quand la surveillance vient d'un proche, agir avec un appui est plus sûr.",
+          "reflexes": [
+            5
+          ]
+        }
+      ],
+      "feedback": "Une application espion installée par un proche est une violence. Ce n'est pas ta faute et tu peux être aidée."
+    },
+    {
+      "chapter": "5 · La menace",
+      "header": {
+        "status": "Messages à conserver"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Sèdjro",
+          "Si tu me quittes, j'envoie nos conversations à toute ta famille."
+        ],
+        [
+          "Sèdjro",
+          "Tu sais que j'ai tout dans mon téléphone."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Rester pour éviter le scandale",
+          "protective": false,
+          "outcome": "Les menaces reviennent à chaque désaccord. La peur décide à ta place.",
+          "advice": "Céder ne fait pas cesser le chantage. Tu as le droit de partir et d'être protégée."
+        },
+        {
+          "label": "Le supplier de ne rien faire",
+          "protective": false,
+          "outcome": "Il voit que la menace marche et s'en sert à nouveau le lendemain.",
+          "advice": "Tu n'as pas à négocier avec une menace. Garde les messages et cherche du soutien."
+        },
+        {
+          "label": "Garder les preuves et appeler le 114",
+          "protective": true,
+          "outcome": "Tu fais des captures datées et tu appelles l'INF. On t'écoute et on t'explique tes droits.",
+          "advice": "Menacer de diffuser des conversations privées est puni par la loi. Tu n'es pas seule.",
+          "reflexes": [
+            4,
+            5
+          ]
+        }
+      ],
+      "feedback": "Le chantage pour t'empêcher de partir est une violence. La loi te protège : garde les preuves et demande de l'aide."
+    }
+  ]
+}
