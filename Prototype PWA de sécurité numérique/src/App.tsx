@@ -42,6 +42,7 @@ type IconName =
   | "chevron"
   | "download"
   | "exit"
+  | "headphones"
   | "eye"
   | "help"
   | "home"
@@ -159,6 +160,12 @@ const icons: Record<IconName, React.ReactNode> = {
       <path d="M12 9v5m0 3h.01" />
     </>
   ),
+  headphones: (
+    <>
+      <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+      <path d="M4 15a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2zM20 15a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" />
+    </>
+  ),
   exit: (
     <>
       <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
@@ -168,9 +175,9 @@ const icons: Record<IconName, React.ReactNode> = {
 };
 
 // ---------------------------------------------------------------------------
-// Quick exit. One tap leaves for a neutral page and replaces Ayidote in the
+// Quick exit. One tap leaves for a neutral page and replaces Ayìdótɛ́ in the
 // tab's history, so « Retour » does not bring it back. Optionally, it also
-// wipes what Ayidote keeps on the phone first. The Escape key does the same.
+// wipes what Ayìdótɛ́ keeps on the phone first. The Escape key does the same.
 // ---------------------------------------------------------------------------
 const QUICK_EXIT_URL = "https://www.google.com/search?q=m%C3%A9t%C3%A9o+Cotonou";
 
@@ -221,7 +228,7 @@ function QuickExitButton({ light = false }: { light?: boolean }) {
     <button
       className={`quick-exit ${light ? "light" : ""}`}
       onClick={quickExit}
-      aria-label="Quitter vite Ayidote"
+      aria-label="Quitter vite Ayìdótɛ́"
       title="Quitter vite (touche Échap)"
     >
       <Icon name="exit" size={18} />
@@ -396,6 +403,7 @@ type Scenario = {
   title: string;
   profile: string;
   summary: string;
+  avertissement?: string;
   source: "équipe" | "ia";
   relu: boolean;
   mot?: DailyWord;
@@ -814,7 +822,9 @@ function App() {
     setUnlocked(next);
     localStorage.setItem("naya-reflexes", JSON.stringify(next));
   };
-  const [timer, setTimerState] = useState(() => localStorage.getItem("naya-timer") !== "no");
+  // Off unless chosen: for someone living a real threat, a countdown repeats
+  // the pressure she is under.
+  const [timer, setTimerState] = useState(() => localStorage.getItem("naya-timer") === "yes");
   const setTimer = (on: boolean) => {
     setTimerState(on);
     localStorage.setItem("naya-timer", on ? "yes" : "no");
@@ -830,6 +840,8 @@ function App() {
   const [saved, setSaved] = useState(localStorage.getItem("naya-guide") === "yes");
   const [toast, setToast] = useState("");
   const [eraseOpen, setEraseOpen] = useState(false);
+  // Story whose content note was read in this session.
+  const [noted, setNoted] = useState<string | null>(null);
   const [exitErase, setExitEraseState] = useState(
     () => localStorage.getItem("naya-exit-erase") === "yes",
   );
@@ -860,7 +872,11 @@ function App() {
   // Listening mode, for people who cannot read the screen (sight, reading):
   // one button, and the story starts aloud in the chosen language, with every
   // answer, consequence and instruction said and big numbered buttons.
-  const startListening = (l: Lang) => {
+  // Listening reads threats aloud: suggest headphones first.
+  const [pendingListen, setPendingListen] = useState<Lang | null>(null);
+  const startListening = (l: Lang) => setPendingListen(l);
+  const beginListening = (l: Lang) => {
+    setPendingListen(null);
     setLangState(l);
     localStorage.setItem("naya-lang", l);
     setAudio(true);
@@ -1027,6 +1043,15 @@ function App() {
         profile={profile}
         setProfile={setProfile}
         daily={dailyScenario().id}
+      />
+    );
+  else if (screen === "story" && !listen && story === 0 && storyChoice === null && noted !== scenario.id)
+    content = (
+      <ContentNote
+        scenario={scenario}
+        onStart={() => setNoted(scenario.id)}
+        onOther={() => go("scenarios")}
+        onHelp={() => go("help")}
       />
     );
   else if (screen === "story")
@@ -1213,10 +1238,35 @@ function App() {
     <div className="app-bg">
       <main className={`phone-shell ${listen ? "listen-mode" : ""}`}>
         {content}
+        {(["fake-login", "phishing", "quiz-result"] as Screen[]).includes(screen) && (
+          <div className="quick-exit-float">
+            <QuickExitButton />
+          </div>
+        )}
         {toast && (
           <div className="toast">
             <Icon name="check" size={18} />
             {toast}
+          </div>
+        )}
+        {pendingListen && (
+          <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Écouteurs">
+            <div className="modal headphones-modal">
+              <span className="modal-icon big">
+                <Icon name="headphones" size={44} />
+              </span>
+              <h2>Mets tes écouteurs</h2>
+              <p>
+                L’histoire va être lue à voix haute. Si quelqu’un est près de toi, il pourrait
+                l’entendre.
+              </p>
+              <Button onClick={() => beginListening(pendingListen)} icon="headphones">
+                C’est bon, j’écoute
+              </Button>
+              <Button variant="ghost" onClick={() => setPendingListen(null)}>
+                Pas maintenant
+              </Button>
+            </div>
           </div>
         )}
         {eraseOpen && (
@@ -1254,7 +1304,7 @@ function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang)
       </div>
       <div className="welcome-copy">
         <p className="eyebrow">Mon espace</p>
-        <h1>Ayidote</h1>
+        <h1>Ayìdótɛ́</h1>
         <p>Un endroit calme pour faire le point, à ton rythme.</p>
       </div>
       <div>
@@ -1520,7 +1570,7 @@ function Home({
         <div>
           <h1>Bonjour, {person === "afi" ? "Afi" : "Maya"}</h1>
           <p>
-            Bienvenue sur <strong>Ayidote</strong>
+            Bienvenue sur <strong>Ayìdótɛ́</strong>
           </p>
         </div>
         <QuickExitButton />
@@ -1615,7 +1665,7 @@ function Home({
                 <Icon name="download" />
               </span>
               <span>
-                <strong>Installer Ayidote</strong>
+                <strong>Installer Ayìdótɛ́</strong>
                 <small>Une icône sur ton téléphone, même sans réseau</small>
               </span>
               <Icon name="chevron" />
@@ -2014,6 +2064,45 @@ function Countdown({ seconds, onEnd }: { seconds: number; onEnd: () => void }) {
 
 const COUNTDOWN_S = 15;
 
+/** Before a story: what it is about, and that she can stop at any time. */
+function ContentNote({
+  scenario,
+  onStart,
+  onOther,
+  onHelp,
+}: {
+  scenario: Scenario;
+  onStart: () => void;
+  onOther: () => void;
+  onHelp: () => void;
+}) {
+  return (
+    <section className="screen content-note">
+      <TopBar title={scenario.title} onBack={onOther} />
+      <div className="page-content">
+        <span className="resource-icon">
+          <Icon name="shield" />
+        </span>
+        <p className="eyebrow">Avant de commencer</p>
+        <h1>{scenario.avertissement ?? scenario.summary}</h1>
+        <p className="lead">
+          C’est une histoire inventée. Si elle te rappelle quelque chose de vrai, tu peux arrêter à
+          tout moment, et ce n’est jamais ta faute.
+        </p>
+        <Button onClick={onStart} icon="arrow">
+          Commencer l’histoire
+        </Button>
+        <Button variant="secondary" onClick={onOther}>
+          Choisir une autre histoire
+        </Button>
+        <Button variant="ghost" onClick={onHelp} icon="help">
+          Parler à quelqu’un maintenant
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function Story({
   lang,
   listen,
@@ -2073,8 +2162,9 @@ function Story({
       // Audio is the voice of the person writing, nothing else on the screen.
       if (audio)
         sayMessage(lang, scenario.id, step, shown, incoming[1].replace(/^Image masquée · /, ""));
-      // The threat itself lands harder than an ordinary message.
-      vibrate(data.danger && shown === count - 1 ? [70, 50, 110] : 35);
+      // No vibration on a threat: it would startle, and draw the attention of
+      // people nearby.
+      if (!data.danger) vibrate(35);
     }, delay);
     return () => window.clearTimeout(id);
   }, [shown]);
@@ -2158,6 +2248,7 @@ function Story({
             <Icon name="play" />
           </button>
         )}
+        <QuickExitButton />
       </header>
       <div className="chapter-strip">
         <span>{data.chapter}</span>
@@ -2726,7 +2817,7 @@ function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean })
   const right = results[round];
   return (
     <section className="screen vop vop-round">
-      <header className="vop-bar">
+      <header className="vop-bar with-exit">
         <button className="icon-button" onClick={quit} aria-label="Quitter la partie">
           <Icon name="back" />
         </button>
@@ -2747,6 +2838,7 @@ function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean })
           <Icon name="spark" size={14} />
           {score * 10}
         </span>
+        <QuickExitButton />
       </header>
 
       {phase !== "round" && (
@@ -3104,7 +3196,7 @@ function QuizEquipes({ go }: { go: (s: Screen) => void }) {
 
   return (
     <section className="screen team-quiz">
-      <header className="team-bar">
+      <header className="team-bar with-exit">
         <button className="icon-button" onClick={() => go("play")} aria-label="Quitter la partie">
           <Icon name="back" />
         </button>
@@ -3114,6 +3206,7 @@ function QuizEquipes({ go }: { go: (s: Screen) => void }) {
         <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
           {phase === "question" ? left : <Icon name="check" size={18} />}
         </span>
+        <QuickExitButton />
       </header>
       {phase === "question" && (
         <div className="team-time" aria-hidden>
@@ -3279,7 +3372,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
             ))}
           </div>
           <p className="lead">
-            Chaque joueuse ouvre Ayidote sur son téléphone, touche « Rejoindre » et tape le code.
+            Chaque joueuse ouvre Ayìdótɛ́ sur son téléphone, touche « Rejoindre » et tape le code.
             Pas de compte, juste un prénom ou un pseudo.
           </p>
           <h2>
@@ -3347,7 +3440,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
 
   return (
     <section className="screen team-quiz">
-      <header className="team-bar">
+      <header className="team-bar with-exit">
         <button className="icon-button" onClick={() => go("play")} aria-label="Quitter l’aperçu">
           <Icon name="back" />
         </button>
@@ -3357,6 +3450,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
         <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
           {phase === "question" ? left : <Icon name="check" size={18} />}
         </span>
+        <QuickExitButton />
       </header>
       {phase === "question" && (
         <div className="team-time" aria-hidden>
@@ -3935,7 +4029,7 @@ function Resources({ go }: { go: (s: Screen) => void }) {
 // Who to turn to in Benin. The short numbers come from the official list
 // published by ARCEP Bénin (June 2026), cross-checked with the Government's
 // VBG-FT platform (adovbg-ft.social.gouv.bj) and the UNFPA Bénin digital
-// hygiene training; they must be checked again before each release. Ayidote never calls or writes to anyone itself.
+// hygiene training; they must be checked again before each release. Ayìdótɛ́ never calls or writes to anyone itself.
 const helpContacts = [
   {
     icon: "warning",
@@ -4197,7 +4291,7 @@ function Help({ go }: { go: (s: Screen) => void }) {
           </p>
         </div>
         <p className="disclaimer">
-          Ayidote n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
+          Ayìdótɛ́ n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
           de l’ARCEP Bénin (juin 2026) et de la plateforme VBG-FT du Gouvernement : ils peuvent
           changer.
         </p>
@@ -4363,7 +4457,7 @@ function Guide({
             <span />
             <span />
           </div>
-          <p className="eyebrow">Ayidote · à garder près de toi</p>
+          <p className="eyebrow">Ayìdótɛ́ · à garder près de toi</p>
           <h1>Mes 6 réflexes pour naviguer plus sereinement</h1>
           <p className="guide-count">
             {unlocked.length === reflexes.length
@@ -4467,13 +4561,13 @@ function Progress({
     if (navigator.share)
       navigator
         .share({
-          title: "Ayidote",
-          text: "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
+          title: "Ayìdótɛ́",
+          text: "Découvre Ayìdótɛ́, une expérience pour renforcer tes réflexes numériques.",
         })
         .catch(() => undefined);
     else
       navigator.clipboard?.writeText(
-        "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
+        "Découvre Ayìdótɛ́, une expérience pour renforcer tes réflexes numériques.",
       );
   };
   const count = unlocked.length;
@@ -4582,7 +4676,7 @@ function Settings({
             <span />
           </div>
           <div>
-            <strong>Ayidote</strong>
+            <strong>Ayìdótɛ́</strong>
             <small>Mon espace discret</small>
           </div>
           <OfflinePill />
@@ -4764,7 +4858,7 @@ function Settings({
             Ta progression et tes préférences restent sur ce téléphone.
           </p>
         </div>
-        <p className="version">Ayidote · Prototype 1.0</p>
+        <p className="version">Ayìdótɛ́ · Prototype 1.0</p>
       </div>
       <BottomNav active="settings" go={go} />
     </section>
@@ -4777,33 +4871,33 @@ const LEGAL_DATE = "13 novembre 2026";
 const legalSections: { title: string; intro: string; body: (string | [string, string])[] }[] = [
   {
     title: "Politique de confidentialité",
-    intro: "Ayidote ne collecte aucune donnée sur toi.",
+    intro: "Ayìdótɛ́ ne collecte aucune donnée sur toi.",
     body: [
-      ["Aucun compte, aucune collecte", "Tu n’as pas de compte à créer. Ayidote n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages."],
+      ["Aucun compte, aucune collecte", "Tu n’as pas de compte à créer. Ayìdótɛ́ n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages."],
       ["Ce qui reste sur ton téléphone", "Pour que tu retrouves ta progression, l’application garde sur ton téléphone (stockage local du navigateur) : ta langue, ton personnage, ta progression dans les histoires et le quiz, tes réflexes débloqués, le mot du jour, tes réglages (voix, compte à rebours) et les réglages fictifs de l’alerte. Ces informations ne quittent jamais ton téléphone."],
       ["Tout effacer", "Paramètres › Tout effacer supprime immédiatement toutes ces informations. Désinstaller l’application ou effacer les données du navigateur les supprime aussi."],
-      ["Ce que voit l’hébergeur", "Pour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayidote n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application."],
-      ["Liens et appels", "Quand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayidote : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels."],
+      ["Ce que voit l’hébergeur", "Pour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayìdótɛ́ n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application."],
+      ["Liens et appels", "Quand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayìdótɛ́ : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels."],
       ["Tes droits", "La protection des données personnelles est encadrée au Bénin par le Code du numérique (loi n° 2017-20). Si un service utilise tes données sans ton accord, tu peux saisir l’Autorité de Protection des Données à caractère Personnel (APDP)."],
     ],
   },
   {
     title: "Conditions d’utilisation",
-    intro: "Ayidote est un prototype pédagogique, gratuit.",
+    intro: "Ayìdótɛ́ est un prototype pédagogique, gratuit.",
     body: [
-      ["À quoi sert Ayidote", "Ayidote aide à reconnaître les pièges numériques (chantage, arnaques, piratage de compte) par des histoires fictives, des jeux et des conseils. Les personnages, messages et situations sont inventés ; toute ressemblance est fortuite."],
-      ["Ce qu’Ayidote ne fait pas", "Ayidote ne remplace ni les secours, ni la police, ni un accompagnement professionnel, juridique ou médical. Il ne détecte pas les dangers à ta place. En cas de danger immédiat, appelle le 117."],
+      ["À quoi sert Ayìdótɛ́", "Ayìdótɛ́ aide à reconnaître les pièges numériques (chantage, arnaques, piratage de compte) par des histoires fictives, des jeux et des conseils. Les personnages, messages et situations sont inventés ; toute ressemblance est fortuite."],
+      ["Ce qu’Ayìdótɛ́ ne fait pas", "Ayìdótɛ́ ne remplace ni les secours, ni la police, ni un accompagnement professionnel, juridique ou médical. Il ne détecte pas les dangers à ta place. En cas de danger immédiat, appelle le 117."],
       ["Alerte discrète", "L’alerte discrète est une simulation : elle ne prévient personne et n’envoie aucun message, appel ou position. Ne compte pas sur elle en cas de danger."],
       ["Langues locales", "Les textes et voix en fon et en yoruba sont traduits et générés automatiquement, sans relecture par une personne qui parle ces langues : ils peuvent contenir des erreurs. Le français fait foi."],
       ["Conseils", "Les conseils sont généraux. Les numéros et liens d’aide ont été vérifiés à la date indiquée, mais ils peuvent changer : vérifie-les auprès des sources officielles."],
-      ["Usage", "Ayidote est mis à disposition gratuitement, pour un usage personnel et non commercial, sans garantie de disponibilité. Il convient aux personnes de tout âge ; les plus jeunes peuvent l’utiliser avec un adulte de confiance."],
+      ["Usage", "Ayìdótɛ́ est mis à disposition gratuitement, pour un usage personnel et non commercial, sans garantie de disponibilité. Il convient aux personnes de tout âge ; les plus jeunes peuvent l’utiliser avec un adulte de confiance."],
     ],
   },
   {
     title: "Mentions légales",
-    intro: "Qui publie Ayidote, et où il est hébergé.",
+    intro: "Qui publie Ayìdótɛ́, et où il est hébergé.",
     body: [
-      ["Éditeur", "Équipe Ayidote, prototype réalisé dans le cadre du hackathon HACK4HER 2026 « Tech for Her Safety » (Cotonou, 12 et 13 novembre 2026). Ayidote n’est pas un service officiel de l’État ni des organisateurs du hackathon."],
+      ["Éditeur", "Équipe Ayìdótɛ́, prototype réalisé dans le cadre du hackathon HACK4HER 2026 « Tech for Her Safety » (Cotonou, 12 et 13 novembre 2026). Ayìdótɛ́ n’est pas un service officiel de l’État ni des organisateurs du hackathon."],
       ["Contact", "Par l’intermédiaire des organisateurs du hackathon HACK4HER 2026."],
       ["Hébergement", "GitHub Pages, service de GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis."],
       ["Statut", "Prototype en phase de test. Toute utilisation réelle nécessitera des vérifications techniques, juridiques et de sécurité, et l’accord des institutions compétentes."],
@@ -4811,7 +4905,7 @@ const legalSections: { title: string; intro: string; body: (string | [string, st
   },
   {
     title: "Crédits et licences",
-    intro: "Les outils et contenus libres utilisés par Ayidote.",
+    intro: "Les outils et contenus libres utilisés par Ayìdótɛ́.",
     body: [
       ["Voix françaises", "Générées avec Piper. Voix « siwis » (jeu de données SIWIS, licence CC BY 4.0) et voix « tom » (jeu de données sous licence AGPL v3)."],
       ["Voix en fon et en yoruba", "Générées avec les modèles MMS de Meta (facebook/mms-tts-fon et facebook/mms-tts-yor), licence CC BY-NC 4.0 : usage non commercial uniquement."],
@@ -4867,10 +4961,10 @@ const installSteps: Record<"android" | "ios" | "other", { name: string; steps: [
   android: {
     name: "Android (Chrome)",
     steps: [
-      ["Ouvre le lien dans Chrome", "Le lien d’Ayidote, partagé par l’animatrice ou une amie."],
+      ["Ouvre le lien dans Chrome", "Le lien d’Ayìdótɛ́, partagé par l’animatrice ou une amie."],
       ["Touche les trois points ⋮", "En haut à droite de l’écran."],
       ["Choisis « Installer l’application »", "Ou « Ajouter à l’écran d’accueil », selon ton téléphone."],
-      ["Confirme avec « Installer »", "L’icône Ayidote apparaît avec tes autres applications."],
+      ["Confirme avec « Installer »", "L’icône Ayìdótɛ́ apparaît avec tes autres applications."],
     ],
   },
   ios: {
@@ -4879,7 +4973,7 @@ const installSteps: Record<"android" | "ios" | "other", { name: string; steps: [
       ["Ouvre le lien dans Safari", "L’installation ne marche qu’avec Safari sur iPhone."],
       ["Touche le bouton Partager", "Le carré avec une flèche vers le haut, en bas de l’écran."],
       ["Choisis « Sur l’écran d’accueil »", "Fais défiler la liste si tu ne le vois pas."],
-      ["Touche « Ajouter »", "L’icône Ayidote apparaît sur ton écran d’accueil."],
+      ["Touche « Ajouter »", "L’icône Ayìdótɛ́ apparaît sur ton écran d’accueil."],
     ],
   },
   other: {
@@ -4915,13 +5009,13 @@ function Install({
   const order = [platform, ...(["android", "ios", "other"] as const).filter((p) => p !== platform)];
   return (
     <section className="screen resources">
-      <TopBar title="Installer Ayidote" onBack={onBack} />
+      <TopBar title="Installer Ayìdótɛ́" onBack={onBack} />
       <div className="page-content">
         <div className="resource-title">
           <span>
             <Icon name="download" size={30} />
           </span>
-          <h1>{installed ? "Ayidote est installée." : "Garde Ayidote sur ton téléphone."}</h1>
+          <h1>{installed ? "Ayìdótɛ́ est installée." : "Garde Ayìdótɛ́ sur ton téléphone."}</h1>
           <p>
             {installed
               ? "Tu peux l’ouvrir depuis son icône, même sans réseau."
@@ -4995,7 +5089,7 @@ function Install({
             <p>
               <strong>Le raccourci « Mon carnet »</strong>
               <br />
-              Sur Android, garde le doigt sur l’icône d’Ayidote : « Mon carnet » apparaît. Tu peux le
+              Sur Android, garde le doigt sur l’icône d’Ayìdótɛ́ : « Mon carnet » apparaît. Tu peux le
               glisser sur ton écran.
             </p>
           </li>
@@ -5183,7 +5277,7 @@ function AlertSetup({
               <strong>Touche « Mon carnet »</strong>
               <br />
               L’icône du carnet en haut de l’accueil, ou le raccourci « Mon carnet » (appui long sur
-              l’icône d’Ayidote, à glisser sur l’écran du téléphone).
+              l’icône d’Ayìdótɛ́, à glisser sur l’écran du téléphone).
             </p>
           </li>
           <li>

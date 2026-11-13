@@ -5622,3 +5622,40 @@ textarea {
 .defi-stars .on {
   color: var(--orange-main);
 }
+
+/* Quick exit everywhere: in the game bars, and floating where there is no bar */
+.team-bar.with-exit {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+.vop-bar.with-exit {
+  grid-template-columns: 44px 1fr auto auto;
+}
+.chat-header .quick-exit {
+  flex: none;
+}
+.quick-exit-float {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(12px, calc(50% - 215px + 12px));
+  z-index: 60;
+}
+
+/* Headphones prompt and content note */
+.modal-icon.big {
+  width: 84px;
+  height: 84px;
+}
+.headphones-modal h2 {
+  font-size: 24px;
+}
+.content-note .resource-icon {
+  margin: 8px 0 14px;
+}
+.content-note h1 {
+  font-size: 24px;
+  line-height: 1.3;
+}
+.content-note .btn,
+.content-note button.button {
+  margin-top: 10px;
+}

@@ -104,7 +104,7 @@
   {
     "theme": "alerte",
     "type": "vrai-faux",
-    "prompt": "L'alerte discrète d'Ayidote prévient vraiment tes contacts.",
+    "prompt": "L'alerte discrète d'Ayìdótɛ́ prévient vraiment tes contacts.",
     "answer": false,
     "reveal": "Faux. C'est une simulation pour s'entraîner : elle n'envoie rien. En danger immédiat, appelle le 117."
   },
@@ -123,14 +123,14 @@
   {
     "theme": "alerte",
     "type": "action",
-    "prompt": "Trouvez ensemble le bouton « Quitter » d'Ayidote. Que se passe-t-il quand on le touche ?",
-    "reveal": "Ayidote se ferme et laisse place à une recherche météo. Le bouton Retour ne ramène pas l'application."
+    "prompt": "Trouvez ensemble le bouton « Quitter » d'Ayìdótɛ́. Que se passe-t-il quand on le touche ?",
+    "reveal": "Ayìdótɛ́ se ferme et laisse place à une recherche météo. Le bouton Retour ne ramène pas l'application."
   },
   {
     "theme": "alerte",
     "type": "action",
     "prompt": "Ouvrez le carnet discret depuis l'accueil, puis configurez l'alerte discrète dans les paramètres.",
-    "reveal": "Le carnet ressemble à une simple note. Sur Android, un appui long sur l'icône d'Ayidote ouvre aussi « Mon carnet »."
+    "reveal": "Le carnet ressemble à une simple note. Sur Android, un appui long sur l'icône d'Ayìdótɛ́ ouvre aussi « Mon carnet »."
   },
   {
     "theme": "alerte",
