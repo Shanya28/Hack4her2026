@@ -110,6 +110,13 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
     if (step.attachment) {
       for (const key of ["label", "url", "cta", "pageUrl", "pageTitle", "pageText", "clue"])
         if (!isText(step.attachment[key])) fail(`${where} : lien piégé sans « ${key} »`);
+      if (step.attachment.style !== undefined) {
+        if (step.attachment.style !== "compte") fail(`${where} : style de page inconnu « ${step.attachment.style} »`);
+        if (!isText(step.attachment.service)) fail(`${where} : page « compte » sans « service »`);
+        const acces = step.attachment.acces;
+        if (!Array.isArray(acces) || acces.length < 2 || acces.length > 4 || !acces.every(isText))
+          fail(`${where} : page « compte » : 2 à 4 « acces » attendus`);
+      }
       if (!/example/.test(step.attachment.url ?? ""))
         fail(`${where} : l'adresse du lien doit être fictive (contenir « example »)`);
       return;

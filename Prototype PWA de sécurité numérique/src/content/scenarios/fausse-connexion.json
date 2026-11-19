@@ -1,0 +1,274 @@
+{
+  "id": "fausse-connexion",
+  "order": 11,
+  "title": "La fausse page de connexion",
+  "profile": "Étudiante",
+  "summary": "Une fausse bourse t'envoie un lien pour « te connecter avec ton compte ». Derrière, on vole ton compte pour te faire chanter.",
+  "avertissement": "Cette histoire parle d'une fausse page de connexion, d'un compte volé et de chantage.",
+  "source": "ia",
+  "relu": false,
+  "mot": {
+    "mot": "identifiants",
+    "lecon": "Tes identifiants, ce sont ton adresse et ton mot de passe. Tape-les seulement dans l'application officielle, ouverte par toi-même, jamais depuis un lien reçu.",
+    "indices": [
+      "Il commence par I et compte 12 lettres.",
+      "Au travail, on en reçoit le premier jour pour ouvrir son ordinateur.",
+      "Ils prouvent que c'est bien toi qui entres.",
+      "Ce sont ton adresse et ton mot de passe, ensemble.",
+      "Une fausse page de connexion cherche à te les voler.",
+      "Tu ne les tapes que dans l'application officielle, ouverte par toi-même."
+    ],
+    "chaud": [
+      "identifiant",
+      "connexion",
+      "login",
+      "compte",
+      "accès",
+      "authentification",
+      "mot",
+      "passe"
+    ],
+    "tiede": [
+      "lien",
+      "page",
+      "bourse",
+      "arnaque",
+      "piège",
+      "sécurité",
+      "adresse",
+      "code",
+      "message",
+      "vérification"
+    ]
+  },
+  "contact": {
+    "name": "Bourse Express",
+    "status": "compte récent · non vérifié",
+    "portrait": "rh"
+  },
+  "steps": [
+    {
+      "chapter": "1 · Une bourse inattendue",
+      "messages": [
+        [
+          "Bourse Express",
+          "Bonne nouvelle ! Tu fais partie des 50 étudiantes sélectionnées pour une bourse de 150 000 F."
+        ],
+        [
+          "Bourse Express",
+          "Pour la recevoir, il suffit de te connecter avec ton compte. L'offre expire ce soir."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Super, je me connecte tout de suite",
+          "protective": false,
+          "outcome": "Le compte t'envoie aussitôt un lien. Personne ne t'a dit qui donne cette bourse.",
+          "advice": "Une bonne nouvelle donne envie d'aller vite : c'est justement sur ça que compte le piège."
+        },
+        {
+          "label": "Je n'ai rien demandé : je vérifie auprès de mon école",
+          "protective": true,
+          "outcome": "Le secrétariat ne connaît pas ce programme. Aucune bourse n'est attribuée par message privé.",
+          "advice": "Vérifier par un autre moyen que le message reçu, c'est le bon réflexe."
+        },
+        {
+          "label": "Je demande qui finance cette bourse",
+          "protective": true,
+          "outcome": "On te répond : « Programme national, pas le temps d'expliquer, l'offre expire ce soir. »",
+          "advice": "L'urgence et le flou sont deux signes classiques d'arnaque."
+        }
+      ],
+      "feedback": "Une offre que tu n'as pas demandée, avec un délai très court, doit te faire ralentir."
+    },
+    {
+      "chapter": "2 · Le lien de connexion",
+      "messages": [
+        [
+          "Bourse Express",
+          "Voilà le lien : connecte-toi avec ton compte, ça prend dix secondes."
+        ]
+      ],
+      "attachment": {
+        "label": "Bourse Express · connexion",
+        "url": "bourse-express.example-etudiantes.com",
+        "cta": "Se connecter",
+        "pageUrl": "connexion-comptes-securite.net",
+        "pageTitle": "Choisis un compte",
+        "pageText": "pour continuer vers Bourse Express",
+        "clue": "Une bourse ne s'obtient jamais en un clic depuis un message privé.",
+        "style": "compte",
+        "service": "Bourse Express",
+        "acces": [
+          "Voir et télécharger tes contacts",
+          "Voir tes photos et tes vidéos",
+          "Lire et envoyer des messages à ta place"
+        ]
+      },
+      "choices": [],
+      "feedback": ""
+    },
+    {
+      "chapter": "3 · « Donne-moi juste le code »",
+      "messages": [
+        [
+          "Bourse Express",
+          "Pour finaliser, tu vas recevoir un code par SMS."
+        ],
+        [
+          "Bourse Express",
+          "Envoie-le-moi vite, sinon ta place passe à une autre étudiante."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Envoyer le code pour ne pas perdre la bourse",
+          "protective": false,
+          "outcome": "Quelques minutes plus tard, tu ne peux plus entrer dans ton compte : le mot de passe a changé.",
+          "advice": "Tu voulais saisir une chance. Ce code était la clé de ton compte : la suite montre comment réagir."
+        },
+        {
+          "label": "Garder le code pour moi",
+          "protective": true,
+          "reflexes": [
+            1
+          ],
+          "outcome": "Le compte insiste, puis s'énerve contre toi. Cette colère soudaine confirme le piège.",
+          "advice": "Un code reçu par SMS ne se partage avec personne, même pour une bonne cause."
+        },
+        {
+          "label": "Changer mon mot de passe et activer la vérification en deux étapes",
+          "protective": true,
+          "reflexes": [
+            1,
+            2
+          ],
+          "outcome": "Ton compte est mieux protégé : même avec ton mot de passe, personne n'entre sans ton téléphone.",
+          "advice": "Un mot de passe long, différent pour chaque compte, et la vérification en deux étapes : c'est ton meilleur bouclier."
+        }
+      ],
+      "feedback": "Les arnaqueurs pressent pour qu'on n'ait pas le temps de réfléchir. Un code reçu par SMS ne se partage jamais."
+    },
+    {
+      "chapter": "4 · Ton compte parle à ta place",
+      "header": {
+        "name": "Groupe de la promo",
+        "status": "32 membres",
+        "portrait": "maya"
+      },
+      "messages": [
+        [
+          "Mariam · Promo",
+          "C'est toi qui envoies ce lien de bourse à toute la promo ?"
+        ],
+        [
+          "Mariam · Promo",
+          "Deux filles ont cliqué, et maintenant leurs comptes envoient le même message."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Ne rien dire, j'ai honte d'être tombée dans le piège",
+          "protective": false,
+          "outcome": "Le message continue de circuler. D'autres étudiantes se font piéger à leur tour.",
+          "advice": "Se faire piéger n'est pas une faute : ces pièges sont faits pour tromper tout le monde. En parler protège les autres."
+        },
+        {
+          "label": "Prévenir la promo : ne cliquez pas, c'est une arnaque",
+          "protective": true,
+          "reflexes": [
+            5
+          ],
+          "outcome": "Le lien arrête de circuler. Deux amies te remercient d'avoir prévenu.",
+          "advice": "Prévenir vite, c'est couper la chaîne."
+        },
+        {
+          "label": "Reprendre mon compte et déconnecter les appareils inconnus",
+          "protective": true,
+          "reflexes": [
+            2
+          ],
+          "outcome": "Dans les paramètres, tu vois un appareil inconnu connecté. Tu le déconnectes et tu changes ton mot de passe.",
+          "advice": "Les paramètres de sécurité montrent les appareils connectés : vérifie-les de temps en temps."
+        }
+      ],
+      "feedback": "Un compte volé sert à piéger tes proches. Prévenir et reprendre la main, c'est protéger tout le groupe."
+    },
+    {
+      "chapter": "5 · Le chantage",
+      "header": {
+        "name": "Compte inconnu",
+        "status": "Messages à conserver",
+        "portrait": "kevin"
+      },
+      "danger": true,
+      "messages": [
+        [
+          "Inconnu",
+          "J'ai eu accès à tes photos et à tes conversations."
+        ],
+        [
+          "Inconnu",
+          "Paie 50 000 F avant demain, sinon j'envoie tout à ta famille."
+        ]
+      ],
+      "choices": [
+        {
+          "label": "Payer pour qu'il efface tout",
+          "protective": false,
+          "outcome": "Il encaisse, puis demande encore plus. Payer n'a rien arrêté.",
+          "advice": "Tu as voulu te protéger. Garde les preuves du paiement : elles serviront pour la plainte."
+        },
+        {
+          "label": "L'insulter pour lui faire peur",
+          "protective": false,
+          "outcome": "Il se moque de toi et menace de publier une première capture.",
+          "advice": "La colère est normale. Mais lui répondre lui donne prise : mieux vaut ne plus lui parler."
+        },
+        {
+          "label": "Garder les preuves, ne plus répondre et demander de l'aide",
+          "protective": true,
+          "reflexes": [
+            4,
+            5
+          ],
+          "outcome": "Tu fais des captures, tu bloques le compte et tu en parles à une amie, puis au CNIN.",
+          "advice": "C'est le réflexe le plus protecteur : preuves, blocage, signalement, soutien."
+        }
+      ],
+      "feedback": "Un compte volé peut servir au chantage. Ne paie pas, garde les preuves et fais-toi accompagner : ce n'est jamais ta faute."
+    }
+  ],
+  "bilan": {
+    "violence": "L’hameçonnage",
+    "leurres": [
+      "La traque en ligne",
+      "Le harcèlement en meute",
+      "Le contrôle dans le couple"
+    ],
+    "vecu": "Une fausse « bourse » t’a envoyé vers une page de connexion qui imitait un vrai service, puis t’a demandé ton code reçu par SMS. Avec ton compte, l’arnaqueur a piégé tes proches, puis t’a fait chanter. C’est de l’hameçonnage, suivi de chantage.",
+    "gestes": [
+      "Ne te connecte jamais depuis un lien reçu dans un message : ouvre toi-même l’application officielle.",
+      "Avant de choisir un compte, lis l’adresse de la page et les accès demandés.",
+      "Ne partage jamais un code reçu par SMS.",
+      "Si c’est trop tard : change ton mot de passe, déconnecte les appareils inconnus et préviens tes contacts."
+    ],
+    "aide": [
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "APDP",
+        "numero": "150",
+        "pour": "si tes photos ou tes informations circulent"
+      },
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      }
+    ]
+  }
+}

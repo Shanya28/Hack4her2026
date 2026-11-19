@@ -6436,3 +6436,92 @@ textarea {
     display: none;
   }
 }
+
+/* Fake "choose an account" page: a made-up service, no real brand, nothing to send */
+.account-page {
+  text-align: center;
+}
+.account-logo {
+  width: 52px;
+  height: 52px;
+  margin: 4px auto 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 4px 14px #49372d22;
+}
+.account-logo i {
+  border-radius: 50%;
+}
+.account-logo i:nth-child(1) { background: #5b7fd6; }
+.account-logo i:nth-child(2) { background: #d65b5b; }
+.account-logo i:nth-child(3) { background: #e3b341; }
+.account-logo i:nth-child(4) { background: #4f9d69; }
+.account-kicker {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.account-page .fake-promise h1 {
+  margin-bottom: 2px;
+}
+.account-form {
+  text-align: left;
+  border-radius: 16px;
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+.account-row,
+.account-access {
+  width: 100%;
+  border: 1px solid #dfe3ea;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 10px 12px;
+  text-align: left;
+  font: inherit;
+  color: #2b2f36;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.account-row strong {
+  display: block;
+  font-size: 14px;
+}
+.account-row small {
+  color: #6b7280;
+  font-size: 12px;
+}
+.account-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #5b7fd6;
+  color: var(--white);
+  flex: none;
+}
+.account-avatar.other {
+  background: #eef0f4;
+  color: #6b7280;
+}
+.account-access strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.account-access ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4b5563;
+}

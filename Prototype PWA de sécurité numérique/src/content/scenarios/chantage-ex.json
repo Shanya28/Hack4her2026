@@ -84,27 +84,7 @@
       "feedback": "Partir est un droit. Personne ne peut t'obliger à rester, ni en face ni en ligne."
     },
     {
-      "chapter": "2 · Le lien",
-      "messages": [
-        [
-          "Rodrigue",
-          "Regarde ce que les gens disent de toi sur ce site."
-        ]
-      ],
-      "attachment": {
-        "label": "Ce qu'on dit de toi",
-        "url": "rumeurs-quartier.example-site.com",
-        "cta": "Voir la page",
-        "pageUrl": "rumeurs-quartier-login.net",
-        "pageTitle": "Connecte-toi pour lire",
-        "pageText": "Entre ton numéro et ton mot de passe pour voir les commentaires.",
-        "clue": "Il veut te faire peur pour que tu cliques sans réfléchir."
-      },
-      "choices": [],
-      "feedback": ""
-    },
-    {
-      "chapter": "3 · La menace voilée",
+      "chapter": "2 · La menace voilée",
       "messages": [
         [
           "Rodrigue",
@@ -144,7 +124,7 @@
       "feedback": "Une photo envoyée par confiance ne donne aucun droit. La diffuser sans accord est une violence punie par la loi."
     },
     {
-      "chapter": "4 · L'ultimatum",
+      "chapter": "3 · L'ultimatum",
       "messages": [
         [
           "Rodrigue",
@@ -177,7 +157,7 @@
       "feedback": "Un chantage ne s'arrête pas quand on cède. Il s'arrête quand on est entourée et protégée."
     },
     {
-      "chapter": "5 · La photo publiée",
+      "chapter": "4 · La photo publiée",
       "header": {
         "status": "Messages à conserver"
       },

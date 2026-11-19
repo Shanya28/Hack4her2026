@@ -395,6 +395,10 @@ type Attachment = {
   pageTitle: string;
   pageText: string;
   clue: string;
+  /** "compte": a "choose an account" page asking for far too many permissions. */
+  style?: "compte";
+  service?: string;
+  acces?: string[];
 };
 type StoryStep = {
   chapter: string;
@@ -1162,6 +1166,7 @@ function App() {
       <Phishing
         fresh={fresh}
         clue={scenario.steps.find((s) => s.attachment)?.attachment?.clue}
+        access={scenario.steps.find((s) => s.attachment)?.attachment?.style === "compte"}
         onNext={() => {
           // Resume right after the step that carried the link.
           const after = scenario.steps.findIndex((s) => s.attachment) + 1;
@@ -2583,10 +2588,15 @@ function FakeLogin({
   const clues = [
     ["Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
     ["Un lien inattendu", attachment?.clue ?? "Tu n’attendais pas ce lien."],
-    [
-      "Elle demande ton mot de passe",
-      "Un vrai service ne te demande jamais ton mot de passe par un lien reçu dans une discussion. Ferme la page et ouvre toi-même l’application officielle.",
-    ],
+    attachment?.style === "compte"
+      ? [
+          "Des accès bien trop larges",
+          `${attachment.service ?? "Ce service"} n’a aucune raison de lire tes contacts, tes photos ou tes messages. En choisissant ton compte ici, tu lui donnerais la main sur ta vie privée. Ferme la page et ouvre toi-même l’application officielle.`,
+        ]
+      : [
+          "Elle demande ton mot de passe",
+          "Un vrai service ne te demande jamais ton mot de passe par un lien reçu dans une discussion. Ferme la page et ouvre toi-même l’application officielle.",
+        ],
   ];
   const [found, setFound] = useState<number[]>([]);
   const [last, setLast] = useState<number | null>(null);
@@ -2620,6 +2630,52 @@ function FakeLogin({
         </button>
         <Icon name="more" />
       </div>
+      {attachment?.style === "compte" ? (
+        <div className="fake-content account-page">
+          <div className="account-logo" aria-hidden>
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+          <p className="account-kicker">Connexion avec ton compte</p>
+          <button className={`fake-promise ${mark(1)}`} onClick={() => tap(1)}>
+            <h1>{attachment.pageTitle}</h1>
+            <p>
+              pour continuer vers <b>{attachment.service}</b>
+            </p>
+          </button>
+          <div className={`account-form ${mark(2)}`}>
+            {/* Pictures of an account list, not real ones: nothing to type or send. */}
+            <button className="account-row" onClick={() => tap(2)}>
+              <span className="account-avatar">
+                <Icon name="user" size={18} />
+              </span>
+              <span>
+                <strong>Ton compte</strong>
+                <small>connecté sur ce téléphone</small>
+              </span>
+            </button>
+            <button className="account-row" onClick={() => tap(2)}>
+              <span className="account-avatar other">
+                <Icon name="user" size={18} />
+              </span>
+              <span>
+                <strong>Utiliser un autre compte</strong>
+              </span>
+            </button>
+            <button className="account-access" onClick={() => tap(2)}>
+              <strong>{attachment.service} pourra :</strong>
+              <ul>
+                {(attachment.acces ?? []).map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
+            </button>
+          </div>
+          <small>Page fictive créée pour cet exercice. Rien ne peut y être choisi ni envoyé.</small>
+        </div>
+      ) : (
       <div className="fake-content">
         <div className="generic-logo">
           <span />
@@ -2644,6 +2700,7 @@ function FakeLogin({
         </div>
         <small>Page fictive créée pour cet exercice. Rien ne peut y être écrit.</small>
       </div>
+      )}
       <div className="hunt-panel" aria-live="polite">
         {last !== null ? (
           <p>
@@ -4035,10 +4092,13 @@ function Play({
 function Phishing({
   onNext,
   clue,
+  access = false,
   fresh,
 }: {
   onNext: () => void;
   clue?: string;
+  /** The page was a "choose an account" screen asking for permissions. */
+  access?: boolean;
   fresh: number[];
 }) {
   return (
@@ -4058,11 +4118,13 @@ function Phishing({
         <h2>Les 3 indices que tu as repérés</h2>
         {[
           ["message", "Un lien inattendu", clue ?? "Tu n’attendais pas ce lien."],
-          [
-            "lock",
-            "Une demande de connexion",
-            "Le contenu promis est caché derrière un formulaire.",
-          ],
+          access
+            ? [
+                "lock",
+                "Des accès bien trop larges",
+                "La page voulait lire tes contacts, tes photos et tes messages, et écrire à ta place.",
+              ]
+            : ["lock", "Une demande de connexion", "Le contenu promis est caché derrière un formulaire."],
           ["search", "Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
         ].map(([i, t, p], n) => (
           <div className="clue" key={t}>
