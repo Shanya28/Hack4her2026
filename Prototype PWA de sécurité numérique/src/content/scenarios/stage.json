@@ -1,7 +1,7 @@
 {
   "id": "stage",
   "order": 10,
-  "title": "Le message du soir",
+  "title": "Le harcèlement au stage",
   "profile": "Stagiaire",
   "summary": "Ton maître de stage t'écrit tard le soir, insiste, puis lie ton évaluation à un dîner.",
   "avertissement": "Cette histoire parle d'un chef qui harcèle sa stagiaire et menace son avenir.",
@@ -11,9 +11,12 @@
     "mot": "harcèlement",
     "lecon": "Des messages insistants d'un supérieur, qui lient ton travail à ta personne, sont du harcèlement. Tu peux le signaler.",
     "indices": [
+      "Il commence par H et compte 11 lettres.",
+      "Ce n'est pas une seule fois : c'est encore et encore.",
+      "Il peut arriver à l'école, au travail ou en ligne.",
       "Des messages insistants qu'on n'a pas voulus.",
       "Quand un supérieur l'exerce, il abuse de son pouvoir.",
-      "Il commence par H et compte 11 lettres."
+      "Lier ton évaluation à un dîner, c'en est un. Tu peux le signaler."
     ],
     "chaud": [
       "harcelement",
@@ -226,5 +229,36 @@
       ],
       "feedback": "Un supérieur qui menace ton avenir pour obtenir quelque chose de toi commet une infraction. Tu n'es pas seule."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "Le harcèlement par un supérieur",
+    "leurres": [
+      "Le piratage de compte",
+      "La traque en ligne",
+      "L’usurpation d’identité"
+    ],
+    "vecu": "Ton maître de stage t’a écrit tard le soir, a insisté, puis a lié ton évaluation à un dîner. C’est du harcèlement par une personne qui a du pouvoir sur ton avenir : c’est une infraction.",
+    "gestes": [
+      "Reste professionnelle et refuse.",
+      "Garde tous les messages.",
+      "Parles-en à ton école ou à ta tutrice.",
+      "Tu as le droit de refuser sans que ton stage en pâtisse."
+    ],
+    "aide": [
+      {
+        "nom": "Ton école ou ta tutrice",
+        "pour": "pour signaler la situation"
+      },
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "pour porter plainte, accompagnée"
+      }
+    ]
+  }
 }

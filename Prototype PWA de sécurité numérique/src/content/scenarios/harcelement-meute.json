@@ -1,7 +1,7 @@
 {
   "id": "harcelement-meute",
   "order": 6,
-  "title": "La vidéo de trop",
+  "title": "Le harcèlement en groupe",
   "profile": "Vendeuse en ligne",
   "summary": "Après une vidéo de ta boutique, des inconnus t'insultent en groupe, publient ton adresse et te menacent.",
   "avertissement": "Cette histoire parle d'insultes en groupe, d'adresse publiée et de menaces.",
@@ -11,9 +11,12 @@
     "mot": "harcèlement",
     "lecon": "Des attaques répétées en ligne, c'est du harcèlement : ce n'est pas « juste internet ». Tu peux bloquer, signaler et porter plainte.",
     "indices": [
+      "Il commence par H et compte 11 lettres.",
+      "Un moustique qui revient sans cesse toute la nuit finit par y ressembler.",
+      "À l'école, des moqueries tous les jours contre la même élève, c'en est.",
       "Des attaques qui se répètent, encore et encore.",
       "En ligne, il vient souvent en groupe, sous une photo ou une vidéo.",
-      "Il commence par H et compte 11 lettres."
+      "Ce n'est pas « juste internet » : la loi le punit."
     ],
     "chaud": [
       "cyberharcèlement",
@@ -226,5 +229,37 @@
       ],
       "feedback": "Une menace en ligne est une vraie menace. Garde tout, porte plainte et ne reste pas seule."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "Le harcèlement en meute",
+    "leurres": [
+      "La surveillance dans le couple",
+      "Le piratage de compte",
+      "La fausse offre d’emploi"
+    ],
+    "vecu": "Après une vidéo de ta boutique, un groupe t’a insultée, a publié ton adresse et t’a menacée. C’est du harcèlement en meute, et publier ton adresse te met en danger réel.",
+    "gestes": [
+      "Fais des captures, puis masque et bloque.",
+      "Limite qui peut commenter et signale avec des amies.",
+      "Si ton adresse circule, protège-toi d’abord : préviens tes proches et ne reste pas seule.",
+      "Garde les menaces et porte plainte."
+    ],
+    "aide": [
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "en cas de menace"
+      },
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "APDP",
+        "numero": "150",
+        "pour": "pour ton adresse publiée"
+      }
+    ]
+  }
 }

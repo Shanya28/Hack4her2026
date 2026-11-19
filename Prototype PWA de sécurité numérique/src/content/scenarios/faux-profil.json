@@ -1,7 +1,7 @@
 {
   "id": "faux-profil",
   "order": 5,
-  "title": "Le faux profil",
+  "title": "Le faux compte et la photo truquée",
   "profile": "Lycéenne",
   "summary": "Un compte se fait passer pour toi, publie une photo truquée, puis te fait chanter.",
   "avertissement": "Cette histoire parle d'un faux compte à ton nom, d'une photo truquée et de chantage.",
@@ -11,9 +11,12 @@
     "mot": "montage",
     "lecon": "Une image truquée ou un faux profil à ton nom peut être signalé et retiré. Ce qui est faux ne dit rien de ta valeur.",
     "indices": [
-      "Une image truquée en est un.",
+      "Il commence par M et compte 7 lettres.",
+      "Au cinéma, c'est le moment où l'on assemble les scènes du film.",
+      "On parle aussi de celui d'un meuble, avec sa notice.",
       "On colle ton visage sur une autre photo.",
-      "Il commence par M et compte 7 lettres."
+      "Une image truquée en est un.",
+      "Il peut faire croire que tu as fait ce que tu n'as jamais fait."
     ],
     "chaud": [
       "trucage",
@@ -233,5 +236,37 @@
       ],
       "feedback": "Un montage reste une violence, même s'il est faux. Ne paie pas, garde les preuves et fais-toi accompagner."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "L’usurpation d’identité",
+    "leurres": [
+      "La surveillance dans le couple",
+      "La traque en ligne",
+      "La fausse offre d’emploi"
+    ],
+    "vecu": "Un faux compte s’est fait passer pour toi, a publié un montage humiliant, puis t’a fait chanter. C’est une infraction. Un montage reste une violence, même s’il est faux.",
+    "gestes": [
+      "Fais des captures avant tout.",
+      "Signale le faux compte et la photo pour les faire retirer.",
+      "Préviens tes contacts que ce n’est pas toi.",
+      "Ne paie jamais, et montre tout à un adulte de confiance."
+    ],
+    "aide": [
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "APDP",
+        "numero": "150",
+        "pour": "pour faire retirer ton image"
+      },
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      }
+    ]
+  }
 }

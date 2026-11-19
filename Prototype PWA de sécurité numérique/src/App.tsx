@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
 import teamQuizContent from "./content/quiz-equipes.json";
 import vopContent from "./content/vrai-ou-piege.json";
@@ -27,6 +27,7 @@ type Screen =
   | "quiz"
   | "quiz-result"
   | "guide"
+  | "bilan"
   | "progress"
   | "privacy"
   | "legal"
@@ -42,6 +43,7 @@ type IconName =
   | "book"
   | "check"
   | "chevron"
+  | "clock"
   | "download"
   | "exit"
   | "headphones"
@@ -69,6 +71,12 @@ const icons: Record<IconName, React.ReactNode> = {
     </>
   ),
   back: <path d="m15 18-6-6 6-6" />,
+  clock: (
+    <>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 9v4l2.5 2.5M10 2h4" />
+    </>
+  ),
   book: (
     <>
       <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z" />
@@ -406,6 +414,15 @@ type DailyWord = {
   chaud: string[];
   tiede: string[];
 };
+/** End-of-story recap: name the violence, then what to do and who to turn to. */
+type Bilan = {
+  violence: string;
+  /** Other kinds of violence, shown as wrong answers. */
+  leurres: string[];
+  vecu: string;
+  gestes: string[];
+  aide: { nom: string; numero?: string; pour: string }[];
+};
 type Scenario = {
   id: string;
   order: number;
@@ -416,6 +433,7 @@ type Scenario = {
   source: "équipe" | "ia";
   relu: boolean;
   mot?: DailyWord;
+  bilan?: Bilan;
   contact: Contact;
   steps: StoryStep[];
 };
@@ -852,6 +870,9 @@ function App() {
   const [eraseOpen, setEraseOpen] = useState(false);
   // Story whose content note was read in this session.
   const [noted, setNoted] = useState<string | null>(null);
+  // The word game was opened from the story sheet: the warning is already read,
+  // so once the word is found the padlock opens straight away.
+  const [wordFromSetup, setWordFromSetup] = useState(false);
   const [exitErase, setExitEraseState] = useState(
     () => localStorage.getItem("naya-exit-erase") === "yes",
   );
@@ -924,7 +945,7 @@ function App() {
         setDone(next);
         localStorage.setItem("naya-done", JSON.stringify(next));
       }
-      go("progress");
+      go(scenario.bilan ? "bilan" : "progress");
     } else {
       const n = story + 1;
       setStory(n);
@@ -1047,7 +1068,10 @@ function App() {
         game={wordGame}
         setGame={setWordGame}
         onPlay={() => startScenario(dailyScenario().id)}
-        onBack={() => go("home")}
+        onBack={() => {
+          setWordFromSetup(false);
+          go("home");
+        }}
       />
     );
   else if (screen === "play")
@@ -1080,8 +1104,15 @@ function App() {
         timer={timer}
         setTimer={setTimer}
         askWord={scenario.id === dailyScenario().id && !!scenario.mot && !wordGame.found && !wordGame.revealed}
-        onGuess={() => go("mot")}
-        onStart={() => setNoted(scenario.id)}
+        startUnlocked={wordFromSetup && (wordGame.found || wordGame.revealed)}
+        onGuess={() => {
+          setWordFromSetup(true);
+          go("mot");
+        }}
+        onStart={() => {
+          setWordFromSetup(false);
+          setNoted(scenario.id);
+        }}
         onOther={() => go("scenarios")}
         onHelp={() => go("help")}
       />
@@ -1189,7 +1220,17 @@ function App() {
         go={go}
       />
     );
-  else if (screen === "progress")
+  else if (screen === "bilan" && scenario.bilan)
+    content = (
+      <BilanScreen
+        key={scenario.id}
+        id={scenario.id}
+        bilan={scenario.bilan}
+        onDone={() => go("progress")}
+        onHelp={() => go("help")}
+      />
+    );
+  else if (screen === "progress" || screen === "bilan")
     content = (
       <Progress
         title={scenario.title}
@@ -2056,6 +2097,7 @@ function StorySetup({
   timer,
   setTimer,
   askWord,
+  startUnlocked = false,
   onGuess,
   onStart,
   onOther,
@@ -2069,12 +2111,13 @@ function StorySetup({
   timer: boolean;
   setTimer: (v: boolean) => void;
   askWord: boolean;
+  startUnlocked?: boolean;
   onGuess: () => void;
   onStart: () => void;
   onOther: () => void;
   onHelp: () => void;
 }) {
-  const [phase, setPhase] = useState<"setup" | "word" | "unlock">("setup");
+  const [phase, setPhase] = useState<"setup" | "word" | "unlock">(startUnlocked ? "unlock" : "setup");
   useEffect(() => {
     if (phase !== "unlock") return;
     vibrate(30);
@@ -3634,6 +3677,13 @@ const defiTypes: Record<Defi["type"], string> = {
   action: "Défi action",
 };
 const DEFIS_PAR_PARTIE = 6;
+/** Time for the group, by kind of challenge: a quick yes/no, a talk, a task. */
+const DEFI_TIME_S: Record<Defi["type"], number> = {
+  "vrai-faux": 20,
+  question: 45,
+  situation: 60,
+  action: 90,
+};
 
 function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   const [deck, setDeck] = useState<Defi[]>([]);
@@ -3641,9 +3691,14 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   const [revealed, setRevealed] = useState(false);
   const [guess, setGuess] = useState<boolean | null>(null);
   const [won, setWon] = useState<boolean[]>([]);
+  const [left, setLeft] = useState(0);
+  const [timeUp, setTimeUp] = useState(false);
   const start = (theme: Defi["theme"] | "tout") => {
     const pool = theme === "tout" ? defis : defis.filter((d) => d.theme === theme);
-    setDeck(shuffled(pool).slice(0, DEFIS_PAR_PARTIE));
+    const picked = shuffled(pool).slice(0, DEFIS_PAR_PARTIE);
+    setDeck(picked);
+    setLeft(picked.length ? DEFI_TIME_S[picked[0].type] : 0);
+    setTimeUp(false);
     setIndex(0);
     setWon([]);
     setRevealed(false);
@@ -3652,6 +3707,9 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   };
   const next = (success: boolean) => {
     setWon([...won, success]);
+    const upcoming = deck[index + 1];
+    if (upcoming) setLeft(DEFI_TIME_S[upcoming.type]);
+    setTimeUp(false);
     setIndex(index + 1);
     setRevealed(false);
     setGuess(null);
@@ -3659,6 +3717,18 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
     window.scrollTo(0, 0);
   };
   const defi = deck[index];
+  // The clock is set when each challenge starts; it stops as soon as the answer shows.
+  useEffect(() => {
+    if (!defi || revealed) return;
+    if (left <= 0) {
+      setTimeUp(true);
+      setRevealed(true);
+      vibrate([60, 40, 60]);
+      return;
+    }
+    const id = window.setTimeout(() => setLeft((value) => value - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [defi, revealed, left]);
 
   if (!deck.length)
     return (
@@ -3736,7 +3806,30 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
         action={<QuickExitButton />}
       />
       <div className="page-content">
-        <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
+        <div className="defi-head">
+          <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
+          {!revealed && (
+            <span
+              className={`defi-clock ${left <= 5 ? "hurry" : ""}`}
+              role="timer"
+              aria-label={`${left} secondes restantes`}
+            >
+              <Icon name="clock" size={16} />
+              {left} s
+            </span>
+          )}
+        </div>
+        {!revealed && (
+          <div className="defi-time" aria-hidden>
+            <i style={{ width: `${(left / DEFI_TIME_S[defi.type]) * 100}%` }} />
+          </div>
+        )}
+        {timeUp && (
+          <div className="defi-timeup" role="status">
+            <Icon name="clock" size={22} />
+            <strong>Temps écoulé !</strong>
+          </div>
+        )}
         <h1 className="team-question">{defi.prompt}</h1>
         {isVF && !revealed && (
           <div className="defi-vf">
@@ -3768,7 +3861,11 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
         {revealed && (
           <>
             <div className={`team-why ${isVF ? (guess === defi.answer ? "good" : "miss") : ""}`}>
-              {isVF && <strong>{guess === defi.answer ? "Bien vu !" : "Pas tout à fait."}</strong>}
+              {isVF && (
+                <strong>
+                  {guess === null ? "Voici la réponse." : guess === defi.answer ? "Bien vu !" : "Pas tout à fait."}
+                </strong>
+              )}
               <p>{defi.reveal}</p>
             </div>
             {isVF ? (
@@ -3867,7 +3964,7 @@ function Play({
             <Icon name="spark" />
           </span>
           <span>
-            <strong>Quiz sans jugement</strong>
+            <strong>Quiz</strong>
             <small>5 questions sur les pièges en ligne</small>
           </span>
           <Icon name="chevron" />
@@ -4421,7 +4518,7 @@ function Quiz({
   const item = quiz[index];
   return (
     <section className="screen quiz">
-      <TopBar title="Quiz sans jugement" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
+      <TopBar title="Quiz" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
       <div className="quiz-progress">
         {quiz.map((_, i) => (
           <i key={i} className={i <= index ? "done" : ""} />
@@ -4749,7 +4846,7 @@ function badgesOf(done: string[], unlocked: number[], wordFound: boolean) {
     { icon: "shield" as IconName, name: "Sentinelle", how: "Débloque les 6 réflexes", won: unlocked.length >= 6 },
     { icon: "check" as IconName, name: "Mot trouvé", how: "Trouve le mot du jour", won: wordFound },
     { icon: "user" as IconName, name: "Esprit d’équipe", how: "Joue à Vrai ou piège en groupe", won: vop.games >= 1 },
-    { icon: "eye" as IconName, name: "Quiz terminé", how: "Termine le quiz sans jugement", won: localStorage.getItem("naya-quiz") === "done" },
+    { icon: "eye" as IconName, name: "Quiz terminé", how: "Termine le quiz", won: localStorage.getItem("naya-quiz") === "done" },
   ];
 }
 
@@ -4884,6 +4981,162 @@ function RankArt({ lit }: { lit: number }) {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+/** Same order on every visit, but the right answer is not always first. */
+function bilanOptions(id: string, bilan: Bilan) {
+  let seed = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const options = [bilan.violence, ...bilan.leurres];
+  for (let i = options.length - 1; i > 0; i--) {
+    seed = (seed * 1103515245 + 12345) >>> 0;
+    const j = seed % (i + 1);
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return options;
+}
+
+/**
+ * After the last step: "which violence did you just go through?". Whatever the
+ * answer, nothing is lost: a wrong pick gets a gentle nudge, and after two
+ * tries the answer opens anyway. The padlock then opens on the recap.
+ */
+function BilanScreen({
+  id,
+  bilan,
+  onDone,
+  onHelp,
+}: {
+  id: string;
+  bilan: Bilan;
+  onDone: () => void;
+  onHelp: () => void;
+}) {
+  const options = useMemo(() => bilanOptions(id, bilan), [id, bilan]);
+  const [wrong, setWrong] = useState<string[]>([]);
+  const [phase, setPhase] = useState<"question" | "unlock" | "reveal">("question");
+  const [found, setFound] = useState(false);
+  useEffect(() => {
+    if (phase !== "unlock") return;
+    vibrate(30);
+    const t = window.setTimeout(() => setPhase("reveal"), reducedMotion() ? 300 : 1500);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+  const pick = (option: string) => {
+    if (option === bilan.violence) {
+      setFound(true);
+      setPhase("unlock");
+    } else {
+      const next = [...wrong, option];
+      setWrong(next);
+      if (next.length >= 2) window.setTimeout(() => setPhase("unlock"), 900);
+    }
+  };
+
+  if (phase === "unlock")
+    return (
+      <section className="screen story-unlock bilan-unlock" aria-live="polite">
+        <div className="padlock" aria-hidden>
+          <svg viewBox="0 0 120 140" width="120" height="140">
+            <path className="shackle" d="M34 62V44a26 26 0 0 1 52 0v18" fill="none" strokeWidth="12" strokeLinecap="round" />
+            <rect x="14" y="60" width="92" height="72" rx="18" className="body" />
+            <circle cx="60" cy="92" r="9" className="hole" />
+            <path d="M60 98v14" className="hole-line" strokeWidth="6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <p className="eyebrow">{found ? "Bien vu" : "La réponse"}</p>
+        <h1>{bilan.violence}</h1>
+      </section>
+    );
+
+  if (phase === "reveal")
+    return (
+      <section className="screen bilan-screen">
+        <TopBar title="Ce qu’il faut retenir" onBack={onDone} />
+        <div className="page-content bilan-reveal">
+          <div className="bilan-name">
+            <Icon name="shield" />
+            <div>
+              <small>Ce que tu as vécu</small>
+              <strong>{bilan.violence}</strong>
+            </div>
+          </div>
+          <p className="bilan-vecu">{bilan.vecu}</p>
+          <div className="bilan-block">
+            <h2>Si ça t’arrive</h2>
+            <ol>
+              {bilan.gestes.map((g) => (
+                <li key={g}>{g}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="bilan-block">
+            <h2>À qui t’adresser</h2>
+            <ul className="bilan-aide">
+              {bilan.aide.map((a) => (
+                <li key={a.nom}>
+                  {a.numero && <b>{a.numero}</b>}
+                  <span>
+                    <strong>{a.nom}</strong>
+                    <small>{a.pour}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {bilan.aide.some((a) => a.numero) && !CALLS_ENABLED && (
+              <p className="microcopy">Numéros affichés seulement : appel désactivé pendant la démonstration.</p>
+            )}
+          </div>
+          <Button onClick={onDone} icon="arrow">
+            Voir mes réflexes
+          </Button>
+          <Button variant="ghost" onClick={onHelp}>
+            Voir toute l’aide au Bénin
+          </Button>
+        </div>
+      </section>
+    );
+
+  return (
+    <section className="screen bilan-screen">
+      <TopBar title="Petit bilan" onBack={onDone} />
+      <div className="page-content">
+        <div className="bilan-lock" aria-hidden>
+          <Icon name="lock" size={26} />
+        </div>
+        <p className="eyebrow">Débloque ce qu’il faut retenir</p>
+        <h1 className="bilan-question">Quelle violence viens-tu de vivre dans cette histoire ?</h1>
+        <div className="bilan-options">
+          {options.map((o, i) => {
+            const isWrong = wrong.includes(o);
+            return (
+              <button
+                key={o}
+                className={`story-choice ${isWrong ? "bilan-wrong" : ""}`}
+                onClick={() => pick(o)}
+                disabled={isWrong || wrong.length >= 2}
+              >
+                <b className="choice-number" aria-hidden>
+                  {i + 1}
+                </b>
+                <span>{o}</span>
+                <Icon name="arrow" size={17} />
+              </button>
+            );
+          })}
+        </div>
+        <p className="microcopy" aria-live="polite">
+          {wrong.length === 0
+            ? "Il n’y a pas de mauvaise note : c’est juste pour faire le point."
+            : wrong.length === 1
+              ? "Pas tout à fait. Repense à ce qui s’est passé, et essaie encore."
+              : "Ce n’est pas grave : voici la réponse."}
+        </p>
+        <Button variant="ghost" onClick={() => setPhase("unlock")}>
+          Passer et voir la réponse
+        </Button>
+      </div>
+    </section>
   );
 }
 

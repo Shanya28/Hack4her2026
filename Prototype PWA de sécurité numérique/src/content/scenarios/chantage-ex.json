@@ -1,7 +1,7 @@
 {
   "id": "chantage-ex",
   "order": 7,
-  "title": "La photo d’avant",
+  "title": "Le chantage d’un ex",
   "profile": "Jeune femme, 19 ans",
   "summary": "Après la rupture, ton ex menace de diffuser une photo privée si tu ne reviens pas avec lui.",
   "avertissement": "Cette histoire parle d'un ex qui menace de diffuser une photo intime.",
@@ -11,9 +11,12 @@
     "mot": "chantage",
     "lecon": "Menacer de diffuser une image intime pour te forcer est un chantage puni par la loi. La honte doit changer de camp.",
     "indices": [
-      "C'est une menace pour te forcer à faire quelque chose.",
+      "Il commence par C et compte 8 lettres.",
+      "Dans les films de gangsters, on s'en sert pour obtenir de l'argent.",
+      "Un enfant qui dit « je pleure si tu ne m'achètes pas de bonbon » en fait un petit.",
       "« Fais ce que je dis, sinon… »",
-      "Il commence par C et compte 8 lettres."
+      "C'est une menace pour te forcer à faire quelque chose.",
+      "Menacer de diffuser une photo intime pour te forcer, c'en est un, puni par la loi."
     ],
     "chaud": [
       "menace",
@@ -214,5 +217,37 @@
       ],
       "feedback": "La honte doit changer de camp : la faute est à celui qui diffuse, jamais à toi."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "La diffusion d’une image intime sans consentement",
+    "leurres": [
+      "La fausse offre d’emploi",
+      "Le harcèlement en meute",
+      "La traque en ligne"
+    ],
+    "vecu": "Après la rupture, ton ex a menacé de diffuser une photo privée si tu ne revenais pas, puis l’a publiée. Le chantage et la diffusion sans ton accord sont punis par la loi.",
+    "gestes": [
+      "Partir est ton droit : ne cède pas à l’ultimatum.",
+      "Garde ses messages et parles-en.",
+      "Si la photo est publiée, signale-la pour la faire retirer et porte plainte.",
+      "La honte est pour celui qui diffuse, jamais pour toi."
+    ],
+    "aide": [
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      },
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "APDP",
+        "numero": "150",
+        "pour": "pour le retrait de l’image"
+      }
+    ]
+  }
 }

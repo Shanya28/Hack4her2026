@@ -1,7 +1,7 @@
 {
   "id": "sextorsion",
   "order": 1,
-  "title": "La rencontre en ligne",
+  "title": "Le chantage aux photos intimes",
   "profile": "Étudiante",
   "summary": "Un inconnu gagne ta confiance, puis menace de publier tes messages.",
   "avertissement": "Cette histoire parle de chantage avec des messages et des photos privées.",
@@ -11,9 +11,12 @@
     "mot": "consentement",
     "lecon": "Ton consentement doit être libre et réversible : dire oui une fois, ce n'est pas dire oui pour toujours, ni dire oui à un partage.",
     "indices": [
+      "Il commence par C et compte 12 lettres.",
+      "On le donne, mais on a toujours le droit de le reprendre.",
+      "Avant une opération, le médecin te le demande, souvent par écrit.",
+      "Il se dit avec un « oui » libre, jamais forcé.",
       "C'est un mot qui parle de ton accord.",
-      "Sans lui, personne n'a le droit de partager une image de toi.",
-      "Il commence par C et compte 12 lettres."
+      "Sans lui, personne n'a le droit de partager une image de toi."
     ],
     "chaud": [
       "accord",
@@ -233,5 +236,37 @@
       },
       "danger": true
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "La sextorsion",
+    "leurres": [
+      "Le piratage de compte",
+      "Le harcèlement en groupe",
+      "La traque en ligne"
+    ],
+    "vecu": "Un inconnu a gagné ta confiance, a demandé une photo privée, puis a menacé de publier tes messages pour obtenir de l’argent. C’est un chantage puni par la loi. Ce n’est jamais la faute de la personne qui le subit.",
+    "gestes": [
+      "Ne paie pas et n’envoie rien de plus : le chantage ne s’arrête pas quand on cède.",
+      "Garde les preuves : captures, nom du compte, dates.",
+      "Bloque et signale le compte.",
+      "Parles-en à une personne de confiance."
+    ],
+    "aide": [
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "si tu es en danger maintenant"
+      }
+    ]
+  }
 }

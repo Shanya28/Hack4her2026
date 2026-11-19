@@ -1,7 +1,7 @@
 {
   "id": "faux-recrutement",
   "order": 2,
-  "title": "L’offre trop belle",
+  "title": "La fausse offre d’emploi",
   "profile": "Chercheuse d’emploi",
   "summary": "Une fausse recruteuse promet un poste d'hôtesse, réclame des photos, puis un entretien seule à l'hôtel.",
   "avertissement": "Cette histoire parle d'une fausse offre d'emploi qui sert à piéger des femmes.",
@@ -11,9 +11,12 @@
     "mot": "hôtesse",
     "lecon": "Un vrai employeur ne choisit pas sur photos et ne reçoit pas à l'hôtel le soir. Une offre qui vise ton apparence peut cacher de l'exploitation.",
     "indices": [
-      "C'est le poste promis dans l'offre.",
+      "Il commence par H et compte 7 lettres.",
+      "Dans l'avion, elle accueille les passagers.",
+      "Chez elle, c'est la femme qui reçoit ses invités.",
       "On l'imagine à l'accueil d'un hôtel ou d'un salon.",
-      "Il commence par H et compte 7 lettres."
+      "C'est le poste promis dans l'offre.",
+      "Pour ce poste, la fausse recruteuse réclame des photos de toi."
     ],
     "chaud": [
       "hotesse",
@@ -224,5 +227,37 @@
       ],
       "feedback": "Les fausses offres d'emploi servent parfois à piéger des femmes. Ne cède pas : garde les preuves et fais-toi accompagner."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "L’exploitation par une fausse offre d’emploi",
+    "leurres": [
+      "La sextorsion",
+      "Le piratage de compte",
+      "L’usurpation d’identité"
+    ],
+    "vecu": "Une offre trop belle, des photos de ton corps réclamées, un « entretien » le soir à l’hôtel, puis des menaces : ce sont les signes d’un piège qui peut mener à l’exploitation.",
+    "gestes": [
+      "Vérifie toujours qui recrute : nom, adresse, avis.",
+      "Un vrai employeur ne choisit pas sur photos et reçoit dans un bureau, en journée.",
+      "Ne va jamais seule à un rendez-vous de ce genre.",
+      "Garde toutes les demandes et montre-les à un proche."
+    ],
+    "aide": [
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "si tu es menacée"
+      },
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour signaler la fausse offre"
+      }
+    ]
+  }
 }

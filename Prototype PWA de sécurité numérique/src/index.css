@@ -6032,3 +6032,224 @@ textarea {
   font-size: 12px;
   color: var(--muted);
 }
+
+/* End-of-story recap: name the violence, the padlock opens, then the recap */
+.bilan-lock {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: var(--beige-2);
+  color: var(--ink);
+  margin: 6px 0 12px;
+  animation: padlock-shake 0.5s 0.3s ease-in-out 2;
+}
+.bilan-question {
+  font-size: 24px;
+  line-height: 1.2;
+  margin: 4px 0 16px;
+}
+.bilan-options {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.bilan-options .story-choice {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  gap: 12px;
+}
+.bilan-options .story-choice > span {
+  flex: 1;
+}
+.bilan-options .story-choice:disabled {
+  cursor: default;
+}
+.bilan-options .bilan-wrong {
+  opacity: 0.45;
+  text-decoration: line-through;
+  animation: threat-shake 0.4s ease-in-out;
+}
+.bilan-unlock h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  max-width: 320px;
+  padding: 0 16px;
+  animation: bilan-pop 0.5s 0.9s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.bilan-reveal > * {
+  animation: bilan-rise 0.45s both ease-out;
+}
+.bilan-reveal > :nth-child(2) { animation-delay: 0.12s; }
+.bilan-reveal > :nth-child(3) { animation-delay: 0.3s; }
+.bilan-reveal > :nth-child(4) { animation-delay: 0.48s; }
+.bilan-reveal > :nth-child(n + 5) { animation-delay: 0.62s; }
+.bilan-name {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--orange-main);
+  color: var(--white);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.bilan-name small {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.bilan-name strong {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.bilan-vecu {
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.bilan-block {
+  background: var(--white);
+  border: 1px solid var(--beige-2);
+  border-radius: 20px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.bilan-block h2 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+.bilan-block ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: geste;
+  display: grid;
+  gap: 8px;
+  line-height: 1.45;
+}
+.bilan-block ol li {
+  counter-increment: geste;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+.bilan-block ol li::before {
+  content: counter(geste);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 800;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+}
+.bilan-aide {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.bilan-aide li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bilan-aide b {
+  min-width: 52px;
+  text-align: center;
+  font-size: 18px;
+  background: var(--beige);
+  border-radius: 12px;
+  padding: 6px 4px;
+}
+.bilan-aide strong {
+  display: block;
+}
+.bilan-aide small {
+  color: var(--muted);
+}
+.bilan-screen .button {
+  width: 100%;
+  margin-top: 6px;
+}
+@keyframes bilan-pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes bilan-rise {
+  from { transform: translateY(14px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bilan-lock,
+  .bilan-unlock h1,
+  .bilan-reveal > *,
+  .bilan-options .bilan-wrong {
+    animation: none;
+  }
+}
+
+/* Défis en groupe: a clock per challenge, then "Temps écoulé !" */
+.defi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.defi-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--white);
+  border: 1px solid var(--beige-2);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.defi-clock.hurry {
+  background: var(--orange-main);
+  border-color: var(--orange-main);
+  color: var(--white);
+  animation: padlock-shake 0.4s ease-in-out infinite;
+}
+.defi-time {
+  height: 6px;
+  margin: 12px 0 4px;
+  border-radius: 3px;
+  background: var(--beige-2);
+  overflow: hidden;
+}
+.defi-time i {
+  display: block;
+  height: 100%;
+  background: var(--orange-main);
+  transition: width 1s linear;
+}
+.defi-timeup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 4px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--orange-main);
+  color: var(--white);
+  font-size: 18px;
+  animation: bilan-pop 0.4s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .defi-clock.hurry,
+  .defi-timeup {
+    animation: none;
+  }
+}

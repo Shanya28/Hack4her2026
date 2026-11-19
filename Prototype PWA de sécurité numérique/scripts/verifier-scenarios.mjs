@@ -58,12 +58,33 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
     const mot = scenario.mot;
     if (!isText(mot.mot) || /\s/.test(mot.mot.trim())) fail("mot du jour : « mot » doit être un seul mot");
     if (!isText(mot.lecon)) fail("mot du jour : « lecon » manquante");
-    if (!Array.isArray(mot.indices) || mot.indices.length !== 3 || !mot.indices.every(isText))
-      fail("mot du jour : 3 indices attendus");
+    if (!Array.isArray(mot.indices) || mot.indices.length !== 6 || !mot.indices.every(isText))
+      fail("mot du jour : 6 indices attendus (la première lettre en premier)");
     for (const key of ["chaud", "tiede"])
       if (!Array.isArray(mot[key]) || mot[key].length < 5 || !mot[key].every(isText))
         fail(`mot du jour : au moins 5 mots dans « ${key} »`);
   }
+
+  // Bilan de fin : nommer la violence, puis quoi faire et à qui s'adresser.
+  // Seuls les numéros déjà présents sur la page Aide sont acceptés.
+  const HELP_NUMBERS = ["117", "114", "138", "160", "150", "151"];
+  if (scenario.bilan !== undefined) {
+    const b = scenario.bilan;
+    if (!isText(b.violence)) fail("bilan : « violence » manquante");
+    if (!Array.isArray(b.leurres) || b.leurres.length !== 3 || !b.leurres.every(isText))
+      fail("bilan : 3 mauvaises réponses attendues dans « leurres »");
+    else if (b.leurres.includes(b.violence)) fail("bilan : la bonne réponse est aussi dans « leurres »");
+    if (!isText(b.vecu)) fail("bilan : « vecu » manquant");
+    if (!Array.isArray(b.gestes) || b.gestes.length < 2 || b.gestes.length > 5 || !b.gestes.every(isText))
+      fail("bilan : 2 à 5 « gestes » attendus");
+    if (!Array.isArray(b.aide) || b.aide.length < 1 || b.aide.length > 4) fail("bilan : 1 à 4 contacts attendus dans « aide »");
+    else
+      for (const a of b.aide) {
+        if (!isText(a.nom) || !isText(a.pour)) fail("bilan : chaque contact a un « nom » et un « pour »");
+        if (a.numero !== undefined && !HELP_NUMBERS.includes(a.numero))
+          fail(`bilan : numéro ${a.numero} absent de la page Aide`);
+      }
+  } else fail("bilan de fin manquant");
 
   const steps = Array.isArray(scenario.steps) ? scenario.steps : [];
   if (steps.length < 3 || steps.length > 7) fail(`il faut 3 à 7 situations (trouvé : ${steps.length})`);
