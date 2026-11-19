@@ -221,6 +221,42 @@ const RECIPE =
   } else console.log(`✓ ${file} — ${cards.length} messages, dont ${traps} pièges`);
 }
 
+// Traduction anglaise des histoires (src/content/langues/en.json) : chaque texte
+// affiché doit avoir sa phrase anglaise, et aucune clé ne doit viser une étape
+// qui n'existe plus (après l'ajout ou le retrait d'une étape).
+{
+  const enFile = path.resolve(dir, "../langues/en.json");
+  let en = null;
+  try {
+    en = JSON.parse(readFileSync(enFile, "utf8")).textes;
+  } catch {
+    // pas de traduction anglaise : rien à vérifier
+  }
+  if (en) {
+    const expected = new Set();
+    for (const file of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+      const s = JSON.parse(readFileSync(path.join(dir, file), "utf8"));
+      (s.steps ?? []).forEach((step, i) => {
+        const n = i + 1;
+        (step.messages ?? []).forEach((_, m) => expected.add(`${s.id}.m${n}-${m + 1}`));
+        if (step.attachment) expected.add(`${s.id}.cta${n}`);
+        (step.choices ?? []).forEach((_, c) =>
+          ["c", "o", "a"].forEach((k) => expected.add(`${s.id}.${k}${n}-${c + 1}`)),
+        );
+        if (isText(step.feedback)) expected.add(`${s.id}.f${n}`);
+      });
+    }
+    const missing = [...expected].filter((k) => !isText(en[k]));
+    const orphans = Object.keys(en).filter((k) => !expected.has(k));
+    if (missing.length || orphans.length) {
+      errors += missing.length + orphans.length;
+      console.log("✗ langues/en.json");
+      for (const k of missing) console.log(`    phrase anglaise manquante : ${k}`);
+      for (const k of orphans) console.log(`    clé sans texte français (étape déplacée ?) : ${k}`);
+    } else console.log(`✓ langues/en.json — ${expected.size} phrases`);
+  }
+}
+
 if (toReview.length)
   console.log(`\nÀ relire par l'équipe (puis passer "relu" à true) : ${toReview.join(", ")}`);
 if (errors) {

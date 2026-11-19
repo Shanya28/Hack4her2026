@@ -582,8 +582,14 @@ function speak(text: string, queue = false) {
 // scripts/generer-voix.py makes the French clips, scripts/langue-locale.py the
 // translations and clips of a local language. A language shows up in the app
 // as soon as it has clips; anything missing falls back to French.
-type Lang = "fr" | "fon" | "yo" | "mina";
-const langNames: Record<Lang, string> = { fr: "Français", fon: "Fon", yo: "Yoruba", mina: "Mina" };
+type Lang = "fr" | "en" | "fon" | "yo" | "mina";
+const langNames: Record<Lang, string> = {
+  fr: "Français",
+  en: "English",
+  fon: "Fon",
+  yo: "Yoruba",
+  mina: "Mina",
+};
 const localLangs: Lang[] = ["fon", "yo", "mina"];
 
 const clips: Record<string, string> = {};
@@ -614,6 +620,10 @@ const recordedLangs = localLangs.filter(
   (lang) => canPlay && Object.keys(clips).some((key) => key.startsWith(`${lang}/`)),
 );
 const canListen = canSpeak || (canPlay && Object.keys(clips).length > 0);
+// Languages for the story text only, with no recorded voice (English): the
+// menus, games and listening mode stay in French.
+const textLangs = (["en"] as Lang[]).filter((lang) => translations[lang]);
+const storyLangs: Lang[] = [...textLangs, ...recordedLangs];
 
 /** Text of `key` in a local language, or undefined (then French is shown). */
 function tr(lang: Lang, key: string): string | undefined {
@@ -628,7 +638,7 @@ function clipOf(lang: Lang, key: string, frFallback = true): string | undefined 
 
 function readLang(): Lang {
   const saved = localStorage.getItem("naya-lang") as Lang | null;
-  return saved && recordedLangs.includes(saved) ? saved : "fr";
+  return saved && storyLangs.includes(saved) ? saved : "fr";
 }
 
 // Clips play one after the other. Each can announce itself (to highlight the
@@ -737,13 +747,14 @@ function App() {
     if (!next) stopSpeaking();
   };
   const [lang, setLangState] = useState<Lang>(readLang);
+  document.documentElement.dataset.lang = lang;
   const [listen, setListenState] = useState(() => localStorage.getItem("naya-ecoute") === "yes");
   const setLang = (next: Lang) => {
     stopSpeaking();
     setLangState(next);
     localStorage.setItem("naya-lang", next);
     // Choosing a recorded voice means wanting to hear it.
-    if (next !== "fr") setAudio(true);
+    if (recordedLangs.includes(next)) setAudio(true);
   };
   useEffect(() => {
     // Keep the voice clips that can be played available offline, once the
@@ -1431,7 +1442,7 @@ function Welcome({
       <div>
         <p className="welcome-lang-label">Ta langue</p>
         <div className="segmented welcome-lang" role="radiogroup" aria-label="Langue">
-          {(["fr", ...recordedLangs] as Lang[]).map((l) => (
+          {(["fr", ...storyLangs] as Lang[]).map((l) => (
             <button
               key={l}
               role="radio"
@@ -1443,7 +1454,10 @@ function Welcome({
             </button>
           ))}
         </div>
-        {lang !== "fr" && (
+        {lang === "en" && (
+          <p className="microcopy">Les histoires en anglais ; les menus restent en français.</p>
+        )}
+        {lang !== "fr" && lang !== "en" && (
           <p className="microcopy">Traduction et voix automatiques, à l’essai.</p>
         )}
         <Button onClick={onNext} icon="arrow">
@@ -2064,6 +2078,14 @@ function ReflexUnlock({ fresh }: { fresh: number[] }) {
 /** A text in the chosen language, with the French original underneath. */
 function Said({ text, local }: { text: string; local?: string }) {
   if (!local) return <span className="said">{text}</span>;
+  // English readers get the English text alone; local languages keep the
+  // French underneath, since the French text is the reference.
+  if (document.documentElement.dataset.lang === "en")
+    return (
+      <span className="said" lang="en">
+        {local}
+      </span>
+    );
   return (
     <span className="said">
       <span lang="x-local">{local}</span>
@@ -2177,7 +2199,7 @@ function StorySetup({
         </div>
         <h3>Langue</h3>
         <div className="segmented" role="radiogroup" aria-label="Langue de l’histoire">
-          {(["fr", ...recordedLangs] as Lang[]).map((l) => (
+          {(["fr", ...storyLangs] as Lang[]).map((l) => (
             <button
               key={l}
               role="radio"
@@ -2439,7 +2461,7 @@ function Story({
                 )}
                 <Said
                   text={text}
-                  local={mine ? undefined : tr(lang, `${scenario.id}.m${step + 1}-${i + 1}`)}
+                  local={mine && lang !== "en" ? undefined : tr(lang, `${scenario.id}.m${step + 1}-${i + 1}`)}
                 />
                 <small>
                   10:{24 + i * 2}
@@ -5446,8 +5468,8 @@ function Settings({
         </div>
         <h3>Langue</h3>
         <div className="segmented" role="radiogroup" aria-label="Langue">
-          {(["fr", ...localLangs] as Lang[]).map((x) => {
-            const available = x === "fr" || recordedLangs.includes(x);
+          {(["fr", ...textLangs, ...localLangs] as Lang[]).map((x) => {
+            const available = x === "fr" || storyLangs.includes(x);
             return (
               <button
                 key={x}
@@ -5466,7 +5488,13 @@ function Settings({
             );
           })}
         </div>
-        {lang !== "fr" && (
+        {lang === "en" && (
+          <p className="setting-note">
+            Les histoires sont affichées en anglais. Les menus, les jeux, les bilans et le mode
+            écoute restent en français. Traduction préparée avec l’aide d’une IA, à relire.
+          </p>
+        )}
+        {lang !== "fr" && lang !== "en" && (
           <p className="setting-note">
             Les histoires sont affichées et lues en {langNames[lang].toLowerCase()}, avec le
             français en petit. Traduction et voix automatiques, à l’essai : pas encore relues par
