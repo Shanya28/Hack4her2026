@@ -6253,3 +6253,186 @@ textarea {
     animation: none;
   }
 }
+
+/* Quiz: the character walks along, answers slide in, sparks on a good answer */
+.quiz-track {
+  position: relative;
+  margin: 4px 30px 0 22px;
+  height: 44px;
+}
+.quiz-track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--sand);
+  overflow: hidden;
+}
+.quiz-track-line i {
+  display: block;
+  height: 100%;
+  background: var(--orange-main);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.quiz-walker {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  transition: left 0.6s cubic-bezier(0.3, 1.3, 0.5, 1);
+  animation: walker-bob 0.9s ease-in-out infinite;
+}
+.quiz-walker .portrait-small {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--white);
+  box-shadow: 0 3px 10px #49372d33;
+}
+.quiz .page-content.quiz-card {
+  padding-top: 30px;
+}
+.quiz-card > .eyebrow,
+.quiz-card > h1 {
+  animation: bilan-rise 0.45s both ease-out;
+}
+.quiz-card > h1 {
+  animation-delay: 0.06s;
+}
+.quiz-options button {
+  position: relative;
+  animation: quiz-in 0.4s both ease-out;
+  transition: transform 0.2s ease;
+}
+.quiz-options button:not(:disabled):active {
+  transform: scale(0.97);
+}
+.quiz-options button.correct.picked {
+  animation: quiz-pop 0.45s ease-out both;
+}
+.quiz-options button.wrong {
+  animation: threat-shake 0.45s ease-in-out both;
+}
+.quiz-options button.correct.glow {
+  animation: quiz-glow 1.2s 0.3s ease-in-out 2 both;
+}
+.sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sparks i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 50%;
+  background: var(--orange-main);
+  transform: rotate(var(--a)) translateX(0);
+  animation: spark-out 0.7s ease-out forwards;
+}
+.sparks i:nth-child(even) {
+  background: var(--orange-soft);
+}
+.quiz-streak {
+  margin: 14px 0 0;
+  text-align: center;
+  font-weight: 800;
+  color: var(--orange-main);
+  animation: bilan-pop 0.45s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.quiz-explain {
+  animation: bilan-rise 0.45s 0.15s both ease-out;
+}
+
+/* Quiz result: the score counts up, stars light up, confetti from 4/5 */
+.quiz-finish {
+  position: relative;
+  overflow: hidden;
+}
+.quiz-finish .finish-icon {
+  animation: bilan-pop 0.6s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.quiz-finish h1 .count {
+  display: inline-block;
+  min-width: 0.6em;
+}
+.quiz-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 4px;
+  font-size: 30px;
+  color: var(--sand);
+}
+.quiz-stars .on {
+  color: var(--orange-main);
+  animation: bilan-pop 0.4s both cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.quiz-finish .score-bar i {
+  background: var(--orange-main);
+  transition: width 0.38s ease;
+}
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation: confetti-fall linear 2 both;
+}
+.quiz-finish > :not(.confetti) {
+  position: relative;
+  z-index: 1;
+}
+@keyframes quiz-in {
+  from { transform: translateX(26px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes quiz-pop {
+  40% { transform: scale(1.05); }
+  to { transform: scale(1); }
+}
+@keyframes quiz-glow {
+  50% { box-shadow: 0 0 0 6px #f5823240; }
+}
+@keyframes spark-out {
+  from { transform: rotate(var(--a)) translateX(0) scale(1); opacity: 1; }
+  to { transform: rotate(var(--a)) translateX(150px) scale(0.3); opacity: 0; }
+}
+@keyframes walker-bob {
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+@keyframes confetti-fall {
+  to { transform: translateY(110vh) rotate(var(--tilt)) rotateY(720deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-walker,
+  .quiz-card > .eyebrow,
+  .quiz-card > h1,
+  .quiz-options button,
+  .quiz-options button.correct.picked,
+  .quiz-options button.wrong,
+  .quiz-options button.correct.glow,
+  .quiz-streak,
+  .quiz-explain,
+  .quiz-finish .finish-icon,
+  .quiz-stars .on {
+    animation: none;
+  }
+  .sparks,
+  .confetti {
+    display: none;
+  }
+}

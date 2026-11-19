@@ -865,6 +865,8 @@ function App() {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [quizChoice, setQuizChoice] = useState<number | null>(null);
+  // Good answers in a row, only ever shown to cheer, never to point out a miss.
+  const [quizStreak, setQuizStreak] = useState(0);
   const [saved, setSaved] = useState(localStorage.getItem("naya-guide") === "yes");
   const [toast, setToast] = useState("");
   const [eraseOpen, setEraseOpen] = useState(false);
@@ -993,6 +995,7 @@ function App() {
     setQuizIndex(0);
     setQuizScore(0);
     setQuizChoice(null);
+    setQuizStreak(0);
     setSaved(false);
     setEraseOpen(false);
     go("welcome");
@@ -1179,7 +1182,14 @@ function App() {
         index={quizIndex}
         score={quizScore}
         choice={quizChoice}
-        setChoice={setQuizChoice}
+        streak={quizStreak}
+        person={person}
+        setChoice={(i) => {
+          const good = i === quiz[quizIndex].correct;
+          setQuizChoice(i);
+          setQuizStreak(good ? quizStreak + 1 : 0);
+          vibrate(good ? [20, 30, 40] : 40);
+        }}
         onNext={() => {
           if (quizChoice === quiz[quizIndex].correct) setQuizScore(quizScore + 1);
           if (quizIndex === quiz.length - 1) {
@@ -1201,6 +1211,7 @@ function App() {
           setQuizIndex(0);
           setQuizScore(0);
           setQuizChoice(null);
+          setQuizStreak(0);
           go("quiz");
         }}
         go={go}
@@ -4509,6 +4520,8 @@ function Help({ go }: { go: (s: Screen) => void }) {
 function Quiz({
   index,
   choice,
+  streak,
+  person,
   setChoice,
   onNext,
   onBack,
@@ -4516,64 +4529,92 @@ function Quiz({
   index: number;
   score: number;
   choice: number | null;
+  streak: number;
+  person: string;
   setChoice: (n: number) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
   const item = quiz[index];
+  const answered = choice !== null;
+  const good = answered && choice === item.correct;
+  // The character walks along the track: one step per answered question.
+  const steps = index + (answered ? 1 : 0);
   return (
     <section className="screen quiz">
-      <TopBar title="Quiz" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
-      <div className="quiz-progress">
-        {quiz.map((_, i) => (
-          <i key={i} className={i <= index ? "done" : ""} />
-        ))}
+      <TopBar title="Quiz" onBack={onBack} action={<strong>{index + 1}/{quiz.length}</strong>} />
+      <div className="quiz-track" aria-hidden>
+        <div className="quiz-track-line">
+          <i style={{ width: `${(steps / quiz.length) * 100}%` }} />
+        </div>
+        <div className="quiz-walker" style={{ left: `${(steps / quiz.length) * 100}%` }}>
+          <Portrait person={person} small />
+        </div>
       </div>
-      <div className="page-content">
+      <div className="page-content quiz-card" key={index}>
         <p className="eyebrow">Question {index + 1}</p>
         <h1>{item.q}</h1>
         <div className="quiz-options">
-          {item.a.map((a, i) => (
-            <button
-              key={a}
-              disabled={choice !== null}
-              onClick={() => setChoice(i)}
-              className={
-                choice === i
-                  ? i === item.correct
+          {item.a.map((a, i) => {
+            const state =
+              choice === i
+                ? i === item.correct
+                  ? "correct picked"
+                  : "wrong"
+                : answered && i === item.correct
+                  ? good
                     ? "correct"
-                    : "wrong"
-                  : choice !== null && i === item.correct
-                    ? "correct"
-                    : ""
-              }
-            >
-              <span>{String.fromCharCode(65 + i)}</span>
-              {a}
-              {choice !== null && i === item.correct && <Icon name="check" />}
-            </button>
-          ))}
+                    : "correct glow"
+                  : "";
+            return (
+              <button
+                key={a}
+                disabled={answered}
+                onClick={() => setChoice(i)}
+                className={state}
+                style={{ animationDelay: `${120 + i * 110}ms` }}
+              >
+                <span>{String.fromCharCode(65 + i)}</span>
+                {a}
+                {answered && i === item.correct && <Icon name="check" />}
+                {choice === i && good && (
+                  <b className="sparks" aria-hidden>
+                    {Array.from({ length: 10 }, (_, k) => (
+                      <i key={k} style={{ ["--a" as string]: `${k * 36}deg` }} />
+                    ))}
+                  </b>
+                )}
+              </button>
+            );
+          })}
         </div>
-        {choice !== null && (
-          <div className={`quiz-explain ${choice === item.correct ? "good" : "learn"}`}>
+        {good && streak >= 2 && (
+          <p className="quiz-streak" role="status">
+            🔥 {streak} bonnes réponses d’affilée !
+          </p>
+        )}
+        {answered && (
+          <div className={`quiz-explain ${good ? "good" : "learn"}`}>
             <span>
-              <Icon name={choice === item.correct ? "check" : "spark"} />
+              <Icon name={good ? "check" : "spark"} />
             </span>
             <div>
-              <strong>{choice === item.correct ? "Bien vu !" : "À retenir"}</strong>
+              <strong>{good ? "Bien vu !" : "À retenir"}</strong>
               <p>{item.why}</p>
             </div>
           </div>
         )}
       </div>
       <div className="sticky-action">
-        <Button onClick={onNext} disabled={choice === null} icon="arrow">
-          {index === 4 ? "Voir mon bilan" : "Question suivante"}
+        <Button onClick={onNext} disabled={!answered} icon="arrow">
+          {index === quiz.length - 1 ? "Voir mon bilan" : "Question suivante"}
         </Button>
       </div>
     </section>
   );
 }
+
+const CONFETTI_COLORS = ["#f58232", "#ffb36b", "#49372d", "#e8dccb", "#ffffff"];
 
 function QuizResult({
   score,
@@ -4584,14 +4625,57 @@ function QuizResult({
   onRetry: () => void;
   go: (s: Screen) => void;
 }) {
+  const total = quiz.length;
+  // The score counts up, then the stars light up one by one.
+  const [shown, setShown] = useState(reducedMotion() ? score : 0);
+  useEffect(() => {
+    if (shown >= score) return;
+    const id = window.setTimeout(() => setShown(shown + 1), shown === 0 ? 500 : 380);
+    return () => window.clearTimeout(id);
+  }, [shown, score]);
+  const confetti = useMemo(
+    () =>
+      Array.from({ length: 36 }, (_, i) => ({
+        left: `${(i * 37) % 100}%`,
+        delay: `${(i % 9) * 0.18}s`,
+        duration: `${2.4 + (i % 5) * 0.35}s`,
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        tilt: `${(i * 53) % 360}deg`,
+      })),
+    [],
+  );
   return (
-    <section className="screen finish">
-      <div className="confetti-lines" />
+    <section className="screen finish quiz-finish">
+      {score >= 4 && (
+        <div className="confetti" aria-hidden>
+          {confetti.map((c, i) => (
+            <i
+              key={i}
+              style={{
+                left: c.left,
+                background: c.color,
+                animationDelay: c.delay,
+                animationDuration: c.duration,
+                ["--tilt" as string]: c.tilt,
+              }}
+            />
+          ))}
+        </div>
+      )}
       <div className="finish-icon">
         <Icon name="spark" size={42} />
       </div>
       <p className="eyebrow">Quiz terminé</p>
-      <h1>{score}/5</h1>
+      <h1 aria-label={`${score} sur ${total}`}>
+        <span className="count">{shown}</span>/{total}
+      </h1>
+      <div className="quiz-stars" aria-hidden>
+        {Array.from({ length: total }, (_, i) => (
+          <span key={i} className={i < shown ? "on" : ""}>
+            ★
+          </span>
+        ))}
+      </div>
       <h2>
         {score >= 4 ? "Tu as déjà de bons réflexes." : "Tu es en train de construire tes réflexes."}
       </h2>
@@ -4599,7 +4683,7 @@ function QuizResult({
         Continue à les appliquer dans tes conversations quotidiennes. Chaque vérification compte.
       </p>
       <div className="score-bar">
-        <i style={{ width: `${score * 20}%` }} />
+        <i style={{ width: `${(shown / total) * 100}%` }} />
       </div>
       <div className="finish-actions">
         <Button onClick={() => go("guide")} icon="download">
