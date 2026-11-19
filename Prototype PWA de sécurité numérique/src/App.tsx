@@ -3719,16 +3719,16 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   const defi = deck[index];
   // The clock is set when each challenge starts; it stops as soon as the answer shows.
   useEffect(() => {
-    if (!defi || revealed) return;
+    if (!defi || revealed || timeUp) return;
     if (left <= 0) {
+      // Time is up: the answer stays hidden until the group asks for it.
       setTimeUp(true);
-      setRevealed(true);
       vibrate([60, 40, 60]);
       return;
     }
     const id = window.setTimeout(() => setLeft((value) => value - 1), 1000);
     return () => window.clearTimeout(id);
-  }, [defi, revealed, left]);
+  }, [defi, revealed, timeUp, left]);
 
   if (!deck.length)
     return (
@@ -3808,7 +3808,7 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
       <div className="page-content">
         <div className="defi-head">
           <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
-          {!revealed && (
+          {!revealed && !timeUp && (
             <span
               className={`defi-clock ${left <= 5 ? "hurry" : ""}`}
               role="timer"
@@ -3819,7 +3819,7 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
             </span>
           )}
         </div>
-        {!revealed && (
+        {!revealed && !timeUp && (
           <div className="defi-time" aria-hidden>
             <i style={{ width: `${(left / DEFI_TIME_S[defi.type]) * 100}%` }} />
           </div>
@@ -3831,7 +3831,12 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
           </div>
         )}
         <h1 className="team-question">{defi.prompt}</h1>
-        {isVF && !revealed && (
+        {timeUp && !revealed && (
+          <Button onClick={() => setRevealed(true)} icon="eye">
+            Révéler la réponse
+          </Button>
+        )}
+        {isVF && !revealed && !timeUp && (
           <div className="defi-vf">
             {[true, false].map((v) => (
               <button
@@ -3846,7 +3851,7 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
             ))}
           </div>
         )}
-        {!isVF && !revealed && (
+        {!isVF && !revealed && !timeUp && (
           <>
             <p className="team-help">
               {defi.type === "action"
