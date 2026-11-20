@@ -1,0 +1,189 @@
+{
+ "total": 117.45,
+ "scenes": [
+  {
+   "name": "hook",
+   "start": 0.0,
+   "end": 16.9
+  },
+  {
+   "name": "brand",
+   "start": 16.9,
+   "end": 27.58
+  },
+  {
+   "name": "start",
+   "start": 27.58,
+   "end": 37.4
+  },
+  {
+   "name": "story",
+   "start": 37.4,
+   "end": 47.11
+  },
+  {
+   "name": "threat",
+   "start": 47.11,
+   "end": 58.91
+  },
+  {
+   "name": "fake",
+   "start": 58.91,
+   "end": 68.61
+  },
+  {
+   "name": "group",
+   "start": 68.61,
+   "end": 80.49
+  },
+  {
+   "name": "alert",
+   "start": 80.49,
+   "end": 96.47
+  },
+  {
+   "name": "help",
+   "start": 96.47,
+   "end": 106.28
+  },
+  {
+   "name": "end",
+   "start": 106.28,
+   "end": 117.45
+  }
+ ],
+ "lines": [
+  {
+   "t": 3.0,
+   "end": 6.86,
+   "text": "Envoie-moi d'autres photos. Sinon, je publie tout.",
+   "voice": "m"
+  },
+  {
+   "t": 7.36,
+   "end": 11.84,
+   "text": "Sika a seize ans. Ce soir, ce message vient d'arriver sur son téléphone.",
+   "voice": "f"
+  },
+  {
+   "t": 12.34,
+   "end": 16.1,
+   "text": "Elle a peur. Elle a honte. Et elle ne sait pas à qui parler.",
+   "voice": "f"
+  },
+  {
+   "t": 17.7,
+   "end": 22.92,
+   "text": "Pour que chaque jeune fille sache repérer ces pièges avant qu'ils ne se referment, nous avons créé Ayidotè.",
+   "voice": "f"
+  },
+  {
+   "t": 23.42,
+   "end": 26.58,
+   "text": "En fon, cela veut dire : rester vigilante.",
+   "voice": "f"
+  },
+  {
+   "t": 28.18,
+   "end": 32.88,
+   "text": "L'application s'ouvre sur un espace discret. Pas de compte, rien à partager.",
+   "voice": "f"
+  },
+  {
+   "t": 33.38,
+   "end": 36.8,
+   "text": "On choisit sa langue : français, fon ou yoruba.",
+   "voice": "f"
+  },
+  {
+   "t": 37.8,
+   "end": 41.44,
+   "text": "Dans les histoires, on vit la situation comme une vraie conversation.",
+   "voice": "f"
+  },
+  {
+   "t": 41.94,
+   "end": 45.51,
+   "text": "Chaque choix a une conséquence, expliquée sans jamais juger.",
+   "voice": "f"
+  },
+  {
+   "t": 47.41,
+   "end": 51.38,
+   "text": "Puis le chantage arrive. La pression monte, le temps presse.",
+   "voice": "f"
+  },
+  {
+   "t": 51.88,
+   "end": 57.91,
+   "text": "Ayidotè apprend le bon réflexe : ne pas payer, garder les preuves, et en parler à quelqu'un de confiance.",
+   "voice": "f"
+  },
+  {
+   "t": 59.21,
+   "end": 64.19,
+   "text": "Un lien trop beau pour être vrai ? On ouvre une fausse page, sans aucun risque.",
+   "voice": "f"
+  },
+  {
+   "t": 64.69,
+   "end": 67.21,
+   "text": "Et on cherche soi-même les indices du piège.",
+   "voice": "f"
+  },
+  {
+   "t": 68.91,
+   "end": 73.16,
+   "text": "En classe ou entre amies, on joue ensemble, sur un seul téléphone.",
+   "voice": "f"
+  },
+  {
+   "t": 73.66,
+   "end": 78.89,
+   "text": "Vrai ou piège ? On discute, on vote, puis on découvre les signes qui devaient alerter.",
+   "voice": "f"
+  },
+  {
+   "t": 80.79,
+   "end": 85.86,
+   "text": "Et si le danger est réel ? Un appui long sur l'icône ouvre un simple carnet de notes.",
+   "voice": "f"
+  },
+  {
+   "t": 86.36,
+   "end": 90.5,
+   "text": "En arrière-plan, un proche choisi à l'avance est prévenu, avec la position.",
+   "voice": "f"
+  },
+  {
+   "t": 91.0,
+   "end": 94.87,
+   "text": "Pour l'instant, c'est une simulation. Ce sera notre prochaine étape.",
+   "voice": "f"
+  },
+  {
+   "t": 96.77,
+   "end": 101.1,
+   "text": "Ayidotè oriente aussi vers l'aide et les structures compétentes au Bénin.",
+   "voice": "f"
+  },
+  {
+   "t": 101.6,
+   "end": 105.28,
+   "text": "Et tout fonctionne hors connexion, sans envoyer aucune donnée.",
+   "voice": "f"
+  },
+  {
+   "t": 106.88,
+   "end": 110.59,
+   "text": "Ayidotè. En ligne comme dans la rue, protège-toi.",
+   "voice": "f"
+  },
+  {
+   "t": 111.09,
+   "end": 113.45,
+   "text": "Parce que la honte doit changer de camp.",
+   "voice": "f"
+  }
+ ]
+}
