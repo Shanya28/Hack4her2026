@@ -1,18 +1,22 @@
 {
   "id": "nouvel-ami",
   "order": 8,
-  "title": "Le nouvel ami",
+  "title": "Le piège d’un adulte inconnu",
   "profile": "Collégienne, 15 ans",
   "summary": "Un inconnu très gentil te demande de garder le secret, puis une photo, puis un rendez-vous.",
+  "avertissement": "Cette histoire parle d'un adulte qui manipule une adolescente en ligne.",
   "source": "ia",
   "relu": false,
   "mot": {
     "mot": "secret",
     "lecon": "Un adulte qui te demande de garder le secret sur vos échanges est un signal d'alarme. Un bon secret ne fait jamais peur.",
     "indices": [
+      "Il commence par S et compte 6 lettres.",
+      "Dans la recette de grand-mère, il y a toujours un ingrédient qui l'est.",
+      "Un coffre-fort sert à bien le garder.",
+      "On le « confie », on le « garde », parfois on le « trahit ».",
       "« Ne le dis à personne. »",
-      "Celui qui te le demande veut t'isoler.",
-      "Il commence par S et compte 6 lettres."
+      "Celui qui te le demande veut t'isoler."
     ],
     "chaud": [
       "cachotterie",
@@ -219,5 +223,37 @@
       ],
       "feedback": "Approcher une mineure en ligne pour la manipuler est puni par la loi. Parle, garde les preuves, appelle le 138."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "Un adulte qui manipule une mineure",
+    "leurres": [
+      "Le piratage de compte",
+      "Le harcèlement en meute",
+      "La fausse offre d’emploi"
+    ],
+    "vecu": "Un adulte très gentil t’a demandé de garder le secret, t’a offert un cadeau, a demandé une photo, puis un rendez-vous. C’est un piège pour manipuler une mineure, puni par la loi. Ce n’est jamais la faute de l’enfant.",
+    "gestes": [
+      "Un adulte qui te demande un secret, c’est un signal d’alarme.",
+      "N’envoie pas de photo et ne va jamais au rendez-vous.",
+      "Montre tout à un parent ou à un adulte de confiance.",
+      "Tu ne seras pas punie pour avoir parlé."
+    ],
+    "aide": [
+      {
+        "nom": "Ligne d’assistance aux enfants",
+        "numero": "138",
+        "pour": "si tu as moins de 18 ans"
+      },
+      {
+        "nom": "Brigade des mineurs",
+        "numero": "160",
+        "pour": "quand la victime est mineure"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "si tu es en danger"
+      }
+    ]
+  }
 }

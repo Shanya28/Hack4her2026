@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
 });
 
 /**
- * Ayidote talks to no server: the page may only load its own files. Links to
+ * Ayìdótɛ́ talks to no server: the page may only load its own files. Links to
  * official sites still open (navigation is not restricted), and tel: calls
  * still work. Added to production builds only.
  */

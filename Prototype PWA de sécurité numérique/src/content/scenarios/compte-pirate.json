@@ -1,18 +1,22 @@
 {
   "id": "compte-pirate",
   "order": 3,
-  "title": "Le code de trop",
+  "title": "Le piratage de compte",
   "profile": "Commerçante",
   "summary": "Une « amie » te demande un code reçu par SMS. Celui qui prend ton compte s'en sert pour te faire chanter.",
+  "avertissement": "Cette histoire parle d'un compte piraté et de chantage avec des photos privées.",
   "source": "ia",
   "relu": false,
   "mot": {
     "mot": "code",
     "lecon": "Un code reçu par SMS est la clé de ton compte. Personne, même une amie, n'a de raison de te le demander.",
     "indices": [
+      "Il commence par C et compte 4 lettres.",
+      "Une valise à cadenas en a un, à trois chiffres.",
+      "Les espions s'en servent pour écrire des messages que personne ne comprend.",
+      "Sur la route, il y en a un que tout le monde doit respecter.",
       "Tu le reçois souvent par SMS.",
-      "C'est la clé de ton compte : il ne se partage jamais.",
-      "Il commence par C et compte 4 lettres."
+      "C'est la clé de ton compte : il ne se partage jamais."
     ],
     "chaud": [
       "mot de passe",
@@ -225,5 +229,37 @@
       ],
       "feedback": "Un compte piraté peut devenir un outil de chantage. Ne cède pas : preuves, plainte, soutien."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "Le piratage de compte",
+    "leurres": [
+      "La surveillance dans le couple",
+      "Le harcèlement en groupe",
+      "La fausse offre d’emploi"
+    ],
+    "vecu": "Une fausse « amie » a obtenu ton code reçu par SMS, a pris ton compte, a écrit à tes contacts à ta place, puis t’a fait chanter. C’est un piratage suivi de chantage.",
+    "gestes": [
+      "Ne donne jamais un code reçu par SMS, même à une proche.",
+      "Vérifie par un appel quand une « amie » change de numéro.",
+      "Récupère ton compte et active la vérification en deux étapes.",
+      "Préviens tes contacts et tes clients."
+    ],
+    "aide": [
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "APDP",
+        "numero": "150",
+        "pour": "si tes informations personnelles circulent"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "pour porter plainte"
+      }
+    ]
+  }
 }

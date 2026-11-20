@@ -58,12 +58,33 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
     const mot = scenario.mot;
     if (!isText(mot.mot) || /\s/.test(mot.mot.trim())) fail("mot du jour : « mot » doit être un seul mot");
     if (!isText(mot.lecon)) fail("mot du jour : « lecon » manquante");
-    if (!Array.isArray(mot.indices) || mot.indices.length !== 3 || !mot.indices.every(isText))
-      fail("mot du jour : 3 indices attendus");
+    if (!Array.isArray(mot.indices) || mot.indices.length !== 6 || !mot.indices.every(isText))
+      fail("mot du jour : 6 indices attendus (la première lettre en premier)");
     for (const key of ["chaud", "tiede"])
       if (!Array.isArray(mot[key]) || mot[key].length < 5 || !mot[key].every(isText))
         fail(`mot du jour : au moins 5 mots dans « ${key} »`);
   }
+
+  // Bilan de fin : nommer la violence, puis quoi faire et à qui s'adresser.
+  // Seuls les numéros déjà présents sur la page Aide sont acceptés.
+  const HELP_NUMBERS = ["117", "114", "138", "160", "150", "151"];
+  if (scenario.bilan !== undefined) {
+    const b = scenario.bilan;
+    if (!isText(b.violence)) fail("bilan : « violence » manquante");
+    if (!Array.isArray(b.leurres) || b.leurres.length !== 3 || !b.leurres.every(isText))
+      fail("bilan : 3 mauvaises réponses attendues dans « leurres »");
+    else if (b.leurres.includes(b.violence)) fail("bilan : la bonne réponse est aussi dans « leurres »");
+    if (!isText(b.vecu)) fail("bilan : « vecu » manquant");
+    if (!Array.isArray(b.gestes) || b.gestes.length < 2 || b.gestes.length > 5 || !b.gestes.every(isText))
+      fail("bilan : 2 à 5 « gestes » attendus");
+    if (!Array.isArray(b.aide) || b.aide.length < 1 || b.aide.length > 4) fail("bilan : 1 à 4 contacts attendus dans « aide »");
+    else
+      for (const a of b.aide) {
+        if (!isText(a.nom) || !isText(a.pour)) fail("bilan : chaque contact a un « nom » et un « pour »");
+        if (a.numero !== undefined && !HELP_NUMBERS.includes(a.numero))
+          fail(`bilan : numéro ${a.numero} absent de la page Aide`);
+      }
+  } else fail("bilan de fin manquant");
 
   const steps = Array.isArray(scenario.steps) ? scenario.steps : [];
   if (steps.length < 3 || steps.length > 7) fail(`il faut 3 à 7 situations (trouvé : ${steps.length})`);
@@ -89,6 +110,13 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".json")).sort()) {
     if (step.attachment) {
       for (const key of ["label", "url", "cta", "pageUrl", "pageTitle", "pageText", "clue"])
         if (!isText(step.attachment[key])) fail(`${where} : lien piégé sans « ${key} »`);
+      if (step.attachment.style !== undefined) {
+        if (step.attachment.style !== "compte") fail(`${where} : style de page inconnu « ${step.attachment.style} »`);
+        if (!isText(step.attachment.service)) fail(`${where} : page « compte » sans « service »`);
+        const acces = step.attachment.acces;
+        if (!Array.isArray(acces) || acces.length < 2 || acces.length > 4 || !acces.every(isText))
+          fail(`${where} : page « compte » : 2 à 4 « acces » attendus`);
+      }
       if (!/example/.test(step.attachment.url ?? ""))
         fail(`${where} : l'adresse du lien doit être fictive (contenir « example »)`);
       return;
@@ -191,6 +219,42 @@ const RECIPE =
     console.log(`✗ ${file}`);
     for (const problem of problems) console.log(`    ${problem}`);
   } else console.log(`✓ ${file} — ${cards.length} messages, dont ${traps} pièges`);
+}
+
+// Traduction anglaise des histoires (src/content/langues/en.json) : chaque texte
+// affiché doit avoir sa phrase anglaise, et aucune clé ne doit viser une étape
+// qui n'existe plus (après l'ajout ou le retrait d'une étape).
+{
+  const enFile = path.resolve(dir, "../langues/en.json");
+  let en = null;
+  try {
+    en = JSON.parse(readFileSync(enFile, "utf8")).textes;
+  } catch {
+    // pas de traduction anglaise : rien à vérifier
+  }
+  if (en) {
+    const expected = new Set();
+    for (const file of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+      const s = JSON.parse(readFileSync(path.join(dir, file), "utf8"));
+      (s.steps ?? []).forEach((step, i) => {
+        const n = i + 1;
+        (step.messages ?? []).forEach((_, m) => expected.add(`${s.id}.m${n}-${m + 1}`));
+        if (step.attachment) expected.add(`${s.id}.cta${n}`);
+        (step.choices ?? []).forEach((_, c) =>
+          ["c", "o", "a"].forEach((k) => expected.add(`${s.id}.${k}${n}-${c + 1}`)),
+        );
+        if (isText(step.feedback)) expected.add(`${s.id}.f${n}`);
+      });
+    }
+    const missing = [...expected].filter((k) => !isText(en[k]));
+    const orphans = Object.keys(en).filter((k) => !expected.has(k));
+    if (missing.length || orphans.length) {
+      errors += missing.length + orphans.length;
+      console.log("✗ langues/en.json");
+      for (const k of missing) console.log(`    phrase anglaise manquante : ${k}`);
+      for (const k of orphans) console.log(`    clé sans texte français (étape déplacée ?) : ${k}`);
+    } else console.log(`✓ langues/en.json — ${expected.size} phrases`);
+  }
 }
 
 if (toReview.length)

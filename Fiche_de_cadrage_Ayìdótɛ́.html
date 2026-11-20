@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fiche de cadrage – Ayìdótɛ́</title>
+    <!-- Source de Fiche_de_cadrage_Ayìdótɛ́.pdf : ouvrir dans Chrome, puis Imprimer > Enregistrer au format PDF (A4, sans en-têtes). -->
+    <style>
+      @page {
+        size: A4;
+        margin: 14mm 13mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Noto Sans", "DejaVu Sans", Arial, sans-serif;
+        font-size: 9.6pt;
+        line-height: 1.45;
+        color: #2a2228;
+      }
+      .kicker {
+        font-size: 7.6pt;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        color: #b0613f;
+        margin: 0;
+      }
+      h1 {
+        font-size: 19pt;
+        color: #49213d;
+        margin: 2pt 0 1pt;
+      }
+      .meta {
+        font-size: 8.6pt;
+        color: #6b5f66;
+        margin: 0 0 12pt;
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 6pt;
+        font-size: 11.5pt;
+        color: #49213d;
+        margin: 13pt 0 6pt;
+        break-after: avoid;
+      }
+      h2 span {
+        width: 15pt;
+        height: 15pt;
+        border-radius: 50%;
+        background: #49213d;
+        color: #fff;
+        font-size: 8.5pt;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      p {
+        margin: 0 0 5pt;
+      }
+      .pitch {
+        background: #f6efe6;
+        border-left: 3pt solid #b0613f;
+        padding: 7pt 9pt;
+        margin-bottom: 7pt;
+      }
+      .note {
+        background: #fbf0d9;
+        border: 0.75pt solid #e3c88f;
+        border-radius: 3pt;
+        padding: 7pt 9pt;
+      }
+      ol,
+      ul {
+        margin: 0 0 5pt;
+        padding-left: 15pt;
+      }
+      li {
+        margin-bottom: 1.5pt;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8.5pt;
+        line-height: 1.38;
+      }
+      th {
+        background: #49213d;
+        color: #fff;
+        text-align: left;
+        padding: 4pt 6pt;
+        font-size: 8.4pt;
+      }
+      td {
+        padding: 4.5pt 6pt;
+        vertical-align: top;
+        border-bottom: 0.75pt solid #e2d8cd;
+      }
+      tr {
+        break-inside: avoid;
+      }
+      .ok {
+        color: #3f6b3a;
+        font-weight: 700;
+      }
+      .part {
+        color: #a56a12;
+        font-weight: 700;
+      }
+      .todo {
+        color: #a23a2f;
+        font-weight: 700;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14pt;
+      }
+      .cols h3 {
+        font-size: 9.6pt;
+        margin: 0 0 3pt;
+      }
+      .footer {
+        margin-top: 12pt;
+        padding-top: 6pt;
+        border-top: 0.75pt solid #e2d8cd;
+        font-size: 7.8pt;
+        color: #6b5f66;
+      }
+      .new {
+        color: #b0613f;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="kicker">HACK4HER 2026 – TECH FOR HER SAFETY • DÉFI 4 : HYGIÈNE NUMÉRIQUE</p>
+    <h1>Fiche de cadrage – Ayìdótɛ́</h1>
+    <p class="meta">
+      Mise à jour du vendredi 13 novembre 2026 • Epitech Bénin • Équipe : Idvaresse, Aichath, Shanya, Christelle,
+      Imane
+    </p>
+
+    <h2><span>1</span>Le problème ciblé</h2>
+    <p class="pitch">
+      Pour <strong>les jeunes femmes de 15 à 30 ans</strong>, qui ont besoin de
+      <strong>reconnaître les violences facilitées par la technologie et de savoir comment réagir</strong>, notre outil
+      <strong
+        >Ayìdótɛ́ les entraîne par 10 histoires interactives, des jeux de groupe et des conseils pratiques</strong
+      >, afin qu'<strong
+        >elles sachent se protéger, conserver les preuves et ne restent pas seules</strong
+      >.
+    </p>
+    <p>
+      <strong>Le nom :</strong> « Ayìdótɛ́ » vient du fon <em>ayi ɖo te</em>, « rester vigilante, l'esprit en éveil » :
+      c'est le réflexe de prévention que l'outil enseigne.
+    </p>
+    <p>
+      Une partie des violences faites aux femmes passe par le téléphone : chantage aux images intimes, comptes
+      piratés, contrôle dans le couple, faux profils, harcèlement en groupe, traque. Elles touchent d'abord les plus
+      jeunes : 58 % des filles et jeunes femmes de 15 à 25 ans ont déjà été harcelées en ligne (Plan International,
+      2020, 22 pays dont le Bénin). Ayìdótɛ́ intervient <strong>avant</strong> la violence : apprendre à reconnaître un
+      piège et à réagir sans céder à la pression.
+    </p>
+    <p>
+      <strong>Public principal :</strong> jeunes femmes de 15 à 30 ans, téléphone Android d'entrée de gamme, connexion
+      limitée. <strong>Public élargi :</strong> groupes d'élèves et de participantes en séance animée ; personnes qui
+      lisent difficilement ou malvoyantes, grâce au mode écoute (français, fon, yoruba).
+    </p>
+
+    <h2><span>2</span>Le service public utilisateur</h2>
+    <div class="note">
+      <p>
+        <strong>Proposition à valider avec le mentor.</strong> Structure porteuse envisagée : l'<strong
+          >Institut National de la Femme (INF)</strong
+        >, qui diffuserait l'outil dans ses actions de sensibilisation. Relais de terrain possibles : les
+        <strong>Centres de Promotion Sociale</strong> et les
+        <strong>établissements scolaires et universitaires</strong>. Les jeux de groupe sont conçus pour ces séances :
+        un seul téléphone, une animatrice, un groupe.
+      </p>
+      <p style="margin: 0">
+        L'outil ne reçoit aucune plainte : il prépare et oriente. La page Aide reprend les numéros courts de la liste
+        de l'ARCEP Bénin (juin 2026), recoupés avec la plateforme officielle VBG-FT du Gouvernement
+        (adovbg-ft.social.gouv.bj) et la formation UNFPA Bénin sur l'hygiène numérique,
+        <strong>à faire confirmer par le mentor</strong>. Pendant le hackathon, ces numéros sont seulement
+        affichés : <strong>aucun appel ne part de l'application</strong>.
+      </p>
+    </div>
+
+    <h2><span>3</span>Le parcours d'usage</h2>
+    <ol>
+      <li>
+        <strong>Premier lancement :</strong> un écran de bienvenue présente l'application et propose la langue
+        (français, fon, yoruba) ou l'écoute ; elle choisit un <strong>personnage fictif</strong> (Afi ou Maya), puis
+        peut installer l'application ou le faire plus tard. Aucun compte.
+      </li>
+      <li>
+        <strong>Accueil :</strong> l'histoire du jour, une ligne « Reprendre » et la tuile « Mes résultats ». Barre du
+        bas : Accueil, Jouer, S'éduquer, Paramètres. Un bouton « Quitter » est présent sur chaque écran.
+      </li>
+      <li>
+        <strong>Une histoire :</strong> dans Jouer › Histoires, elle choisit parmi 10 histoires. Une fiche annonce le
+        sujet (« tu peux arrêter à tout moment ») et propose la langue, la voix et le compte à rebours. Pour l'histoire
+        du jour, une fenêtre propose de deviner le <strong>mot du jour</strong> (ou de passer), puis un cadenas
+        s'ouvre.
+      </li>
+      <li>
+        Les messages arrivent un par un ; une jauge montre la pression de l'interlocuteur ; chaque choix a sa
+        conséquence, expliquée sans jugement. Le lien piégé ouvre une <strong>fausse page de connexion</strong> où
+        elle touche les indices du piège ; aucune saisie n'est possible.
+      </li>
+      <li>
+        Ses choix protecteurs <strong>débloquent les cartes</strong> « Mes 6 réflexes » et des
+        <strong>badges</strong>, visibles dans le tableau de bord « Mes résultats ».
+      </li>
+      <li>
+        <strong>En groupe</strong> (Jouer › Jeu de groupe) : le grand quiz en équipes, « Vrai ou piège ? » et les
+        défis en groupe (le Code du numérique, les bonnes attitudes, le bouton d'alerte).
+      </li>
+      <li>
+        <strong>S'éduquer :</strong> les 6 réflexes, les bons gestes (les 5 piliers de l'hygiène numérique), ses
+        droits et l'aide au Bénin.
+      </li>
+      <li>
+        <strong>Paramètres :</strong> « Trouver de l'aide » en tête, langue, mode écoute, alerte discrète,
+        « Effacer en quittant vite » et « Tout effacer ».
+      </li>
+    </ol>
+
+    <h2><span>4</span>La fonctionnalité minimale</h2>
+    <p>
+      <strong>Une histoire interactive jouable de bout en bout</strong> (fiche de l'histoire, cadenas, conversation,
+      choix, lien piégé, réflexes débloqués), suivie de la page Aide et du bouton « Quitter ». En démonstration, nous
+      montrons aussi un jeu de groupe (« Vrai ou piège ? » ou les défis) et le mode écoute en fon.
+    </p>
+    <p>
+      <strong>Si le temps manque</strong>, ordre de retrait : alerte discrète, puis aperçus « à venir » (quiz
+      multi-téléphones, assistant IA), puis histoires écrites avec l'IA non relues.
+    </p>
+
+    <h2><span>5</span>État d'avancement du prototype</h2>
+    <table>
+      <tr>
+        <th style="width: 21%">Module</th>
+        <th style="width: 10%">État</th>
+        <th style="width: 37%">Ce qui existe dans le prototype</th>
+        <th>Ce qui reste</th>
+      </tr>
+      <tr>
+        <td>Histoires (défi 4) <span class="new">10 histoires</span></td>
+        <td class="ok">Jouable</td>
+        <td>
+          10 histoires sur les VBG-FT : sextorsion, fausse offre d'emploi, compte piraté, contrôle dans le couple,
+          faux profil, harcèlement en groupe, chantage d'un ex, pédopiégeage, traque, harcèlement par un supérieur.
+          Fiche d'avertissement, mot du jour, cadenas, jauge de pression
+        </td>
+        <td>Relecture des 9 histoires écrites avec l'IA (« relu » : non), en priorité « Le nouvel ami »</td>
+      </tr>
+      <tr>
+        <td>Jeux de groupe (défi 4)</td>
+        <td class="ok">Jouable</td>
+        <td>
+          Grand quiz en équipes (12 questions) ; « Vrai ou piège ? » (13 messages, dont 4 fiables) ; défis en groupe
+          (22 défis sur la loi, les attitudes et l'alerte)
+        </td>
+        <td>Test avec un vrai groupe ; relecture des défis sur la loi par une personne qui connaît le droit béninois</td>
+      </tr>
+      <tr>
+        <td>Simulation de lien piégé</td>
+        <td class="ok">Fait</td>
+        <td>Fausse page fictive dans chaque histoire, chasse aux indices ; aucune saisie possible</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Quiz, réflexes et résultats</td>
+        <td class="ok">Fait</td>
+        <td>
+          Quiz de 5 questions ; fiche « Mes 6 réflexes » ; tableau de bord « Mes résultats » avec rang, histoires
+          jouées et 9 badges, sans classement entre joueuses
+        </td>
+        <td>Relecture des conseils par le mentor</td>
+      </tr>
+      <tr>
+        <td>S'éduquer</td>
+        <td class="ok">Fait</td>
+        <td>
+          Réflexes ; bons gestes repris des 5 piliers UNFPA (comptes, confidentialité, bloquer et signaler, réflexes du
+          quotidien) ; droits et aide
+        </td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Aide et orientation (défis 3 et 1)</td>
+        <td class="ok">Fait</td>
+        <td>
+          Police (117), INF (114), aide aux enfants (138), Brigade des mineurs (160), APDP (150), CNIN (151) ;
+          plateforme VBG-FT ; lois (2011-26, 2021-11, Code du numérique 2017-20 modifié par 2020-35) ; droits de la
+          victime ; aider une amie. Numéros affichés sans bouton d'appel (« Appel désactivé pendant la
+          démonstration »)
+        </td>
+        <td>Confirmation des numéros par le mentor ; réactiver les appels après les vérifications</td>
+      </tr>
+      <tr>
+        <td>Sortie rapide et discrétion</td>
+        <td class="ok">Fait</td>
+        <td>
+          Bouton « Quitter » sur chaque écran (et touche Échap) : page neutre, retour impossible ; option d'effacement
+          en quittant ; nom et aperçu de lien neutres
+        </td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Alerte discrète (défi 5)</td>
+        <td class="part">Simulation</td>
+        <td>Appui long sur l'icône, faux carnet de notes, 3 secondes pour annuler ; rien n'est envoyé</td>
+        <td>
+          Choisir l'envoi réel : SMS pré-rempli (un geste), serveur d'envoi ou application Android
+        </td>
+      </tr>
+      <tr>
+        <td>Grille Safety by Design (défi 6)</td>
+        <td class="part">Partiel</td>
+        <td>Engagements et tableau risque / prévention / limite dans l'application ; fiche technique et de risques</td>
+        <td>L'utiliser pour les tests</td>
+      </tr>
+      <tr>
+        <td>Contrôle des contenus</td>
+        <td class="ok">Fait</td>
+        <td>
+          Script qui vérifie chaque histoire et chaque message : aucune marque, aucune coordonnée réelle, ton non
+          culpabilisant, « le signe, jamais la recette »
+        </td>
+        <td>La justesse des conseils reste à relire par une personne</td>
+      </tr>
+      <tr>
+        <td>Hors ligne (PWA)</td>
+        <td class="part">À tester</td>
+        <td>
+          En ligne en HTTPS, installable (vérifié avec Chrome), fonctionne hors connexion, application de 0,7 Mo hors
+          voix ; avertissement dans les navigateurs intégrés aux réseaux sociaux
+        </td>
+        <td>Test d'installation et d'usage hors ligne sur téléphone d'entrée de gamme</td>
+      </tr>
+      <tr>
+        <td>Audio et langues locales</td>
+        <td class="part">Partiel</td>
+        <td>
+          Mode écoute ; voix françaises ; fon et yoruba traduits et lus automatiquement ; invitation à mettre des
+          écouteurs
+        </td>
+        <td>
+          Relecture par des locutrices ; traduire les histoires nouvelles ou réécrites ; ajouter le mina
+        </td>
+      </tr>
+      <tr>
+        <td>À venir</td>
+        <td class="todo">Aperçu</td>
+        <td>
+          Quiz « chacune sur son téléphone » (simulé) ; assistant IA « Veux-tu savoir quelque chose en particulier ? »
+          (réponses préparées, rien n'est envoyé)
+        </td>
+        <td>Un service de relais entre téléphones ; un serveur et des garde-fous pour l'IA</td>
+      </tr>
+    </table>
+
+    <h2><span>6</span>Sécurité et règles respectées</h2>
+    <div class="cols">
+      <div>
+        <h3>Safety by Design – les 4 piliers</h3>
+        <ul>
+          <li><strong>Confidentialité :</strong> aucun compte, aucune collecte ; tout reste sur le téléphone.</li>
+          <li>
+            <strong>Sécurité par défaut :</strong> nom, icône et aperçu de lien neutres ; bouton « Quitter » partout ;
+            la page ne charge que ses propres fichiers ; compte à rebours désactivé et aucune vibration sur les
+            menaces.
+          </li>
+          <li>
+            <strong>Accessibilité :</strong> langage simple, grands boutons, mode écoute en français, fon et yoruba,
+            application légère qui marche hors ligne.
+          </li>
+          <li>
+            <strong>Recours et contrôle humain :</strong> un avertissement avant chaque histoire et un accès à l'aide ;
+            les contenus écrits avec l'IA sont marqués et doivent être relus avant usage réel.
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3>Règles du hackathon</h3>
+        <ul>
+          <li>Uniquement des scénarios fictifs et des données synthétiques.</li>
+          <li>Aucune plainte, aucun témoignage, aucun contenu intime réel (image « masquée » dans l'histoire).</li>
+          <li>L'alerte est une simulation affichée comme telle ; l'outil n'appelle personne à la place de l'utilisatrice.</li>
+          <li>Aucune connexion à des services d'urgence réels : les numéros d'aide sont affichés, mais l'appel depuis l'application est désactivé.</li>
+          <li>Aucune marque réelle imitée ; aucun mot de passe lu ni enregistré.</li>
+          <li>Ton non culpabilisant : la violence n'est jamais la faute de la personne qui la subit.</li>
+          <li>
+            <strong>Ne jamais apprendre à piéger :</strong> personne ne joue l'arnaqueur ; on montre le signe vu par la
+            victime, jamais la méthode ; les points récompensent seulement la vigilance.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h2><span>7</span>Obstacles et points ouverts</h2>
+    <ul>
+      <li>
+        <strong>Numéros d'aide :</strong> recoupés entre l'ARCEP, la plateforme VBG-FT et la formation UNFPA, mais
+        l'INF apparaît au 114 dans deux sources et au 7999 dans une autre ; à confirmer avant toute diffusion.
+      </li>
+      <li>
+        <strong>Relecture :</strong> 9 histoires sur 10, les 13 messages de « Vrai ou piège ? » et les défis sur la loi
+        n'ont pas encore été relus par une personne.
+      </li>
+      <li>
+        <strong>Langues locales :</strong> traductions et voix automatiques, non relues ; plusieurs histoires
+        s'affichent encore en français en mode fon ou yoruba.
+      </li>
+      <li>
+        <strong>Alerte réelle :</strong> une application web ne peut pas envoyer de SMS seule ; le mode d'envoi reste à
+        choisir.
+      </li>
+      <li><strong>Hors ligne :</strong> à vérifier sur un vrai téléphone d'entrée de gamme.</li>
+      <li>
+        <strong>Statistiques :</strong> pas encore de chiffre national clair sur les violences en ligne au Bénin ; les
+        chiffres du CNIN cités par la presse sont à vérifier à la source.
+      </li>
+    </ul>
+    <p>
+      <strong>Questions pour le mentor :</strong> quelle structure publique retenir ? Les numéros de la page Aide
+      sont-ils les bons ? L'histoire « Le nouvel ami » (pédopiégeage) convient-elle aux plus jeunes ? Les conseils des
+      histoires, des jeux et des défis sur la loi sont-ils justes ? Quel mode d'envoi pour l'alerte ?
+    </p>
+
+    <h2><span>8</span>Plan de travail du vendredi 13 novembre</h2>
+    <table>
+      <tr>
+        <th style="width: 19%">Quand</th>
+        <th>Ce qui doit exister</th>
+        <th style="width: 19%">Qui</th>
+      </tr>
+      <tr>
+        <td rowspan="5">09h20 – 10h30</td>
+        <td>Test d'installation et hors ligne sur téléphone d'entrée de gamme, publication de la version finale</td>
+        <td>Idvaresse</td>
+      </tr>
+      <tr>
+        <td>Finitions de « Vrai ou piège ? » et du nouveau design, test du raccourci d'alerte</td>
+        <td>Aichath</td>
+      </tr>
+      <tr>
+        <td>Relecture des 13 messages du jeu et des 2 histoires écrites avec l'IA, passage de « relu » à oui</td>
+        <td>Shanya</td>
+      </tr>
+      <tr>
+        <td>Test du jeu avec un groupe extérieur, test de la voix des messages</td>
+        <td>Christelle</td>
+      </tr>
+      <tr>
+        <td>Confirmation des numéros d'aide avec le mentor, grille en 4 piliers, fiche technique et de risques</td>
+        <td>Imane</td>
+      </tr>
+      <tr>
+        <td>10h30</td>
+        <td>Tous les modules en version minimale, fusionnés ; ce qui n'est pas prêt sort de la démo</td>
+        <td>Toutes</td>
+      </tr>
+      <tr>
+        <td>10h45 – 12h15</td>
+        <td>Tests : fonction, accessibilité, sécurité, biais, données fictives ; fiche d'analyse des risques</td>
+        <td>Toutes</td>
+      </tr>
+      <tr>
+        <td>12h15</td>
+        <td>Gel et dépôt des 3 livrables : démonstration, fiche technique et de risques, support de pitch</td>
+        <td>Idvaresse, Imane</td>
+      </tr>
+      <tr>
+        <td>14h00</td>
+        <td>Démonstration et pitch (15 min, échanges avec le jury inclus)</td>
+        <td>Toutes</td>
+      </tr>
+    </table>
+
+    <p class="footer">
+      Ayìdótɛ́ est un prototype pédagogique : il ne contacte pas les secours, ne remplace pas un accompagnement
+      professionnel et ne garantit pas la détection d'un danger. Toute utilisation réelle nécessitera des vérifications
+      techniques, juridiques et de sécurité.
+    </p>
+  </body>
+</html>

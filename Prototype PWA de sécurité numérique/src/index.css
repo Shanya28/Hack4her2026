@@ -5622,3 +5622,906 @@ textarea {
 .defi-stars .on {
   color: var(--orange-main);
 }
+
+/* Quick exit everywhere: in the game bars, and floating where there is no bar */
+.team-bar.with-exit {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+.vop-bar.with-exit {
+  grid-template-columns: 44px 1fr auto auto;
+}
+.chat-header .quick-exit {
+  flex: none;
+}
+.quick-exit-float {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(12px, calc(50% - 215px + 12px));
+  z-index: 60;
+}
+
+/* Headphones prompt and content note */
+.modal-icon.big {
+  width: 84px;
+  height: 84px;
+}
+.headphones-modal h2 {
+  font-size: 24px;
+}
+.content-note .resource-icon {
+  margin: 8px 0 14px;
+}
+.content-note h1 {
+  font-size: 24px;
+  line-height: 1.3;
+}
+.content-note .btn,
+.content-note button.button {
+  margin-top: 10px;
+}
+
+/* ---------- Refonte du parcours ---------- */
+
+/* Welcome: what the app is, and the language */
+.welcome-about {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.welcome-about li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.welcome-about li > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--orange-main);
+}
+.welcome-lang-label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.welcome-lang {
+  margin-bottom: 10px;
+}
+
+/* Install offer during onboarding */
+.install-offer {
+  text-align: left;
+}
+.resource-icon.big {
+  width: 64px;
+  height: 64px;
+  margin: 18px 0 14px;
+}
+
+/* Home */
+.resume-line {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--beige-2);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+}
+.resume-line span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.today-card.compact {
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.today-card.compact strong {
+  font-size: 24px;
+}
+.results-tile {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 14px 0;
+  padding: 16px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--white);
+  color: var(--ink);
+  text-align: left;
+  box-shadow: 0 6px 18px #49372d14;
+}
+.results-tile .eyebrow {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.results-tile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 13px;
+}
+.results-tile-stats strong {
+  font-size: 18px;
+  margin-right: 3px;
+}
+
+/* Story setup and padlock */
+.setup-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 14px;
+}
+.setup-head small {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.setup-head strong {
+  font-size: 22px;
+}
+.setup-note {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--beige);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.setup-note > svg {
+  flex: none;
+  color: var(--orange-main);
+}
+.setup-note p {
+  margin: 0;
+}
+.word-popup {
+  border: 3px solid var(--orange-main);
+}
+.word-popup h2 {
+  font-size: 21px;
+}
+.story-unlock {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  background: var(--beige);
+}
+.padlock .body {
+  fill: var(--orange-main);
+}
+.padlock .shackle {
+  stroke: var(--ink);
+  transform-origin: 86px 62px;
+  animation: padlock-open 0.7s 0.35s cubic-bezier(0.5, -0.4, 0.4, 1.4) forwards;
+}
+.padlock .hole,
+.padlock .hole-line {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+.padlock {
+  animation: padlock-shake 0.35s ease-in-out;
+}
+@keyframes padlock-open {
+  to {
+    transform: translateY(-12px) rotate(28deg);
+  }
+}
+@keyframes padlock-shake {
+  25% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(6deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .padlock,
+  .padlock .shackle {
+    animation: none;
+  }
+}
+
+/* S'éduquer and the assistant preview */
+.learn-title {
+  font-size: 24px;
+  margin: 6px 0 14px;
+}
+.ia-thread {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.ia-thread > div {
+  display: grid;
+  gap: 10px;
+}
+.ia-bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.ia-bubble.bot {
+  background: var(--white);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 4px 12px #49372d12;
+}
+.ia-bubble.me {
+  justify-self: end;
+  background: var(--orange-soft);
+  border-bottom-right-radius: 6px;
+}
+.ia-help {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--beige-2);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13px;
+}
+.ia-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ia-chips button {
+  border: 2px solid var(--orange-main);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+.ia-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: var(--beige-2);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Results dashboard */
+.rank-hero.small .rank-art {
+  width: 110px;
+  height: 110px;
+}
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+.results-stats > div {
+  padding: 12px 6px;
+  border-radius: 16px;
+  background: var(--white);
+  text-align: center;
+}
+.results-stats strong {
+  display: block;
+  font-size: 22px;
+}
+.results-stats small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.badge {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 12px 6px;
+  border-radius: 16px;
+  background: var(--beige);
+  text-align: center;
+  opacity: 0.75;
+}
+.badge.won {
+  background: var(--white);
+  opacity: 1;
+  box-shadow: 0 4px 12px #49372d14;
+}
+.badge span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--beige-2);
+}
+.badge.won span {
+  background: var(--orange-main);
+}
+.badge strong {
+  font-size: 12px;
+  line-height: 1.25;
+}
+.badge small {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+.results-stories {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.results-stories button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  text-align: left;
+  font-size: 14px;
+}
+.results-stories small {
+  color: var(--muted);
+}
+/* The install card no longer has a « Plus tard » link under it. */
+.install-card .wide-link {
+  padding-bottom: 14px;
+}
+
+/* Help numbers shown without a call button (hackathon demonstration) */
+.help-number {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+}
+.help-number strong {
+  font-size: 22px;
+  letter-spacing: 0.02em;
+}
+.help-number small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* End-of-story recap: name the violence, the padlock opens, then the recap */
+.bilan-lock {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: var(--beige-2);
+  color: var(--ink);
+  margin: 6px 0 12px;
+  animation: padlock-shake 0.5s 0.3s ease-in-out 2;
+}
+.bilan-question {
+  font-size: 24px;
+  line-height: 1.2;
+  margin: 4px 0 16px;
+}
+.bilan-options {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.bilan-options .story-choice {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  gap: 12px;
+}
+.bilan-options .story-choice > span {
+  flex: 1;
+}
+.bilan-options .story-choice:disabled {
+  cursor: default;
+}
+.bilan-options .bilan-wrong {
+  opacity: 0.45;
+  text-decoration: line-through;
+  animation: threat-shake 0.4s ease-in-out;
+}
+.bilan-unlock h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  max-width: 320px;
+  padding: 0 16px;
+  animation: bilan-pop 0.5s 0.9s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.bilan-reveal > * {
+  animation: bilan-rise 0.45s both ease-out;
+}
+.bilan-reveal > :nth-child(2) { animation-delay: 0.12s; }
+.bilan-reveal > :nth-child(3) { animation-delay: 0.3s; }
+.bilan-reveal > :nth-child(4) { animation-delay: 0.48s; }
+.bilan-reveal > :nth-child(n + 5) { animation-delay: 0.62s; }
+.bilan-name {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--orange-main);
+  color: var(--white);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.bilan-name small {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.bilan-name strong {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.bilan-vecu {
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.bilan-block {
+  background: var(--white);
+  border: 1px solid var(--beige-2);
+  border-radius: 20px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.bilan-block h2 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+.bilan-block ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: geste;
+  display: grid;
+  gap: 8px;
+  line-height: 1.45;
+}
+.bilan-block ol li {
+  counter-increment: geste;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+.bilan-block ol li::before {
+  content: counter(geste);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  font-weight: 800;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+}
+.bilan-aide {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.bilan-aide li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.bilan-aide b {
+  min-width: 52px;
+  text-align: center;
+  font-size: 18px;
+  background: var(--beige);
+  border-radius: 12px;
+  padding: 6px 4px;
+}
+.bilan-aide strong {
+  display: block;
+}
+.bilan-aide small {
+  color: var(--muted);
+}
+.bilan-screen .button {
+  width: 100%;
+  margin-top: 6px;
+}
+@keyframes bilan-pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes bilan-rise {
+  from { transform: translateY(14px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bilan-lock,
+  .bilan-unlock h1,
+  .bilan-reveal > *,
+  .bilan-options .bilan-wrong {
+    animation: none;
+  }
+}
+
+/* Défis en groupe: a clock per challenge, then "Temps écoulé !" */
+.defi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.defi-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--white);
+  border: 1px solid var(--beige-2);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.defi-clock.hurry {
+  background: var(--orange-main);
+  border-color: var(--orange-main);
+  color: var(--white);
+  animation: padlock-shake 0.4s ease-in-out infinite;
+}
+.defi-time {
+  height: 6px;
+  margin: 12px 0 4px;
+  border-radius: 3px;
+  background: var(--beige-2);
+  overflow: hidden;
+}
+.defi-time i {
+  display: block;
+  height: 100%;
+  background: var(--orange-main);
+  transition: width 1s linear;
+}
+.defi-timeup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 4px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--orange-main);
+  color: var(--white);
+  font-size: 18px;
+  animation: bilan-pop 0.4s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .defi-clock.hurry,
+  .defi-timeup {
+    animation: none;
+  }
+}
+
+/* Quiz: the character walks along, answers slide in, sparks on a good answer */
+.quiz-track {
+  position: relative;
+  margin: 4px 30px 0 22px;
+  height: 44px;
+}
+.quiz-track-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--sand);
+  overflow: hidden;
+}
+.quiz-track-line i {
+  display: block;
+  height: 100%;
+  background: var(--orange-main);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.quiz-walker {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  transition: left 0.6s cubic-bezier(0.3, 1.3, 0.5, 1);
+  animation: walker-bob 0.9s ease-in-out infinite;
+}
+.quiz-walker .portrait-small {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--white);
+  box-shadow: 0 3px 10px #49372d33;
+}
+.quiz .page-content.quiz-card {
+  padding-top: 30px;
+}
+.quiz-card > .eyebrow,
+.quiz-card > h1 {
+  animation: bilan-rise 0.45s both ease-out;
+}
+.quiz-card > h1 {
+  animation-delay: 0.06s;
+}
+.quiz-options button {
+  position: relative;
+  animation: quiz-in 0.4s both ease-out;
+  transition: transform 0.2s ease;
+}
+.quiz-options button:not(:disabled):active {
+  transform: scale(0.97);
+}
+.quiz-options button.correct.picked {
+  animation: quiz-pop 0.45s ease-out both;
+}
+.quiz-options button.wrong {
+  animation: threat-shake 0.45s ease-in-out both;
+}
+.quiz-options button.correct.glow {
+  animation: quiz-glow 1.2s 0.3s ease-in-out 2 both;
+}
+.sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sparks i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 50%;
+  background: var(--orange-main);
+  transform: rotate(var(--a)) translateX(0);
+  animation: spark-out 0.7s ease-out forwards;
+}
+.sparks i:nth-child(even) {
+  background: var(--orange-soft);
+}
+.quiz-streak {
+  margin: 14px 0 0;
+  text-align: center;
+  font-weight: 800;
+  color: var(--orange-main);
+  animation: bilan-pop 0.45s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.quiz-explain {
+  animation: bilan-rise 0.45s 0.15s both ease-out;
+}
+
+/* Quiz result: the score counts up, stars light up, confetti from 4/5 */
+.quiz-finish {
+  position: relative;
+  overflow: hidden;
+}
+.quiz-finish .finish-icon {
+  animation: bilan-pop 0.6s both cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.quiz-finish h1 .count {
+  display: inline-block;
+  min-width: 0.6em;
+}
+.quiz-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 4px;
+  font-size: 30px;
+  color: var(--sand);
+}
+.quiz-stars .on {
+  color: var(--orange-main);
+  animation: bilan-pop 0.4s both cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.quiz-finish .score-bar i {
+  background: var(--orange-main);
+  transition: width 0.38s ease;
+}
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation: confetti-fall linear 2 both;
+}
+.quiz-finish > :not(.confetti) {
+  position: relative;
+  z-index: 1;
+}
+@keyframes quiz-in {
+  from { transform: translateX(26px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes quiz-pop {
+  40% { transform: scale(1.05); }
+  to { transform: scale(1); }
+}
+@keyframes quiz-glow {
+  50% { box-shadow: 0 0 0 6px #f5823240; }
+}
+@keyframes spark-out {
+  from { transform: rotate(var(--a)) translateX(0) scale(1); opacity: 1; }
+  to { transform: rotate(var(--a)) translateX(150px) scale(0.3); opacity: 0; }
+}
+@keyframes walker-bob {
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+@keyframes confetti-fall {
+  to { transform: translateY(110vh) rotate(var(--tilt)) rotateY(720deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-walker,
+  .quiz-card > .eyebrow,
+  .quiz-card > h1,
+  .quiz-options button,
+  .quiz-options button.correct.picked,
+  .quiz-options button.wrong,
+  .quiz-options button.correct.glow,
+  .quiz-streak,
+  .quiz-explain,
+  .quiz-finish .finish-icon,
+  .quiz-stars .on {
+    animation: none;
+  }
+  .sparks,
+  .confetti {
+    display: none;
+  }
+}
+
+/* Fake "choose an account" page: a made-up service, no real brand, nothing to send */
+.account-page {
+  text-align: center;
+}
+.account-logo {
+  width: 52px;
+  height: 52px;
+  margin: 4px auto 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 4px 14px #49372d22;
+}
+.account-logo i {
+  border-radius: 50%;
+}
+.account-logo i:nth-child(1) { background: #5b7fd6; }
+.account-logo i:nth-child(2) { background: #d65b5b; }
+.account-logo i:nth-child(3) { background: #e3b341; }
+.account-logo i:nth-child(4) { background: #4f9d69; }
+.account-kicker {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.account-page .fake-promise h1 {
+  margin-bottom: 2px;
+}
+.account-form {
+  text-align: left;
+  border-radius: 16px;
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+.account-row,
+.account-access {
+  width: 100%;
+  border: 1px solid #dfe3ea;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 10px 12px;
+  text-align: left;
+  font: inherit;
+  color: #2b2f36;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.account-row strong {
+  display: block;
+  font-size: 14px;
+}
+.account-row small {
+  color: #6b7280;
+  font-size: 12px;
+}
+.account-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #5b7fd6;
+  color: var(--white);
+  flex: none;
+}
+.account-avatar.other {
+  background: #eef0f4;
+  color: #6b7280;
+}
+.account-access strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.account-access ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4b5563;
+}

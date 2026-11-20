@@ -1,18 +1,22 @@
 {
   "id": "traque",
   "order": 9,
-  "title": "Il sait où je suis",
+  "title": "La traque en ligne",
   "profile": "Étudiante",
   "summary": "Un compte anonyme commente tes sorties, devine où tu es, puis trouve ta maison.",
+  "avertissement": "Cette histoire parle de quelqu'un qui suit une jeune femme et trouve sa maison.",
   "source": "ia",
   "relu": false,
   "mot": {
     "mot": "localisation",
     "lecon": "Ta position partagée en direct peut te mettre en danger. Garde-la pour toi et publie tes sorties après coup.",
     "indices": [
+      "Il commence par L et compte 12 lettres.",
+      "Le livreur en a besoin pour t'apporter ta commande.",
+      "Sur une carte, c'est souvent un petit point bleu.",
       "Ton téléphone peut la partager sans que tu y penses.",
       "Elle dit où tu te trouves.",
-      "Il commence par L et compte 12 lettres."
+      "Garde-la pour toi et publie tes sorties après coup."
     ],
     "chaud": [
       "position",
@@ -214,5 +218,37 @@
       ],
       "feedback": "Le harcèlement qui suit tes pas est une violence. Protège ta position, garde les preuves et alerte."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "La traque en ligne",
+    "leurres": [
+      "La fausse offre d’emploi",
+      "Le piratage de compte",
+      "L’usurpation d’identité"
+    ],
+    "vecu": "Un compte anonyme a suivi tes publications, a deviné où tu étais, puis a trouvé ta maison. C’est du harcèlement qui suit tes pas, et le danger peut devenir physique.",
+    "gestes": [
+      "Coupe le partage de position et publie tes sorties après coup.",
+      "Passe ton compte en privé.",
+      "Garde les captures.",
+      "Change tes trajets et ne rentre pas seule."
+    ],
+    "aide": [
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "si tu te sens en danger"
+      },
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour les crimes en ligne"
+      },
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      }
+    ]
+  }
 }

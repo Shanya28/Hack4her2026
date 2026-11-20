@@ -1,18 +1,22 @@
 {
   "id": "controle-couple",
   "order": 4,
-  "title": "Il veut tout voir",
+  "title": "La surveillance dans le couple",
   "profile": "En couple",
   "summary": "Ton copain exige ton code, ta position, puis installe une application pour te surveiller.",
+  "avertissement": "Cette histoire parle d'un copain qui surveille et contrôle sa copine.",
   "source": "ia",
   "relu": false,
   "mot": {
     "mot": "contrôle",
     "lecon": "Exiger tes codes, ta position ou tes messages, ce n'est pas de l'amour : c'est du contrôle. Tu as droit à ta vie privée, même en couple.",
     "indices": [
-      "Ce n'est pas de l'amour, même s'il dit le contraire.",
+      "Il commence par C et compte 8 lettres.",
+      "À l'école, c'est un autre mot pour une interrogation écrite.",
+      "Au bord de la route, la police en fait un.",
+      "Quand on le perd, on ne maîtrise plus rien.",
       "Il veut tes codes, ta position et tes messages.",
-      "Il commence par C et compte 8 lettres."
+      "Ce n'est pas de l'amour, même s'il dit le contraire."
     ],
     "chaud": [
       "surveillance",
@@ -216,5 +220,37 @@
       ],
       "feedback": "Le chantage pour t'empêcher de partir est une violence. La loi te protège : garde les preuves et demande de l'aide."
     }
-  ]
+  ],
+  "bilan": {
+    "violence": "Le contrôle dans le couple",
+    "leurres": [
+      "La sextorsion par un inconnu",
+      "Le harcèlement en groupe",
+      "La fausse offre d’emploi"
+    ],
+    "vecu": "Ton copain a exigé tes codes et ta position, a installé une application pour te surveiller, puis t’a menacée quand tu as voulu partir. Ce n’est pas de l’amour : c’est du contrôle, une violence dans le couple.",
+    "gestes": [
+      "Ton téléphone t’appartient, même en couple.",
+      "Vérifie les applications installées et change tes mots de passe depuis un appareil sûr.",
+      "Parles-en à une amie de confiance.",
+      "Si tu as peur de sa réaction, fais-toi aider avant d’agir."
+    ],
+    "aide": [
+      {
+        "nom": "Institut National de la Femme",
+        "numero": "114",
+        "pour": "pour être écoutée et accompagnée"
+      },
+      {
+        "nom": "Police Républicaine",
+        "numero": "117",
+        "pour": "si tu es en danger maintenant"
+      },
+      {
+        "nom": "CNIN",
+        "numero": "151",
+        "pour": "pour l’application espion"
+      }
+    ]
+  }
 }

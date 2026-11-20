@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import quizContent from "./content/quiz.json";
 import teamQuizContent from "./content/quiz-equipes.json";
 import vopContent from "./content/vrai-ou-piege.json";
@@ -6,9 +6,11 @@ import defisContent from "./content/defis.json";
 
 type Screen =
   | "welcome"
-  | "language"
-  | "intro"
   | "character"
+  | "install-offer"
+  | "learn"
+  | "ia"
+  | "results"
   | "home"
   | "story"
   | "scenarios"
@@ -25,6 +27,7 @@ type Screen =
   | "quiz"
   | "quiz-result"
   | "guide"
+  | "bilan"
   | "progress"
   | "privacy"
   | "legal"
@@ -40,8 +43,11 @@ type IconName =
   | "book"
   | "check"
   | "chevron"
+  | "clock"
   | "download"
   | "exit"
+  | "headphones"
+  | "learn"
   | "eye"
   | "help"
   | "home"
@@ -65,6 +71,12 @@ const icons: Record<IconName, React.ReactNode> = {
     </>
   ),
   back: <path d="m15 18-6-6 6-6" />,
+  clock: (
+    <>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 9v4l2.5 2.5M10 2h4" />
+    </>
+  ),
   book: (
     <>
       <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z" />
@@ -159,6 +171,18 @@ const icons: Record<IconName, React.ReactNode> = {
       <path d="M12 9v5m0 3h.01" />
     </>
   ),
+  learn: (
+    <>
+      <path d="M2 9.5 12 5l10 4.5-10 4.5z" />
+      <path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9.5V15" />
+    </>
+  ),
+  headphones: (
+    <>
+      <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+      <path d="M4 15a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2zM20 15a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" />
+    </>
+  ),
   exit: (
     <>
       <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
@@ -168,9 +192,9 @@ const icons: Record<IconName, React.ReactNode> = {
 };
 
 // ---------------------------------------------------------------------------
-// Quick exit. One tap leaves for a neutral page and replaces Ayidote in the
+// Quick exit. One tap leaves for a neutral page and replaces Ayìdótɛ́ in the
 // tab's history, so « Retour » does not bring it back. Optionally, it also
-// wipes what Ayidote keeps on the phone first. The Escape key does the same.
+// wipes what Ayìdótɛ́ keeps on the phone first. The Escape key does the same.
 // ---------------------------------------------------------------------------
 const QUICK_EXIT_URL = "https://www.google.com/search?q=m%C3%A9t%C3%A9o+Cotonou";
 
@@ -221,7 +245,7 @@ function QuickExitButton({ light = false }: { light?: boolean }) {
     <button
       className={`quick-exit ${light ? "light" : ""}`}
       onClick={quickExit}
-      aria-label="Quitter vite Ayidote"
+      aria-label="Quitter vite Ayìdótɛ́"
       title="Quitter vite (touche Échap)"
     >
       <Icon name="exit" size={18} />
@@ -371,6 +395,10 @@ type Attachment = {
   pageTitle: string;
   pageText: string;
   clue: string;
+  /** "compte": a "choose an account" page asking for far too many permissions. */
+  style?: "compte";
+  service?: string;
+  acces?: string[];
 };
 type StoryStep = {
   chapter: string;
@@ -390,15 +418,26 @@ type DailyWord = {
   chaud: string[];
   tiede: string[];
 };
+/** End-of-story recap: name the violence, then what to do and who to turn to. */
+type Bilan = {
+  violence: string;
+  /** Other kinds of violence, shown as wrong answers. */
+  leurres: string[];
+  vecu: string;
+  gestes: string[];
+  aide: { nom: string; numero?: string; pour: string }[];
+};
 type Scenario = {
   id: string;
   order: number;
   title: string;
   profile: string;
   summary: string;
+  avertissement?: string;
   source: "équipe" | "ia";
   relu: boolean;
   mot?: DailyWord;
+  bilan?: Bilan;
   contact: Contact;
   steps: StoryStep[];
 };
@@ -543,8 +582,14 @@ function speak(text: string, queue = false) {
 // scripts/generer-voix.py makes the French clips, scripts/langue-locale.py the
 // translations and clips of a local language. A language shows up in the app
 // as soon as it has clips; anything missing falls back to French.
-type Lang = "fr" | "fon" | "yo" | "mina";
-const langNames: Record<Lang, string> = { fr: "Français", fon: "Fon", yo: "Yoruba", mina: "Mina" };
+type Lang = "fr" | "en" | "fon" | "yo" | "mina";
+const langNames: Record<Lang, string> = {
+  fr: "Français",
+  en: "English",
+  fon: "Fon",
+  yo: "Yoruba",
+  mina: "Mina",
+};
 const localLangs: Lang[] = ["fon", "yo", "mina"];
 
 const clips: Record<string, string> = {};
@@ -575,6 +620,10 @@ const recordedLangs = localLangs.filter(
   (lang) => canPlay && Object.keys(clips).some((key) => key.startsWith(`${lang}/`)),
 );
 const canListen = canSpeak || (canPlay && Object.keys(clips).length > 0);
+// Languages for the story text only, with no recorded voice (English): the
+// menus, games and listening mode stay in French.
+const textLangs = (["en"] as Lang[]).filter((lang) => translations[lang]);
+const storyLangs: Lang[] = [...textLangs, ...recordedLangs];
 
 /** Text of `key` in a local language, or undefined (then French is shown). */
 function tr(lang: Lang, key: string): string | undefined {
@@ -589,7 +638,7 @@ function clipOf(lang: Lang, key: string, frFallback = true): string | undefined 
 
 function readLang(): Lang {
   const saved = localStorage.getItem("naya-lang") as Lang | null;
-  return saved && recordedLangs.includes(saved) ? saved : "fr";
+  return saved && storyLangs.includes(saved) ? saved : "fr";
 }
 
 // Clips play one after the other. Each can announce itself (to highlight the
@@ -698,13 +747,14 @@ function App() {
     if (!next) stopSpeaking();
   };
   const [lang, setLangState] = useState<Lang>(readLang);
+  document.documentElement.dataset.lang = lang;
   const [listen, setListenState] = useState(() => localStorage.getItem("naya-ecoute") === "yes");
   const setLang = (next: Lang) => {
     stopSpeaking();
     setLangState(next);
     localStorage.setItem("naya-lang", next);
     // Choosing a recorded voice means wanting to hear it.
-    if (next !== "fr") setAudio(true);
+    if (recordedLangs.includes(next)) setAudio(true);
   };
   useEffect(() => {
     // Keep the voice clips that can be played available offline, once the
@@ -777,6 +827,7 @@ function App() {
     const choice = await installPrompt.userChoice;
     if (choice.outcome === "accepted") setInstalled(true);
     setInstallPrompt(null);
+    if (screen === "install-offer") completeOnboarding();
   };
   const [wordGame, setWordGameState] = useState<WordGame>(readWordGame);
   const setWordGame = (game: WordGame) => {
@@ -814,7 +865,9 @@ function App() {
     setUnlocked(next);
     localStorage.setItem("naya-reflexes", JSON.stringify(next));
   };
-  const [timer, setTimerState] = useState(() => localStorage.getItem("naya-timer") !== "no");
+  // Off unless chosen: for someone living a real threat, a countdown repeats
+  // the pressure she is under.
+  const [timer, setTimerState] = useState(() => localStorage.getItem("naya-timer") === "yes");
   const setTimer = (on: boolean) => {
     setTimerState(on);
     localStorage.setItem("naya-timer", on ? "yes" : "no");
@@ -827,9 +880,16 @@ function App() {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [quizChoice, setQuizChoice] = useState<number | null>(null);
+  // Good answers in a row, only ever shown to cheer, never to point out a miss.
+  const [quizStreak, setQuizStreak] = useState(0);
   const [saved, setSaved] = useState(localStorage.getItem("naya-guide") === "yes");
   const [toast, setToast] = useState("");
   const [eraseOpen, setEraseOpen] = useState(false);
+  // Story whose content note was read in this session.
+  const [noted, setNoted] = useState<string | null>(null);
+  // The word game was opened from the story sheet: the warning is already read,
+  // so once the word is found the padlock opens straight away.
+  const [wordFromSetup, setWordFromSetup] = useState(false);
   const [exitErase, setExitEraseState] = useState(
     () => localStorage.getItem("naya-exit-erase") === "yes",
   );
@@ -860,7 +920,11 @@ function App() {
   // Listening mode, for people who cannot read the screen (sight, reading):
   // one button, and the story starts aloud in the chosen language, with every
   // answer, consequence and instruction said and big numbered buttons.
-  const startListening = (l: Lang) => {
+  // Listening reads threats aloud: suggest headphones first.
+  const [pendingListen, setPendingListen] = useState<Lang | null>(null);
+  const startListening = (l: Lang) => setPendingListen(l);
+  const beginListening = (l: Lang) => {
+    setPendingListen(null);
     setLangState(l);
     localStorage.setItem("naya-lang", l);
     setAudio(true);
@@ -898,7 +962,7 @@ function App() {
         setDone(next);
         localStorage.setItem("naya-done", JSON.stringify(next));
       }
-      go("progress");
+      go(scenario.bilan ? "bilan" : "progress");
     } else {
       const n = story + 1;
       setStory(n);
@@ -941,11 +1005,12 @@ function App() {
     setPressureState(START_PRESSURE);
     setUnlocked([]);
     setFresh([]);
-    setTimerState(true);
+    setTimerState(false);
     setProfileState("");
     setQuizIndex(0);
     setQuizScore(0);
     setQuizChoice(null);
+    setQuizStreak(0);
     setSaved(false);
     setEraseOpen(false);
     go("welcome");
@@ -954,27 +1019,43 @@ function App() {
 
   let content: React.ReactNode;
   if (screen === "welcome")
-    content = <Welcome onNext={() => go("language")} onListen={startListening} />;
-  else if (screen === "language")
     content = (
-      <Language
+      <Welcome
         lang={lang}
         setLang={setLang}
-        audio={audio}
-        setAudio={setAudio}
-        onNext={() => go("intro")}
-        onBack={() => go("welcome")}
+        onNext={() => go("character")}
+        onListen={startListening}
       />
     );
-  else if (screen === "intro")
-    content = <Intro onNext={() => go("character")} onBack={() => go("language")} />;
   else if (screen === "character")
     content = (
       <Character
         person={person}
         setPerson={setPerson}
-        onNext={completeOnboarding}
-        onBack={() => go("intro")}
+        onNext={() => (installed ? completeOnboarding() : go("install-offer"))}
+        onBack={() => go("welcome")}
+      />
+    );
+  else if (screen === "install-offer")
+    content = (
+      <InstallOffer
+        onInstall={() => {
+          localStorage.setItem("naya-started", "yes");
+          install();
+        }}
+        onLater={completeOnboarding}
+      />
+    );
+  else if (screen === "learn") content = <Learn go={go} unlocked={unlocked.length} />;
+  else if (screen === "ia") content = <IaApercu go={go} person={person} />;
+  else if (screen === "results")
+    content = (
+      <Results
+        go={go}
+        done={done}
+        unlocked={unlocked}
+        wordFound={wordGame.found}
+        onStory={startScenario}
       />
     );
   else if (screen === "home") content = (
@@ -987,10 +1068,6 @@ function App() {
         daily={dailyScenario()}
         showInstall={!installed && !installHidden}
         install={install}
-        hideInstall={() => {
-          setInstallHidden(true);
-          localStorage.setItem("naya-install", "hidden");
-        }}
         wordOpen={wordGame.found || wordGame.revealed}
         listen={listen}
         lang={lang}
@@ -998,6 +1075,8 @@ function App() {
         stopListening={stopListening}
         onPick={startScenario}
         unlocked={unlocked.length}
+        doneCount={done.length}
+        badgeCount={badgesOf(done, unlocked, wordGame.found).filter((b) => b.won).length}
       />
     );
   else if (screen === "mot")
@@ -1007,7 +1086,10 @@ function App() {
         game={wordGame}
         setGame={setWordGame}
         onPlay={() => startScenario(dailyScenario().id)}
-        onBack={() => go("home")}
+        onBack={() => {
+          setWordFromSetup(false);
+          go("home");
+        }}
       />
     );
   else if (screen === "play")
@@ -1023,10 +1105,34 @@ function App() {
         story={story}
         done={done}
         onPick={startScenario}
-        onBack={() => go("home")}
+        onBack={() => go("play")}
         profile={profile}
         setProfile={setProfile}
         daily={dailyScenario().id}
+      />
+    );
+  else if (screen === "story" && !listen && story === 0 && storyChoice === null && noted !== scenario.id)
+    content = (
+      <StorySetup
+        scenario={scenario}
+        lang={lang}
+        setLang={setLang}
+        audio={audio}
+        setAudio={setAudio}
+        timer={timer}
+        setTimer={setTimer}
+        askWord={scenario.id === dailyScenario().id && !!scenario.mot && !wordGame.found && !wordGame.revealed}
+        startUnlocked={wordFromSetup && (wordGame.found || wordGame.revealed)}
+        onGuess={() => {
+          setWordFromSetup(true);
+          go("mot");
+        }}
+        onStart={() => {
+          setWordFromSetup(false);
+          setNoted(scenario.id);
+        }}
+        onOther={() => go("scenarios")}
+        onHelp={() => go("help")}
       />
     );
   else if (screen === "story")
@@ -1071,6 +1177,7 @@ function App() {
       <Phishing
         fresh={fresh}
         clue={scenario.steps.find((s) => s.attachment)?.attachment?.clue}
+        access={scenario.steps.find((s) => s.attachment)?.attachment?.style === "compte"}
         onNext={() => {
           // Resume right after the step that carried the link.
           const after = scenario.steps.findIndex((s) => s.attachment) + 1;
@@ -1091,7 +1198,14 @@ function App() {
         index={quizIndex}
         score={quizScore}
         choice={quizChoice}
-        setChoice={setQuizChoice}
+        streak={quizStreak}
+        person={person}
+        setChoice={(i) => {
+          const good = i === quiz[quizIndex].correct;
+          setQuizChoice(i);
+          setQuizStreak(good ? quizStreak + 1 : 0);
+          vibrate(good ? [20, 30, 40] : 40);
+        }}
         onNext={() => {
           if (quizChoice === quiz[quizIndex].correct) setQuizScore(quizScore + 1);
           if (quizIndex === quiz.length - 1) {
@@ -1113,6 +1227,7 @@ function App() {
           setQuizIndex(0);
           setQuizScore(0);
           setQuizChoice(null);
+          setQuizStreak(0);
           go("quiz");
         }}
         go={go}
@@ -1128,15 +1243,27 @@ function App() {
           localStorage.setItem("naya-guide", "yes");
           notify("Fiche enregistrée sur ce téléphone");
         }}
-        onBack={() => go("home")}
+        onBack={() => go("learn")}
         go={go}
       />
     );
-  else if (screen === "progress")
+  else if (screen === "bilan" && scenario.bilan)
+    content = (
+      <BilanScreen
+        key={scenario.id}
+        id={scenario.id}
+        bilan={scenario.bilan}
+        onDone={() => go("progress")}
+        onHelp={() => go("help")}
+      />
+    );
+  else if (screen === "progress" || screen === "bilan")
     content = (
       <Progress
         title={scenario.title}
         unlocked={unlocked}
+        canInstall={!installed && done.length === 1}
+        install={install}
         onOther={() => go("scenarios")}
         go={go}
         replay={() => {
@@ -1213,10 +1340,35 @@ function App() {
     <div className="app-bg">
       <main className={`phone-shell ${listen ? "listen-mode" : ""}`}>
         {content}
+        {(["fake-login", "phishing", "quiz-result"] as Screen[]).includes(screen) && (
+          <div className="quick-exit-float">
+            <QuickExitButton />
+          </div>
+        )}
         {toast && (
           <div className="toast">
             <Icon name="check" size={18} />
             {toast}
+          </div>
+        )}
+        {pendingListen && (
+          <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Écouteurs">
+            <div className="modal headphones-modal">
+              <span className="modal-icon big">
+                <Icon name="headphones" size={44} />
+              </span>
+              <h2>Mets tes écouteurs</h2>
+              <p>
+                L’histoire va être lue à voix haute. Si quelqu’un est près de toi, il pourrait
+                l’entendre.
+              </p>
+              <Button onClick={() => beginListening(pendingListen)} icon="headphones">
+                C’est bon, j’écoute
+              </Button>
+              <Button variant="ghost" onClick={() => setPendingListen(null)}>
+                Pas maintenant
+              </Button>
+            </div>
           </div>
         )}
         {eraseOpen && (
@@ -1244,7 +1396,17 @@ function App() {
   );
 }
 
-function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang) => void }) {
+function Welcome({
+  lang,
+  setLang,
+  onNext,
+  onListen,
+}: {
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  onNext: () => void;
+  onListen: (l: Lang) => void;
+}) {
   return (
     <section className="screen welcome">
       <div className="welcome-mark">
@@ -1254,11 +1416,50 @@ function Welcome({ onNext, onListen }: { onNext: () => void; onListen: (l: Lang)
       </div>
       <div className="welcome-copy">
         <p className="eyebrow">Mon espace</p>
-        <h1>Ayidote</h1>
-        <p>Un endroit calme pour faire le point, à ton rythme.</p>
+        <h1>Ayìdótɛ́</h1>
+        <p>Un endroit calme pour apprendre à repérer les pièges en ligne, à ton rythme.</p>
       </div>
+      <ul className="welcome-about">
+        <li>
+          <Icon name="message" />
+          <span>
+            <strong>Des histoires</strong> inventées, où tu choisis quoi répondre.
+          </span>
+        </li>
+        <li>
+          <Icon name="spark" />
+          <span>
+            <strong>Des jeux</strong> à faire seule ou en groupe.
+          </span>
+        </li>
+        <li>
+          <Icon name="help" />
+          <span>
+            <strong>De l’aide au Bénin</strong> : numéros, structures, tes droits.
+          </span>
+        </li>
+      </ul>
       <div>
-        <OfflinePill />
+        <p className="welcome-lang-label">Ta langue</p>
+        <div className="segmented welcome-lang" role="radiogroup" aria-label="Langue">
+          {(["fr", ...storyLangs] as Lang[]).map((l) => (
+            <button
+              key={l}
+              role="radio"
+              aria-checked={lang === l}
+              className={lang === l ? "on" : ""}
+              onClick={() => setLang(l)}
+            >
+              {langNames[l]}
+            </button>
+          ))}
+        </div>
+        {lang === "en" && (
+          <p className="microcopy">Les histoires en anglais ; les menus restent en français.</p>
+        )}
+        {lang !== "fr" && lang !== "en" && (
+          <p className="microcopy">Traduction et voix automatiques, à l’essai.</p>
+        )}
         <Button onClick={onNext} icon="arrow">
           Continuer
         </Button>
@@ -1291,122 +1492,6 @@ function ListenChooser({ onListen }: { onListen: (l: Lang) => void }) {
   );
 }
 
-function Language({
-  lang,
-  setLang,
-  audio,
-  setAudio,
-  onNext,
-  onBack,
-}: {
-  lang: Lang;
-  setLang: (l: Lang) => void;
-  audio: boolean;
-  setAudio: (v: boolean) => void;
-  onNext: () => void;
-  onBack: () => void;
-}) {
-  return (
-    <section className="screen">
-      <TopBar title="Tes préférences" onBack={onBack} />
-      <div className="page-content">
-        <p className="step">1 sur 3</p>
-        <h1>Comment veux-tu explorer ?</h1>
-        <p className="lead">Tu pourras changer ces choix plus tard.</p>
-        <h3>Langue</h3>
-        <div className="option-list">
-          {(["fr", ...localLangs] as Lang[]).map((x) => (
-            <button
-              key={x}
-              disabled={x !== "fr" && !recordedLangs.includes(x)}
-              onClick={() => setLang(x)}
-              className={`select-row ${lang === x ? "selected" : ""}`}
-            >
-              <span>
-                <strong>{langNames[x]}</strong>
-                {x !== "fr" && (
-                  <small>
-                    {recordedLangs.includes(x)
-                      ? "Textes et voix traduits automatiquement · à l’essai"
-                      : "En préparation"}
-                  </small>
-                )}
-              </span>
-              {lang === x && (
-                <span className="radio">
-                  <Icon name="check" size={14} />
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <h3>Audio</h3>
-        <button className="toggle-row" onClick={() => setAudio(!audio)} disabled={!canListen}>
-          <span>
-            <strong>Voix des messages</strong>
-            <small>
-              {!canListen
-                ? "Non disponible sur ce téléphone"
-                : audio
-                  ? "Activée · tu entends la voix de la personne qui t’écrit"
-                  : "Continuer sans audio"}
-            </small>
-          </span>
-          <span className={`toggle ${audio ? "on" : ""}`}>
-            <i />
-          </span>
-        </button>
-      </div>
-      <div className="sticky-action">
-        <Button onClick={onNext} icon="arrow">
-          Continuer en {langNames[lang].toLowerCase()}
-        </Button>
-      </div>
-    </section>
-  );
-}
-
-function Intro({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  return (
-    <section className="screen intro">
-      <TopBar title="" onBack={onBack} />
-      <div className="intro-art">
-        <div className="orbit o1" />
-        <div className="orbit o2" />
-        <span className="shield-big">
-          <Icon name="shield" size={50} />
-        </span>
-        <span className="floating-card fc1">
-          <Icon name="message" />
-        </span>
-        <span className="floating-card fc2">
-          <Icon name="eye" />
-        </span>
-      </div>
-      <div className="page-content intro-copy">
-        <p className="step">2 sur 3</p>
-        <h1>Les pièges ne se montrent pas toujours tout de suite.</h1>
-        <p className="lead">
-          Ici, tu peux vivre des situations fictives et apprendre à les reconnaître à ton rythme.
-        </p>
-        <div className="reassurance">
-          <Icon name="spark" />
-          <p>
-            <strong>Explore librement.</strong>
-            <br />
-            Il n’y a pas de mauvaise réponse et rien n’est envoyé.
-          </p>
-        </div>
-      </div>
-      <div className="sticky-action">
-        <Button onClick={onNext} icon="arrow">
-          Découvrir
-        </Button>
-      </div>
-    </section>
-  );
-}
-
 function Character({
   person,
   setPerson,
@@ -1420,9 +1505,9 @@ function Character({
 }) {
   return (
     <section className="screen">
-      <TopBar title="Choisis ton histoire" onBack={onBack} />
+      <TopBar title="Ton personnage" onBack={onBack} />
       <div className="page-content">
-        <p className="step">3 sur 3</p>
+        <p className="step">1 sur 2</p>
         <h1>À travers qui veux-tu vivre l’histoire ?</h1>
         <p className="lead">Ton choix change le visage du personnage, pas les apprentissages.</p>
         <div className="character-grid">
@@ -1474,6 +1559,45 @@ function Character({
   );
 }
 
+function InstallOffer({ onInstall, onLater }: { onInstall: () => void; onLater: () => void }) {
+  return (
+    <section className="screen">
+      <div className="page-content install-offer">
+        <p className="step">2 sur 2</p>
+        <span className="resource-icon big">
+          <Icon name="download" size={32} />
+        </span>
+        <h1>Garde Ayìdótɛ́ sur ton téléphone</h1>
+        <p className="lead">
+          Une icône comme une application, sans magasin d’applications. Elle marche sans réseau.
+        </p>
+        <ul className="help-list">
+          <li>
+            <Icon name="offline" size={16} />
+            <span>Fonctionne hors connexion après la première ouverture.</span>
+          </li>
+          <li>
+            <Icon name="eye" size={16} />
+            <span>Un nom et une icône discrets.</span>
+          </li>
+          <li>
+            <Icon name="check" size={16} />
+            <span>Tu peux la supprimer à tout moment.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="sticky-action">
+        <Button onClick={onInstall} icon="download">
+          Installer
+        </Button>
+        <Button variant="ghost" onClick={onLater}>
+          Plus tard
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function Home({
   person,
   story,
@@ -1483,7 +1607,6 @@ function Home({
   daily,
   showInstall,
   install,
-  hideInstall,
   listen,
   lang,
   startListening,
@@ -1491,6 +1614,8 @@ function Home({
   wordOpen,
   onPick,
   unlocked,
+  doneCount,
+  badgeCount,
 }: {
   person: "afi" | "maya";
   story: number;
@@ -1500,7 +1625,6 @@ function Home({
   daily: Scenario;
   showInstall: boolean;
   install: () => void;
-  hideInstall: () => void;
   listen: boolean;
   lang: Lang;
   startListening: (l: Lang) => void;
@@ -1508,6 +1632,8 @@ function Home({
   wordOpen: boolean;
   onPick: (id: string) => void;
   unlocked: number;
+  doneCount: number;
+  badgeCount: number;
 }) {
   const total = scenario.steps.length;
   const inStory = story > 0 && story < total;
@@ -1520,7 +1646,7 @@ function Home({
         <div>
           <h1>Bonjour, {person === "afi" ? "Afi" : "Maya"}</h1>
           <p>
-            Bienvenue sur <strong>Ayidote</strong>
+            Bienvenue sur <strong>Ayìdótɛ́</strong>
           </p>
         </div>
         <QuickExitButton />
@@ -1547,55 +1673,42 @@ function Home({
             {inStory ? "Reprendre l’histoire" : "Écouter une histoire"}
           </button>
         )}
-        {!listen && inStory ? (
-          <button className="vop-card today-card" onClick={() => go("story")}>
-            <span className="eyebrow">Ton histoire en cours</span>
-            <strong>{scenario.title}</strong>
+        {!listen && inStory && (
+          <button className="resume-line" onClick={() => go("story")}>
+            <Icon name="play" size={16} />
             <span>
-              Situation {story + 1} sur {total}. Reprends là où tu t’es arrêtée.
+              Reprendre « {scenario.title} » · {story + 1}/{total}
             </span>
-            <span className="vop-card-cta">
-              Reprendre <Icon name="arrow" size={18} />
-            </span>
+            <Icon name="chevron" size={16} />
           </button>
-        ) : listen ? null : daily.mot && !wordOpen ? (
-          <button className="vop-card today-card" onClick={() => go("mot")}>
-            <span className="eyebrow">Aujourd’hui</span>
-            <strong>Le mot du jour</strong>
-            <span>Trouve-le pour ouvrir l’histoire du jour.</span>
-            <span className="vop-card-cta">
-              Deviner le mot <Icon name="arrow" size={18} />
-            </span>
-          </button>
-        ) : (
-          <button className="vop-card today-card" onClick={() => onPick(daily.id)}>
+        )}
+        {!listen && (
+          <button className="vop-card today-card compact" onClick={() => onPick(daily.id)}>
             <span className="eyebrow">
-              {daily.mot ? `Mot du jour : ${daily.mot.mot}` : "Aujourd’hui"}
+              {daily.mot && wordOpen ? `Mot du jour : ${daily.mot.mot}` : "Aujourd’hui"}
             </span>
             <strong>L’histoire du jour</strong>
-            <span>
-              « {daily.title} » · {daily.summary}
-            </span>
+            <span>« {daily.title} »</span>
             <span className="vop-card-cta">
-              Jouer <Icon name="arrow" size={18} />
+              {daily.mot && !wordOpen ? "Deviner le mot" : "Jouer"} <Icon name="arrow" size={18} />
             </span>
           </button>
         )}
-        <section className="journey-card">
-          <h2>Ton parcours</h2>
-          <div>
+        <button className="results-tile" onClick={() => go("results")}>
+          <span className="eyebrow">Mes résultats</span>
+          <span className="results-tile-stats">
             <span>
-              <strong>
-                {Math.min(story, total)}/{total}
-              </strong>
-              situations
+              <strong>{doneCount}/{scenarios.length}</strong> histoires
             </span>
             <span>
-              <strong>{unlocked}/6</strong>
-              réflexes
+              <strong>{unlocked}/6</strong> réflexes
             </span>
-          </div>
-        </section>
+            <span>
+              <strong>{badgeCount}</strong> badge{badgeCount > 1 ? "s" : ""}
+            </span>
+          </span>
+          <Icon name="chevron" />
+        </button>
         {!listen && canPlay && (
           <button className="wide-link" onClick={() => startListening(lang)}>
             <span className="link-icon">
@@ -1615,26 +1728,13 @@ function Home({
                 <Icon name="download" />
               </span>
               <span>
-                <strong>Installer Ayidote</strong>
+                <strong>Installer Ayìdótɛ́</strong>
                 <small>Une icône sur ton téléphone, même sans réseau</small>
               </span>
               <Icon name="chevron" />
             </button>
-            <button className="install-hide" onClick={hideInstall}>
-              Plus tard
-            </button>
           </div>
         )}
-        <button className="wide-link" onClick={() => go("play")}>
-          <span className="link-icon orange">
-            <Icon name="spark" />
-          </span>
-          <span>
-            <strong>Tous les jeux</strong>
-            <small>Histoires, mot du jour, jeu de groupe, quiz</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
       </div>
       <BottomNav active="home" go={go} />
     </section>
@@ -1916,9 +2016,9 @@ function BottomNav({ active, go }: { active: string; go: (s: Screen) => void }) 
         <Icon name="spark" />
         <span>Jouer</span>
       </button>
-      <button className={active === "guide" ? "active" : ""} onClick={() => go("guide")}>
-        <Icon name="shield" />
-        <span>Réflexes</span>
+      <button className={active === "learn" ? "active" : ""} onClick={() => go("learn")}>
+        <Icon name="learn" />
+        <span>S’éduquer</span>
       </button>
       <button className={active === "settings" ? "active" : ""} onClick={() => go("settings")}>
         <Icon name="settings" />
@@ -1978,6 +2078,14 @@ function ReflexUnlock({ fresh }: { fresh: number[] }) {
 /** A text in the chosen language, with the French original underneath. */
 function Said({ text, local }: { text: string; local?: string }) {
   if (!local) return <span className="said">{text}</span>;
+  // English readers get the English text alone; local languages keep the
+  // French underneath, since the French text is the reference.
+  if (document.documentElement.dataset.lang === "en")
+    return (
+      <span className="said" lang="en">
+        {local}
+      </span>
+    );
   return (
     <span className="said">
       <span lang="x-local">{local}</span>
@@ -2013,6 +2121,153 @@ function Countdown({ seconds, onEnd }: { seconds: number; onEnd: () => void }) {
 }
 
 const COUNTDOWN_S = 15;
+
+/**
+ * Before a story: what it is about, its settings, then (for the story of the
+ * day) the word to guess, which can be skipped, and the padlock that opens.
+ */
+function StorySetup({
+  scenario,
+  lang,
+  setLang,
+  audio,
+  setAudio,
+  timer,
+  setTimer,
+  askWord,
+  startUnlocked = false,
+  onGuess,
+  onStart,
+  onOther,
+  onHelp,
+}: {
+  scenario: Scenario;
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  audio: boolean;
+  setAudio: (v: boolean) => void;
+  timer: boolean;
+  setTimer: (v: boolean) => void;
+  askWord: boolean;
+  startUnlocked?: boolean;
+  onGuess: () => void;
+  onStart: () => void;
+  onOther: () => void;
+  onHelp: () => void;
+}) {
+  const [phase, setPhase] = useState<"setup" | "word" | "unlock">(startUnlocked ? "unlock" : "setup");
+  useEffect(() => {
+    if (phase !== "unlock") return;
+    vibrate(30);
+    const id = window.setTimeout(onStart, reducedMotion() ? 300 : 1300);
+    return () => window.clearTimeout(id);
+  }, [phase]);
+  if (phase === "unlock")
+    return (
+      <section className="screen story-unlock" aria-live="polite">
+        <div className="padlock" aria-hidden>
+          <svg viewBox="0 0 120 140" width="120" height="140">
+            <path className="shackle" d="M34 62V44a26 26 0 0 1 52 0v18" fill="none" strokeWidth="12" strokeLinecap="round" />
+            <rect x="14" y="60" width="92" height="72" rx="18" className="body" />
+            <circle cx="60" cy="92" r="9" className="hole" />
+            <path d="M60 98v14" className="hole-line" strokeWidth="6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <p className="eyebrow">Histoire débloquée</p>
+        <h1>{scenario.title}</h1>
+      </section>
+    );
+  return (
+    <section className="screen story-setup">
+      <TopBar title={scenario.title} onBack={onOther} />
+      <div className="page-content">
+        <div className="setup-head">
+          <Portrait person={scenario.contact.portrait} small />
+          <div>
+            <small>{scenario.profile}</small>
+            <strong>{scenario.title}</strong>
+          </div>
+        </div>
+        <div className="setup-note">
+          <Icon name="shield" />
+          <p>
+            <strong>{scenario.avertissement ?? scenario.summary}</strong>
+            <br />
+            C’est une histoire inventée. Si elle te rappelle quelque chose de vrai, tu peux arrêter
+            à tout moment, et ce n’est jamais ta faute.
+          </p>
+        </div>
+        <h3>Langue</h3>
+        <div className="segmented" role="radiogroup" aria-label="Langue de l’histoire">
+          {(["fr", ...storyLangs] as Lang[]).map((l) => (
+            <button
+              key={l}
+              role="radio"
+              aria-checked={lang === l}
+              className={lang === l ? "on" : ""}
+              onClick={() => setLang(l)}
+            >
+              {langNames[l]}
+            </button>
+          ))}
+        </div>
+        <h3>Réglages</h3>
+        {canListen && (
+          <button className="setting-row" onClick={() => setAudio(!audio)} aria-pressed={audio}>
+            <span>
+              <Icon name="play" />
+            </span>
+            <div>
+              <strong>Voix des messages</strong>
+              <small>{audio ? "Tu entends la personne qui t’écrit" : "Lecture silencieuse"}</small>
+            </div>
+            <span className={`toggle ${audio ? "on" : ""}`}>
+              <i />
+            </span>
+          </button>
+        )}
+        <button className="setting-row" onClick={() => setTimer(!timer)} aria-pressed={timer}>
+          <span>
+            <Icon name="spark" />
+          </span>
+          <div>
+            <strong>Compte à rebours</strong>
+            <small>{timer ? "Activé sur les menaces · sans pénalité" : "Désactivé · à ton rythme"}</small>
+          </div>
+          <span className={`toggle ${timer ? "on" : ""}`}>
+            <i />
+          </span>
+        </button>
+        <Button variant="ghost" onClick={onHelp} icon="help">
+          Parler à quelqu’un maintenant
+        </Button>
+      </div>
+      <div className="sticky-action">
+        <Button onClick={() => setPhase(askWord ? "word" : "unlock")} icon="lock">
+          Débloquer l’histoire
+        </Button>
+      </div>
+      {phase === "word" && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Le mot du jour">
+          <div className="modal word-popup">
+            <span className="modal-icon">
+              <Icon name="search" />
+            </span>
+            <p className="eyebrow">C’est l’histoire du jour</p>
+            <h2>Devine le mot du jour pour l’ouvrir</h2>
+            <p>{scenario.mot?.indices[0]}</p>
+            <Button onClick={onGuess} icon="arrow">
+              Deviner le mot
+            </Button>
+            <Button variant="ghost" onClick={() => setPhase("unlock")}>
+              Passer et ouvrir l’histoire
+            </Button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
 
 function Story({
   lang,
@@ -2073,8 +2328,9 @@ function Story({
       // Audio is the voice of the person writing, nothing else on the screen.
       if (audio)
         sayMessage(lang, scenario.id, step, shown, incoming[1].replace(/^Image masquée · /, ""));
-      // The threat itself lands harder than an ordinary message.
-      vibrate(data.danger && shown === count - 1 ? [70, 50, 110] : 35);
+      // No vibration on a threat: it would startle, and draw the attention of
+      // people nearby.
+      if (!data.danger) vibrate(35);
     }, delay);
     return () => window.clearTimeout(id);
   }, [shown]);
@@ -2158,6 +2414,7 @@ function Story({
             <Icon name="play" />
           </button>
         )}
+        <QuickExitButton />
       </header>
       <div className="chapter-strip">
         <span>{data.chapter}</span>
@@ -2204,7 +2461,7 @@ function Story({
                 )}
                 <Said
                   text={text}
-                  local={mine ? undefined : tr(lang, `${scenario.id}.m${step + 1}-${i + 1}`)}
+                  local={mine && lang !== "en" ? undefined : tr(lang, `${scenario.id}.m${step + 1}-${i + 1}`)}
                 />
                 <small>
                   10:{24 + i * 2}
@@ -2353,10 +2610,15 @@ function FakeLogin({
   const clues = [
     ["Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
     ["Un lien inattendu", attachment?.clue ?? "Tu n’attendais pas ce lien."],
-    [
-      "Elle demande ton mot de passe",
-      "Un vrai service ne te demande jamais ton mot de passe par un lien reçu dans une discussion. Ferme la page et ouvre toi-même l’application officielle.",
-    ],
+    attachment?.style === "compte"
+      ? [
+          "Des accès bien trop larges",
+          `${attachment.service ?? "Ce service"} n’a aucune raison de lire tes contacts, tes photos ou tes messages. En choisissant ton compte ici, tu lui donnerais la main sur ta vie privée. Ferme la page et ouvre toi-même l’application officielle.`,
+        ]
+      : [
+          "Elle demande ton mot de passe",
+          "Un vrai service ne te demande jamais ton mot de passe par un lien reçu dans une discussion. Ferme la page et ouvre toi-même l’application officielle.",
+        ],
   ];
   const [found, setFound] = useState<number[]>([]);
   const [last, setLast] = useState<number | null>(null);
@@ -2390,6 +2652,52 @@ function FakeLogin({
         </button>
         <Icon name="more" />
       </div>
+      {attachment?.style === "compte" ? (
+        <div className="fake-content account-page">
+          <div className="account-logo" aria-hidden>
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+          <p className="account-kicker">Connexion avec ton compte</p>
+          <button className={`fake-promise ${mark(1)}`} onClick={() => tap(1)}>
+            <h1>{attachment.pageTitle}</h1>
+            <p>
+              pour continuer vers <b>{attachment.service}</b>
+            </p>
+          </button>
+          <div className={`account-form ${mark(2)}`}>
+            {/* Pictures of an account list, not real ones: nothing to type or send. */}
+            <button className="account-row" onClick={() => tap(2)}>
+              <span className="account-avatar">
+                <Icon name="user" size={18} />
+              </span>
+              <span>
+                <strong>Ton compte</strong>
+                <small>connecté sur ce téléphone</small>
+              </span>
+            </button>
+            <button className="account-row" onClick={() => tap(2)}>
+              <span className="account-avatar other">
+                <Icon name="user" size={18} />
+              </span>
+              <span>
+                <strong>Utiliser un autre compte</strong>
+              </span>
+            </button>
+            <button className="account-access" onClick={() => tap(2)}>
+              <strong>{attachment.service} pourra :</strong>
+              <ul>
+                {(attachment.acces ?? []).map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
+            </button>
+          </div>
+          <small>Page fictive créée pour cet exercice. Rien ne peut y être choisi ni envoyé.</small>
+        </div>
+      ) : (
       <div className="fake-content">
         <div className="generic-logo">
           <span />
@@ -2414,6 +2722,7 @@ function FakeLogin({
         </div>
         <small>Page fictive créée pour cet exercice. Rien ne peut y être écrit.</small>
       </div>
+      )}
       <div className="hunt-panel" aria-live="polite">
         {last !== null ? (
           <p>
@@ -2726,7 +3035,7 @@ function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean })
   const right = results[round];
   return (
     <section className="screen vop vop-round">
-      <header className="vop-bar">
+      <header className="vop-bar with-exit">
         <button className="icon-button" onClick={quit} aria-label="Quitter la partie">
           <Icon name="back" />
         </button>
@@ -2747,6 +3056,7 @@ function VraiOuPiege({ go, timer }: { go: (s: Screen) => void; timer: boolean })
           <Icon name="spark" size={14} />
           {score * 10}
         </span>
+        <QuickExitButton />
       </header>
 
       {phase !== "round" && (
@@ -3104,7 +3414,7 @@ function QuizEquipes({ go }: { go: (s: Screen) => void }) {
 
   return (
     <section className="screen team-quiz">
-      <header className="team-bar">
+      <header className="team-bar with-exit">
         <button className="icon-button" onClick={() => go("play")} aria-label="Quitter la partie">
           <Icon name="back" />
         </button>
@@ -3114,6 +3424,7 @@ function QuizEquipes({ go }: { go: (s: Screen) => void }) {
         <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
           {phase === "question" ? left : <Icon name="check" size={18} />}
         </span>
+        <QuickExitButton />
       </header>
       {phase === "question" && (
         <div className="team-time" aria-hidden>
@@ -3279,7 +3590,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
             ))}
           </div>
           <p className="lead">
-            Chaque joueuse ouvre Ayidote sur son téléphone, touche « Rejoindre » et tape le code.
+            Chaque joueuse ouvre Ayìdótɛ́ sur son téléphone, touche « Rejoindre » et tape le code.
             Pas de compte, juste un prénom ou un pseudo.
           </p>
           <h2>
@@ -3347,7 +3658,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
 
   return (
     <section className="screen team-quiz">
-      <header className="team-bar">
+      <header className="team-bar with-exit">
         <button className="icon-button" onClick={() => go("play")} aria-label="Quitter l’aperçu">
           <Icon name="back" />
         </button>
@@ -3357,6 +3668,7 @@ function QuizMultiApercu({ go }: { go: (s: Screen) => void }) {
         <span className={`team-timer ${phase === "question" && left <= 5 ? "hurry" : ""}`}>
           {phase === "question" ? left : <Icon name="check" size={18} />}
         </span>
+        <QuickExitButton />
       </header>
       {phase === "question" && (
         <div className="team-time" aria-hidden>
@@ -3455,6 +3767,13 @@ const defiTypes: Record<Defi["type"], string> = {
   action: "Défi action",
 };
 const DEFIS_PAR_PARTIE = 6;
+/** Time for the group, by kind of challenge: a quick yes/no, a talk, a task. */
+const DEFI_TIME_S: Record<Defi["type"], number> = {
+  "vrai-faux": 20,
+  question: 45,
+  situation: 60,
+  action: 90,
+};
 
 function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   const [deck, setDeck] = useState<Defi[]>([]);
@@ -3462,9 +3781,14 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   const [revealed, setRevealed] = useState(false);
   const [guess, setGuess] = useState<boolean | null>(null);
   const [won, setWon] = useState<boolean[]>([]);
+  const [left, setLeft] = useState(0);
+  const [timeUp, setTimeUp] = useState(false);
   const start = (theme: Defi["theme"] | "tout") => {
     const pool = theme === "tout" ? defis : defis.filter((d) => d.theme === theme);
-    setDeck(shuffled(pool).slice(0, DEFIS_PAR_PARTIE));
+    const picked = shuffled(pool).slice(0, DEFIS_PAR_PARTIE);
+    setDeck(picked);
+    setLeft(picked.length ? DEFI_TIME_S[picked[0].type] : 0);
+    setTimeUp(false);
     setIndex(0);
     setWon([]);
     setRevealed(false);
@@ -3473,6 +3797,9 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
   };
   const next = (success: boolean) => {
     setWon([...won, success]);
+    const upcoming = deck[index + 1];
+    if (upcoming) setLeft(DEFI_TIME_S[upcoming.type]);
+    setTimeUp(false);
     setIndex(index + 1);
     setRevealed(false);
     setGuess(null);
@@ -3480,6 +3807,18 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
     window.scrollTo(0, 0);
   };
   const defi = deck[index];
+  // The clock is set when each challenge starts; it stops as soon as the answer shows.
+  useEffect(() => {
+    if (!defi || revealed || timeUp) return;
+    if (left <= 0) {
+      // Time is up: the answer stays hidden until the group asks for it.
+      setTimeUp(true);
+      vibrate([60, 40, 60]);
+      return;
+    }
+    const id = window.setTimeout(() => setLeft((value) => value - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [defi, revealed, timeUp, left]);
 
   if (!deck.length)
     return (
@@ -3557,9 +3896,37 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
         action={<QuickExitButton />}
       />
       <div className="page-content">
-        <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
+        <div className="defi-head">
+          <span className={`defi-badge ${defi.type}`}>{defiTypes[defi.type]}</span>
+          {!revealed && !timeUp && (
+            <span
+              className={`defi-clock ${left <= 5 ? "hurry" : ""}`}
+              role="timer"
+              aria-label={`${left} secondes restantes`}
+            >
+              <Icon name="clock" size={16} />
+              {left} s
+            </span>
+          )}
+        </div>
+        {!revealed && !timeUp && (
+          <div className="defi-time" aria-hidden>
+            <i style={{ width: `${(left / DEFI_TIME_S[defi.type]) * 100}%` }} />
+          </div>
+        )}
+        {timeUp && (
+          <div className="defi-timeup" role="status">
+            <Icon name="clock" size={22} />
+            <strong>Temps écoulé !</strong>
+          </div>
+        )}
         <h1 className="team-question">{defi.prompt}</h1>
-        {isVF && !revealed && (
+        {timeUp && !revealed && (
+          <Button onClick={() => setRevealed(true)} icon="eye">
+            Révéler la réponse
+          </Button>
+        )}
+        {isVF && !revealed && !timeUp && (
           <div className="defi-vf">
             {[true, false].map((v) => (
               <button
@@ -3574,7 +3941,7 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
             ))}
           </div>
         )}
-        {!isVF && !revealed && (
+        {!isVF && !revealed && !timeUp && (
           <>
             <p className="team-help">
               {defi.type === "action"
@@ -3589,7 +3956,11 @@ function DefisGroupe({ go }: { go: (s: Screen) => void }) {
         {revealed && (
           <>
             <div className={`team-why ${isVF ? (guess === defi.answer ? "good" : "miss") : ""}`}>
-              {isVF && <strong>{guess === defi.answer ? "Bien vu !" : "Pas tout à fait."}</strong>}
+              {isVF && (
+                <strong>
+                  {guess === null ? "Voici la réponse." : guess === defi.answer ? "Bien vu !" : "Pas tout à fait."}
+                </strong>
+              )}
               <p>{defi.reveal}</p>
             </div>
             {isVF ? (
@@ -3660,13 +4031,49 @@ function Play({
     <section className="screen with-nav">
       <TopBar title="Jouer" onBack={() => go("home")} />
       <div className="page-content home-content">
-        <button className="vop-card team-card" onClick={() => go("equipes")}>
-          <span className="eyebrow">En équipes · un seul écran</span>
-          <strong>Le grand quiz</strong>
-          <span>Jusqu’à 4 équipes. Répondez juste et vite, le classement s’affiche à chaque question.</span>
-          <span className="vop-card-cta">
-            Lancer une partie <Icon name="arrow" size={18} />
+        <h2 className="section-title">Jeu solo</h2>
+        <button className="wide-link" onClick={() => go("scenarios")}>
+          <span className="link-icon orange">
+            <Icon name="message" />
           </span>
+          <span>
+            <strong>Histoires</strong>
+            <small>
+              {inStory ? `Reprendre « ${scenario.title} »` : `${scenarios.length} conversations, tes choix`}
+            </small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("mot")}>
+          <span className="link-icon">
+            <Icon name="search" />
+          </span>
+          <span>
+            <strong>Le mot du jour</strong>
+            <small>Devine le thème, ouvre l’histoire du jour</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("quiz")}>
+          <span className="link-icon">
+            <Icon name="spark" />
+          </span>
+          <span>
+            <strong>Quiz</strong>
+            <small>5 questions sur les pièges en ligne</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Jeu de groupe</h2>
+        <button className="wide-link" onClick={() => go("equipes")}>
+          <span className="link-icon orange">
+            <Icon name="user" />
+          </span>
+          <span>
+            <strong>Le grand quiz</strong>
+            <small>Jusqu’à 4 équipes, un seul écran : juste et vite</small>
+          </span>
+          <Icon name="chevron" />
         </button>
         <button className="wide-link" onClick={() => go("vop")}>
           <span className="link-icon">
@@ -3679,54 +4086,22 @@ function Play({
           <Icon name="chevron" />
         </button>
         <button className="wide-link" onClick={() => go("defis")}>
-          <span className="link-icon orange">
+          <span className="link-icon">
             <Icon name="check" />
           </span>
           <span>
             <strong>Défis en groupe</strong>
-            <small>La loi, les bons réflexes, le bouton d’alerte : relevez les défis ensemble</small>
+            <small>La loi, les bonnes attitudes, le bouton d’alerte</small>
           </span>
           <Icon name="chevron" />
         </button>
-        <h2 className="section-title">Bientôt</h2>
         <button className="wide-link soon" onClick={() => go("multi")}>
           <span className="link-icon">
             <Icon name="spark" />
           </span>
           <span>
-            <strong>Le grand quiz, chacune sur son téléphone</strong>
-            <small>Comme un quiz en direct : un code, et toutes répondent en même temps. Voir l’aperçu</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <h2 className="section-title">Jouer seule</h2>
-        <button className="wide-link" onClick={() => go("mot")}>
-          <span className="link-icon orange">
-            <Icon name="search" />
-          </span>
-          <span>
-            <strong>Le mot du jour</strong>
-            <small>Devine le thème, ouvre l’histoire du jour</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <button className="wide-link" onClick={() => go(inStory ? "story" : "scenarios")}>
-          <span className="link-icon">
-            <Icon name="message" />
-          </span>
-          <span>
-            <strong>Histoires interactives</strong>
-            <small>{inStory ? `Reprendre « ${scenario.title} »` : "Une conversation, tes choix"}</small>
-          </span>
-          <Icon name="chevron" />
-        </button>
-        <button className="wide-link" onClick={() => go("quiz")}>
-          <span className="link-icon orange">
-            <Icon name="spark" />
-          </span>
-          <span>
-            <strong>Quiz sans jugement</strong>
-            <small>5 questions sur les pièges en ligne</small>
+            <strong>Chacune sur son téléphone · bientôt</strong>
+            <small>Un code, et toutes répondent en même temps. Voir l’aperçu</small>
           </span>
           <Icon name="chevron" />
         </button>
@@ -3739,10 +4114,13 @@ function Play({
 function Phishing({
   onNext,
   clue,
+  access = false,
   fresh,
 }: {
   onNext: () => void;
   clue?: string;
+  /** The page was a "choose an account" screen asking for permissions. */
+  access?: boolean;
   fresh: number[];
 }) {
   return (
@@ -3762,11 +4140,13 @@ function Phishing({
         <h2>Les 3 indices que tu as repérés</h2>
         {[
           ["message", "Un lien inattendu", clue ?? "Tu n’attendais pas ce lien."],
-          [
-            "lock",
-            "Une demande de connexion",
-            "Le contenu promis est caché derrière un formulaire.",
-          ],
+          access
+            ? [
+                "lock",
+                "Des accès bien trop larges",
+                "La page voulait lire tes contacts, tes photos et tes messages, et écrire à ta place.",
+              ]
+            : ["lock", "Une demande de connexion", "Le contenu promis est caché derrière un formulaire."],
           ["search", "Une adresse étrange", "Le domaine ne correspond à aucun service attendu."],
         ].map(([i, t, p], n) => (
           <div className="clue" key={t}>
@@ -3932,10 +4312,15 @@ function Resources({ go }: { go: (s: Screen) => void }) {
   );
 }
 
+// Hackathon rule: no connection to real emergency services. The numbers are
+// shown but cannot be dialled from the app. Set to true only after the
+// technical, legal and safety checks required for real use.
+const CALLS_ENABLED = false;
+
 // Who to turn to in Benin. The short numbers come from the official list
 // published by ARCEP Bénin (June 2026), cross-checked with the Government's
 // VBG-FT platform (adovbg-ft.social.gouv.bj) and the UNFPA Bénin digital
-// hygiene training; they must be checked again before each release. Ayidote never calls or writes to anyone itself.
+// hygiene training; they must be checked again before each release. Ayìdótɛ́ never calls or writes to anyone itself.
 const helpContacts = [
   {
     icon: "warning",
@@ -4084,11 +4469,17 @@ function Help({ go }: { go: (s: Screen) => void }) {
               <strong>{c.name}</strong>
               <p className="help-when">{c.when}</p>
               <p>{c.what}</p>
-              {c.number && (
-                <a className="help-call" href={`tel:${c.number}`}>
-                  Appeler le {c.number}
-                </a>
-              )}
+              {c.number &&
+                (CALLS_ENABLED ? (
+                  <a className="help-call" href={`tel:${c.number}`}>
+                    Appeler le {c.number}
+                  </a>
+                ) : (
+                  <p className="help-number">
+                    <strong>{c.number}</strong>
+                    <small>Appel désactivé pendant la démonstration</small>
+                  </p>
+                ))}
             </div>
           </article>
         ))}
@@ -4197,7 +4588,7 @@ function Help({ go }: { go: (s: Screen) => void }) {
           </p>
         </div>
         <p className="disclaimer">
-          Ayidote n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
+          Ayìdótɛ́ n’appelle et n’écrit à personne à ta place. Numéros courts de la liste officielle
           de l’ARCEP Bénin (juin 2026) et de la plateforme VBG-FT du Gouvernement : ils peuvent
           changer.
         </p>
@@ -4213,6 +4604,8 @@ function Help({ go }: { go: (s: Screen) => void }) {
 function Quiz({
   index,
   choice,
+  streak,
+  person,
   setChoice,
   onNext,
   onBack,
@@ -4220,64 +4613,92 @@ function Quiz({
   index: number;
   score: number;
   choice: number | null;
+  streak: number;
+  person: string;
   setChoice: (n: number) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
   const item = quiz[index];
+  const answered = choice !== null;
+  const good = answered && choice === item.correct;
+  // The character walks along the track: one step per answered question.
+  const steps = index + (answered ? 1 : 0);
   return (
     <section className="screen quiz">
-      <TopBar title="Quiz sans jugement" onBack={onBack} action={<strong>{index + 1}/5</strong>} />
-      <div className="quiz-progress">
-        {quiz.map((_, i) => (
-          <i key={i} className={i <= index ? "done" : ""} />
-        ))}
+      <TopBar title="Quiz" onBack={onBack} action={<strong>{index + 1}/{quiz.length}</strong>} />
+      <div className="quiz-track" aria-hidden>
+        <div className="quiz-track-line">
+          <i style={{ width: `${(steps / quiz.length) * 100}%` }} />
+        </div>
+        <div className="quiz-walker" style={{ left: `${(steps / quiz.length) * 100}%` }}>
+          <Portrait person={person} small />
+        </div>
       </div>
-      <div className="page-content">
+      <div className="page-content quiz-card" key={index}>
         <p className="eyebrow">Question {index + 1}</p>
         <h1>{item.q}</h1>
         <div className="quiz-options">
-          {item.a.map((a, i) => (
-            <button
-              key={a}
-              disabled={choice !== null}
-              onClick={() => setChoice(i)}
-              className={
-                choice === i
-                  ? i === item.correct
+          {item.a.map((a, i) => {
+            const state =
+              choice === i
+                ? i === item.correct
+                  ? "correct picked"
+                  : "wrong"
+                : answered && i === item.correct
+                  ? good
                     ? "correct"
-                    : "wrong"
-                  : choice !== null && i === item.correct
-                    ? "correct"
-                    : ""
-              }
-            >
-              <span>{String.fromCharCode(65 + i)}</span>
-              {a}
-              {choice !== null && i === item.correct && <Icon name="check" />}
-            </button>
-          ))}
+                    : "correct glow"
+                  : "";
+            return (
+              <button
+                key={a}
+                disabled={answered}
+                onClick={() => setChoice(i)}
+                className={state}
+                style={{ animationDelay: `${120 + i * 110}ms` }}
+              >
+                <span>{String.fromCharCode(65 + i)}</span>
+                {a}
+                {answered && i === item.correct && <Icon name="check" />}
+                {choice === i && good && (
+                  <b className="sparks" aria-hidden>
+                    {Array.from({ length: 10 }, (_, k) => (
+                      <i key={k} style={{ ["--a" as string]: `${k * 36}deg` }} />
+                    ))}
+                  </b>
+                )}
+              </button>
+            );
+          })}
         </div>
-        {choice !== null && (
-          <div className={`quiz-explain ${choice === item.correct ? "good" : "learn"}`}>
+        {good && streak >= 2 && (
+          <p className="quiz-streak" role="status">
+            🔥 {streak} bonnes réponses d’affilée !
+          </p>
+        )}
+        {answered && (
+          <div className={`quiz-explain ${good ? "good" : "learn"}`}>
             <span>
-              <Icon name={choice === item.correct ? "check" : "spark"} />
+              <Icon name={good ? "check" : "spark"} />
             </span>
             <div>
-              <strong>{choice === item.correct ? "Bien vu !" : "À retenir"}</strong>
+              <strong>{good ? "Bien vu !" : "À retenir"}</strong>
               <p>{item.why}</p>
             </div>
           </div>
         )}
       </div>
       <div className="sticky-action">
-        <Button onClick={onNext} disabled={choice === null} icon="arrow">
-          {index === 4 ? "Voir mon bilan" : "Question suivante"}
+        <Button onClick={onNext} disabled={!answered} icon="arrow">
+          {index === quiz.length - 1 ? "Voir mon bilan" : "Question suivante"}
         </Button>
       </div>
     </section>
   );
 }
+
+const CONFETTI_COLORS = ["#f58232", "#ffb36b", "#49372d", "#e8dccb", "#ffffff"];
 
 function QuizResult({
   score,
@@ -4288,14 +4709,57 @@ function QuizResult({
   onRetry: () => void;
   go: (s: Screen) => void;
 }) {
+  const total = quiz.length;
+  // The score counts up, then the stars light up one by one.
+  const [shown, setShown] = useState(reducedMotion() ? score : 0);
+  useEffect(() => {
+    if (shown >= score) return;
+    const id = window.setTimeout(() => setShown(shown + 1), shown === 0 ? 500 : 380);
+    return () => window.clearTimeout(id);
+  }, [shown, score]);
+  const confetti = useMemo(
+    () =>
+      Array.from({ length: 36 }, (_, i) => ({
+        left: `${(i * 37) % 100}%`,
+        delay: `${(i % 9) * 0.18}s`,
+        duration: `${2.4 + (i % 5) * 0.35}s`,
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        tilt: `${(i * 53) % 360}deg`,
+      })),
+    [],
+  );
   return (
-    <section className="screen finish">
-      <div className="confetti-lines" />
+    <section className="screen finish quiz-finish">
+      {score >= 4 && (
+        <div className="confetti" aria-hidden>
+          {confetti.map((c, i) => (
+            <i
+              key={i}
+              style={{
+                left: c.left,
+                background: c.color,
+                animationDelay: c.delay,
+                animationDuration: c.duration,
+                ["--tilt" as string]: c.tilt,
+              }}
+            />
+          ))}
+        </div>
+      )}
       <div className="finish-icon">
         <Icon name="spark" size={42} />
       </div>
       <p className="eyebrow">Quiz terminé</p>
-      <h1>{score}/5</h1>
+      <h1 aria-label={`${score} sur ${total}`}>
+        <span className="count">{shown}</span>/{total}
+      </h1>
+      <div className="quiz-stars" aria-hidden>
+        {Array.from({ length: total }, (_, i) => (
+          <span key={i} className={i < shown ? "on" : ""}>
+            ★
+          </span>
+        ))}
+      </div>
       <h2>
         {score >= 4 ? "Tu as déjà de bons réflexes." : "Tu es en train de construire tes réflexes."}
       </h2>
@@ -4303,7 +4767,7 @@ function QuizResult({
         Continue à les appliquer dans tes conversations quotidiennes. Chaque vérification compte.
       </p>
       <div className="score-bar">
-        <i style={{ width: `${score * 20}%` }} />
+        <i style={{ width: `${(shown / total) * 100}%` }} />
       </div>
       <div className="finish-actions">
         <Button onClick={() => go("guide")} icon="download">
@@ -4363,7 +4827,7 @@ function Guide({
             <span />
             <span />
           </div>
-          <p className="eyebrow">Ayidote · à garder près de toi</p>
+          <p className="eyebrow">Ayìdótɛ́ · à garder près de toi</p>
           <h1>Mes 6 réflexes pour naviguer plus sereinement</h1>
           <p className="guide-count">
             {unlocked.length === reflexes.length
@@ -4402,7 +4866,250 @@ function Guide({
           Que faire si ça m’arrive ?
         </Button>
       </div>
-      <BottomNav active="guide" go={go} />
+      <BottomNav active="learn" go={go} />
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// « S'éduquer » : the reflexes, the right moves, the law and help, and the
+// coming assistant.
+// ---------------------------------------------------------------------------
+function Learn({ go, unlocked }: { go: (s: Screen) => void; unlocked: number }) {
+  return (
+    <section className="screen with-nav">
+      <TopBar title="S’éduquer" onBack={() => go("home")} />
+      <div className="page-content home-content">
+        <h1 className="learn-title">Comprendre pour mieux se protéger</h1>
+        <button className="wide-link" onClick={() => go("guide")}>
+          <span className="link-icon orange">
+            <Icon name="shield" />
+          </span>
+          <span>
+            <strong>Mes 6 réflexes</strong>
+            <small>{unlocked}/6 débloqués · ta fiche à garder près de toi</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("resources")}>
+          <span className="link-icon">
+            <Icon name="check" />
+          </span>
+          <span>
+            <strong>Les bons gestes</strong>
+            <small>Comptes, confidentialité, bloquer et signaler, preuves</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <button className="wide-link" onClick={() => go("help")}>
+          <span className="link-icon">
+            <Icon name="help" />
+          </span>
+          <span>
+            <strong>Tes droits et l’aide au Bénin</strong>
+            <small>Les lois, les numéros utiles, les structures</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+        <h2 className="section-title">Bientôt</h2>
+        <button className="wide-link soon" onClick={() => go("ia")}>
+          <span className="link-icon orange">
+            <Icon name="message" />
+          </span>
+          <span>
+            <strong>Pose ta question · IA</strong>
+            <small>« Veux-tu savoir quelque chose en particulier ? » Voir l’aperçu</small>
+          </span>
+          <Icon name="chevron" />
+        </button>
+      </div>
+      <BottomNav active="learn" go={go} />
+    </section>
+  );
+}
+
+// Coming soon: an assistant that answers questions. In this preview the
+// answers are written in advance from the app's content; nothing is sent.
+const iaTopics: { q: string; a: string; help?: boolean }[] = [
+  {
+    q: "C’est quoi la sextorsion ?",
+    a: "C’est quand quelqu’un menace de publier des photos ou des messages intimes pour obtenir de l’argent, d’autres photos ou autre chose. Ne paie pas, n’envoie rien, garde les preuves et demande de l’aide. Ce n’est jamais ta faute.",
+    help: true,
+  },
+  {
+    q: "Comment porter plainte ?",
+    a: "Va dans un commissariat avec tes captures d’écran, si possible accompagnée. Le dépôt de plainte est gratuit. Le CNIN, au 151, traite les crimes en ligne, et l’Institut National de la Femme, au 114, peut t’accompagner.",
+    help: true,
+  },
+  {
+    q: "Mon copain veut mes codes",
+    a: "Tu as le droit de refuser. Exiger tes mots de passe ou ta position, c’est du contrôle, pas de l’amour. Si tu as peur de sa réaction, parles-en à une personne de confiance.",
+  },
+  {
+    q: "Comment protéger mon compte ?",
+    a: "Un mot de passe long et différent pour chaque compte, et la vérification en deux étapes. Sur ta messagerie : Paramètres, Compte, Vérification en deux étapes, Activer. Ne donne jamais un code reçu par SMS.",
+  },
+  {
+    q: "Une amie est victime, que faire ?",
+    a: "Crois-la, respecte son rythme et aide-la à garder les preuves. Ne la juge pas et ne la force pas à porter plainte. Proposez ensemble d’appeler le 114.",
+    help: true,
+  },
+];
+
+function IaApercu({ go, person }: { go: (s: Screen) => void; person: "afi" | "maya" }) {
+  const [asked, setAsked] = useState<number[]>([]);
+  const endRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (asked.length) endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [asked]);
+  const name = person === "afi" ? "Afi" : "Maya";
+  return (
+    <section className="screen ia-screen">
+      <TopBar title="Pose ta question" onBack={() => go("learn")} />
+      <div className="page-content">
+        <div className="multi-banner">
+          <Icon name="spark" size={16} /> Aperçu · à venir. Les réponses sont préparées à l’avance et
+          rien n’est envoyé.
+        </div>
+        <div className="ia-thread">
+          <p className="ia-bubble bot">
+            Bonjour {name} ! Veux-tu savoir quelque chose en particulier ?
+          </p>
+          {asked.map((n) => (
+            <div key={n}>
+              <p className="ia-bubble me">{iaTopics[n].q}</p>
+              <p className="ia-bubble bot">{iaTopics[n].a}</p>
+              {iaTopics[n].help && (
+                <button className="ia-help" onClick={() => go("help")}>
+                  <Icon name="help" size={16} /> Voir les numéros d’aide
+                </button>
+              )}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+        <div className="ia-chips">
+          {iaTopics.map((topic, n) =>
+            asked.includes(n) ? null : (
+              <button key={topic.q} onClick={() => setAsked([...asked, n])}>
+                {topic.q}
+              </button>
+            ),
+          )}
+        </div>
+        <div className="ia-input" aria-disabled>
+          <span>Bientôt : écris ta propre question ici</span>
+          <Icon name="arrow" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Badges: earned from what is already kept on the phone, never compared with
+// anyone else.
+function badgesOf(done: string[], unlocked: number[], wordFound: boolean) {
+  const vop = readVopStats();
+  return [
+    { icon: "message" as IconName, name: "Première histoire", how: "Termine une histoire", won: done.length >= 1 },
+    { icon: "spark" as IconName, name: "Exploratrice", how: "Termine 5 histoires", won: done.length >= 5 },
+    { icon: "book" as IconName, name: "Toutes les histoires", how: `Termine les ${scenarios.length} histoires`, won: done.length >= scenarios.length },
+    { icon: "search" as IconName, name: "Œil de lynx", how: "Repère un lien piégé", won: unlocked.includes(0) },
+    { icon: "download" as IconName, name: "Gardienne des preuves", how: "Garde les preuves dans une histoire", won: unlocked.includes(4) },
+    { icon: "shield" as IconName, name: "Sentinelle", how: "Débloque les 6 réflexes", won: unlocked.length >= 6 },
+    { icon: "check" as IconName, name: "Mot trouvé", how: "Trouve le mot du jour", won: wordFound },
+    { icon: "user" as IconName, name: "Esprit d’équipe", how: "Joue à Vrai ou piège en groupe", won: vop.games >= 1 },
+    { icon: "eye" as IconName, name: "Quiz terminé", how: "Termine le quiz", won: localStorage.getItem("naya-quiz") === "done" },
+  ];
+}
+
+function Results({
+  go,
+  done,
+  unlocked,
+  wordFound,
+  onStory,
+}: {
+  go: (s: Screen) => void;
+  done: string[];
+  unlocked: number[];
+  wordFound: boolean;
+  onStory: (id: string) => void;
+}) {
+  const badges = badgesOf(done, unlocked, wordFound);
+  const won = badges.filter((b) => b.won).length;
+  const count = unlocked.length;
+  const rank = [...ranks].reverse().find((r) => count >= r[0]) ?? ranks[0];
+  const vop = readVopStats();
+  return (
+    <section className="screen with-nav results-screen">
+      <TopBar title="Mes résultats" onBack={() => go("home")} />
+      <div className="page-content">
+        <div className="rank-hero small">
+          <RankArt lit={count} />
+          <p className="eyebrow">Ton rang</p>
+          <h1>{rank[1]}</h1>
+          <p>{rank[2]}</p>
+        </div>
+        <div className="results-stats">
+          <div>
+            <strong>
+              {done.length}/{scenarios.length}
+            </strong>
+            <small>histoires</small>
+          </div>
+          <div>
+            <strong>{count}/6</strong>
+            <small>réflexes</small>
+          </div>
+          <div>
+            <strong>
+              {won}/{badges.length}
+            </strong>
+            <small>badges</small>
+          </div>
+        </div>
+        <h2>Mes badges</h2>
+        <div className="badge-grid">
+          {badges.map((b) => (
+            <div key={b.name} className={`badge ${b.won ? "won" : ""}`}>
+              <span>
+                <Icon name={b.won ? b.icon : "lock"} size={20} />
+              </span>
+              <strong>{b.name}</strong>
+              <small>{b.won ? "Gagné" : b.how}</small>
+            </div>
+          ))}
+        </div>
+        <h2>Mes réflexes</h2>
+        <div className="reflex-grid">
+          {reflexes.map((_, i) => (
+            <ReflexTile key={i} index={i} open={unlocked.includes(i)} />
+          ))}
+        </div>
+        <h2>Mes histoires</h2>
+        <ul className="results-stories">
+          {scenarios.map((s) => (
+            <li key={s.id}>
+              <button onClick={() => onStory(s.id)}>
+                <Icon name={done.includes(s.id) ? "check" : "play"} size={16} />
+                <span>{s.title}</span>
+                <small>{done.includes(s.id) ? "Terminée" : "À jouer"}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {vop.games > 0 && (
+          <p className="lead">
+            Vrai ou piège : {vop.games} partie{vop.games > 1 ? "s" : ""}, meilleur score {vop.best}.
+          </p>
+        )}
+        <Button variant="secondary" onClick={() => go("guide")} icon="shield">
+          Ouvrir ma fiche réflexes
+        </Button>
+        <p className="microcopy">Tes résultats restent sur ce téléphone. Personne d’autre ne les voit.</p>
+      </div>
+      <BottomNav active="home" go={go} />
     </section>
   );
 }
@@ -4450,15 +5157,175 @@ function RankArt({ lit }: { lit: number }) {
   );
 }
 
+/** Same order on every visit, but the right answer is not always first. */
+function bilanOptions(id: string, bilan: Bilan) {
+  let seed = [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const options = [bilan.violence, ...bilan.leurres];
+  for (let i = options.length - 1; i > 0; i--) {
+    seed = (seed * 1103515245 + 12345) >>> 0;
+    const j = seed % (i + 1);
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return options;
+}
+
+/**
+ * After the last step: "which violence did you just go through?". Whatever the
+ * answer, nothing is lost: a wrong pick gets a gentle nudge, and after two
+ * tries the answer opens anyway. The padlock then opens on the recap.
+ */
+function BilanScreen({
+  id,
+  bilan,
+  onDone,
+  onHelp,
+}: {
+  id: string;
+  bilan: Bilan;
+  onDone: () => void;
+  onHelp: () => void;
+}) {
+  const options = useMemo(() => bilanOptions(id, bilan), [id, bilan]);
+  const [wrong, setWrong] = useState<string[]>([]);
+  const [phase, setPhase] = useState<"question" | "unlock" | "reveal">("question");
+  const [found, setFound] = useState(false);
+  useEffect(() => {
+    if (phase !== "unlock") return;
+    vibrate(30);
+    const t = window.setTimeout(() => setPhase("reveal"), reducedMotion() ? 300 : 1500);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+  const pick = (option: string) => {
+    if (option === bilan.violence) {
+      setFound(true);
+      setPhase("unlock");
+    } else {
+      const next = [...wrong, option];
+      setWrong(next);
+      if (next.length >= 2) window.setTimeout(() => setPhase("unlock"), 900);
+    }
+  };
+
+  if (phase === "unlock")
+    return (
+      <section className="screen story-unlock bilan-unlock" aria-live="polite">
+        <div className="padlock" aria-hidden>
+          <svg viewBox="0 0 120 140" width="120" height="140">
+            <path className="shackle" d="M34 62V44a26 26 0 0 1 52 0v18" fill="none" strokeWidth="12" strokeLinecap="round" />
+            <rect x="14" y="60" width="92" height="72" rx="18" className="body" />
+            <circle cx="60" cy="92" r="9" className="hole" />
+            <path d="M60 98v14" className="hole-line" strokeWidth="6" strokeLinecap="round" />
+          </svg>
+        </div>
+        <p className="eyebrow">{found ? "Bien vu" : "La réponse"}</p>
+        <h1>{bilan.violence}</h1>
+      </section>
+    );
+
+  if (phase === "reveal")
+    return (
+      <section className="screen bilan-screen">
+        <TopBar title="Ce qu’il faut retenir" onBack={onDone} />
+        <div className="page-content bilan-reveal">
+          <div className="bilan-name">
+            <Icon name="shield" />
+            <div>
+              <small>Ce que tu as vécu</small>
+              <strong>{bilan.violence}</strong>
+            </div>
+          </div>
+          <p className="bilan-vecu">{bilan.vecu}</p>
+          <div className="bilan-block">
+            <h2>Si ça t’arrive</h2>
+            <ol>
+              {bilan.gestes.map((g) => (
+                <li key={g}>{g}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="bilan-block">
+            <h2>À qui t’adresser</h2>
+            <ul className="bilan-aide">
+              {bilan.aide.map((a) => (
+                <li key={a.nom}>
+                  {a.numero && <b>{a.numero}</b>}
+                  <span>
+                    <strong>{a.nom}</strong>
+                    <small>{a.pour}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {bilan.aide.some((a) => a.numero) && !CALLS_ENABLED && (
+              <p className="microcopy">Numéros affichés seulement : appel désactivé pendant la démonstration.</p>
+            )}
+          </div>
+          <Button onClick={onDone} icon="arrow">
+            Voir mes réflexes
+          </Button>
+          <Button variant="ghost" onClick={onHelp}>
+            Voir toute l’aide au Bénin
+          </Button>
+        </div>
+      </section>
+    );
+
+  return (
+    <section className="screen bilan-screen">
+      <TopBar title="Petit bilan" onBack={onDone} />
+      <div className="page-content">
+        <div className="bilan-lock" aria-hidden>
+          <Icon name="lock" size={26} />
+        </div>
+        <p className="eyebrow">Débloque ce qu’il faut retenir</p>
+        <h1 className="bilan-question">Quelle violence viens-tu de vivre dans cette histoire ?</h1>
+        <div className="bilan-options">
+          {options.map((o, i) => {
+            const isWrong = wrong.includes(o);
+            return (
+              <button
+                key={o}
+                className={`story-choice ${isWrong ? "bilan-wrong" : ""}`}
+                onClick={() => pick(o)}
+                disabled={isWrong || wrong.length >= 2}
+              >
+                <b className="choice-number" aria-hidden>
+                  {i + 1}
+                </b>
+                <span>{o}</span>
+                <Icon name="arrow" size={17} />
+              </button>
+            );
+          })}
+        </div>
+        <p className="microcopy" aria-live="polite">
+          {wrong.length === 0
+            ? "Il n’y a pas de mauvaise note : c’est juste pour faire le point."
+            : wrong.length === 1
+              ? "Pas tout à fait. Repense à ce qui s’est passé, et essaie encore."
+              : "Ce n’est pas grave : voici la réponse."}
+        </p>
+        <Button variant="ghost" onClick={() => setPhase("unlock")}>
+          Passer et voir la réponse
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function Progress({
   title,
   unlocked,
+  canInstall,
+  install,
   onOther,
   go,
   replay,
 }: {
   title: string;
   unlocked: number[];
+  canInstall: boolean;
+  install: () => void;
   onOther: () => void;
   go: (s: Screen) => void;
   replay: () => void;
@@ -4467,20 +5334,20 @@ function Progress({
     if (navigator.share)
       navigator
         .share({
-          title: "Ayidote",
-          text: "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
+          title: "Ayìdótɛ́",
+          text: "Découvre Ayìdótɛ́, une expérience pour renforcer tes réflexes numériques.",
         })
         .catch(() => undefined);
     else
       navigator.clipboard?.writeText(
-        "Découvre Ayidote, une expérience pour renforcer tes réflexes numériques.",
+        "Découvre Ayìdótɛ́, une expérience pour renforcer tes réflexes numériques.",
       );
   };
   const count = unlocked.length;
   const rank = [...ranks].reverse().find((r) => count >= r[0]) ?? ranks[0];
   return (
     <section className="screen progress-screen">
-      <TopBar title="Ma progression" onBack={() => go("home")} />
+      <TopBar title="Histoire terminée" onBack={() => go("home")} />
       <div className="page-content">
         <div className="rank-hero">
           <RankArt lit={count} />
@@ -4501,9 +5368,21 @@ function Progress({
             <ReflexTile key={i} index={i} open={unlocked.includes(i)} />
           ))}
         </div>
-        <Button variant="secondary" onClick={() => go("guide")} icon="download">
-          Ouvrir ma fiche
+        <Button variant="secondary" onClick={() => go("results")} icon="spark">
+          Voir mes résultats
         </Button>
+        {canInstall && (
+          <button className="wide-link" onClick={install}>
+            <span className="link-icon">
+              <Icon name="download" />
+            </span>
+            <span>
+              <strong>Garder Ayìdótɛ́ sur ton téléphone</strong>
+              <small>Pour rejouer même sans réseau</small>
+            </span>
+            <Icon name="chevron" />
+          </button>
+        )}
         <div className="replay-card">
           <p className="eyebrow">Et maintenant ?</p>
           <h2>Et si tu essayais un autre chemin ?</h2>
@@ -4582,15 +5461,15 @@ function Settings({
             <span />
           </div>
           <div>
-            <strong>Ayidote</strong>
+            <strong>Ayìdótɛ́</strong>
             <small>Mon espace discret</small>
           </div>
           <OfflinePill />
         </div>
         <h3>Langue</h3>
         <div className="segmented" role="radiogroup" aria-label="Langue">
-          {(["fr", ...localLangs] as Lang[]).map((x) => {
-            const available = x === "fr" || recordedLangs.includes(x);
+          {(["fr", ...textLangs, ...localLangs] as Lang[]).map((x) => {
+            const available = x === "fr" || storyLangs.includes(x);
             return (
               <button
                 key={x}
@@ -4609,7 +5488,13 @@ function Settings({
             );
           })}
         </div>
-        {lang !== "fr" && (
+        {lang === "en" && (
+          <p className="setting-note">
+            Les histoires sont affichées en anglais. Les menus, les jeux, les bilans et le mode
+            écoute restent en français. Traduction préparée avec l’aide d’une IA, à relire.
+          </p>
+        )}
+        {lang !== "fr" && lang !== "en" && (
           <p className="setting-note">
             Les histoires sont affichées et lues en {langNames[lang].toLowerCase()}, avec le
             français en petit. Traduction et voix automatiques, à l’essai : pas encore relues par
@@ -4693,6 +5578,16 @@ function Settings({
           </div>
           <Icon name="chevron" />
         </button>
+        <button className="setting-row" onClick={() => go("alert")}>
+          <span>
+            <Icon name="warning" />
+          </span>
+          <div>
+            <strong>Alerte discrète</strong>
+            <small>Simulation · aucune alerte envoyée</small>
+          </div>
+          <Icon name="chevron" />
+        </button>
         <button className="setting-row" onClick={() => go("legal")}>
           <span>
             <Icon name="book" />
@@ -4710,16 +5605,6 @@ function Settings({
           <div>
             <strong>Nos engagements</strong>
             <small>Safety by Design</small>
-          </div>
-          <Icon name="chevron" />
-        </button>
-        <button className="setting-row" onClick={() => go("alert")}>
-          <span>
-            <Icon name="warning" />
-          </span>
-          <div>
-            <strong>Alerte discrète</strong>
-            <small>Simulation · aucune alerte envoyée</small>
           </div>
           <Icon name="chevron" />
         </button>
@@ -4764,7 +5649,7 @@ function Settings({
             Ta progression et tes préférences restent sur ce téléphone.
           </p>
         </div>
-        <p className="version">Ayidote · Prototype 1.0</p>
+        <p className="version">Ayìdótɛ́ · Prototype 1.0</p>
       </div>
       <BottomNav active="settings" go={go} />
     </section>
@@ -4777,33 +5662,33 @@ const LEGAL_DATE = "13 novembre 2026";
 const legalSections: { title: string; intro: string; body: (string | [string, string])[] }[] = [
   {
     title: "Politique de confidentialité",
-    intro: "Ayidote ne collecte aucune donnée sur toi.",
+    intro: "Ayìdótɛ́ ne collecte aucune donnée sur toi.",
     body: [
-      ["Aucun compte, aucune collecte", "Tu n’as pas de compte à créer. Ayidote n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages."],
+      ["Aucun compte, aucune collecte", "Tu n’as pas de compte à créer. Ayìdótɛ́ n’envoie à personne ce que tu fais dans l’application : ni tes réponses, ni tes choix, ni tes messages."],
       ["Ce qui reste sur ton téléphone", "Pour que tu retrouves ta progression, l’application garde sur ton téléphone (stockage local du navigateur) : ta langue, ton personnage, ta progression dans les histoires et le quiz, tes réflexes débloqués, le mot du jour, tes réglages (voix, compte à rebours) et les réglages fictifs de l’alerte. Ces informations ne quittent jamais ton téléphone."],
       ["Tout effacer", "Paramètres › Tout effacer supprime immédiatement toutes ces informations. Désinstaller l’application ou effacer les données du navigateur les supprime aussi."],
-      ["Ce que voit l’hébergeur", "Pour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayidote n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application."],
-      ["Liens et appels", "Quand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayidote : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels."],
+      ["Ce que voit l’hébergeur", "Pour télécharger l’application, ton téléphone se connecte au serveur qui l’héberge (GitHub Pages). Comme tout site web, ce serveur reçoit techniquement ton adresse IP et le type de navigateur : c’est la politique de confidentialité de GitHub qui s’applique. Ayìdótɛ́ n’utilise ni publicité, ni statistiques de visite, ni cookies, et la police de caractères est fournie avec l’application."],
+      ["Liens et appels", "Quand tu touches un lien vers un site officiel ou un numéro d’aide, tu quittes Ayìdótɛ́ : le site ou l’opérateur concerné applique ses propres règles. Ces liens restent dans l’historique de ton navigateur et de tes appels."],
       ["Tes droits", "La protection des données personnelles est encadrée au Bénin par le Code du numérique (loi n° 2017-20). Si un service utilise tes données sans ton accord, tu peux saisir l’Autorité de Protection des Données à caractère Personnel (APDP)."],
     ],
   },
   {
     title: "Conditions d’utilisation",
-    intro: "Ayidote est un prototype pédagogique, gratuit.",
+    intro: "Ayìdótɛ́ est un prototype pédagogique, gratuit.",
     body: [
-      ["À quoi sert Ayidote", "Ayidote aide à reconnaître les pièges numériques (chantage, arnaques, piratage de compte) par des histoires fictives, des jeux et des conseils. Les personnages, messages et situations sont inventés ; toute ressemblance est fortuite."],
-      ["Ce qu’Ayidote ne fait pas", "Ayidote ne remplace ni les secours, ni la police, ni un accompagnement professionnel, juridique ou médical. Il ne détecte pas les dangers à ta place. En cas de danger immédiat, appelle le 117."],
+      ["À quoi sert Ayìdótɛ́", "Ayìdótɛ́ aide à reconnaître les pièges numériques (chantage, arnaques, piratage de compte) par des histoires fictives, des jeux et des conseils. Les personnages, messages et situations sont inventés ; toute ressemblance est fortuite."],
+      ["Ce qu’Ayìdótɛ́ ne fait pas", "Ayìdótɛ́ ne remplace ni les secours, ni la police, ni un accompagnement professionnel, juridique ou médical. Il ne détecte pas les dangers à ta place. En cas de danger immédiat, appelle le 117."],
       ["Alerte discrète", "L’alerte discrète est une simulation : elle ne prévient personne et n’envoie aucun message, appel ou position. Ne compte pas sur elle en cas de danger."],
       ["Langues locales", "Les textes et voix en fon et en yoruba sont traduits et générés automatiquement, sans relecture par une personne qui parle ces langues : ils peuvent contenir des erreurs. Le français fait foi."],
       ["Conseils", "Les conseils sont généraux. Les numéros et liens d’aide ont été vérifiés à la date indiquée, mais ils peuvent changer : vérifie-les auprès des sources officielles."],
-      ["Usage", "Ayidote est mis à disposition gratuitement, pour un usage personnel et non commercial, sans garantie de disponibilité. Il convient aux personnes de tout âge ; les plus jeunes peuvent l’utiliser avec un adulte de confiance."],
+      ["Usage", "Ayìdótɛ́ est mis à disposition gratuitement, pour un usage personnel et non commercial, sans garantie de disponibilité. Il convient aux personnes de tout âge ; les plus jeunes peuvent l’utiliser avec un adulte de confiance."],
     ],
   },
   {
     title: "Mentions légales",
-    intro: "Qui publie Ayidote, et où il est hébergé.",
+    intro: "Qui publie Ayìdótɛ́, et où il est hébergé.",
     body: [
-      ["Éditeur", "Équipe Ayidote, prototype réalisé dans le cadre du hackathon HACK4HER 2026 « Tech for Her Safety » (Cotonou, 12 et 13 novembre 2026). Ayidote n’est pas un service officiel de l’État ni des organisateurs du hackathon."],
+      ["Éditeur", "Équipe Ayìdótɛ́, prototype réalisé dans le cadre du hackathon HACK4HER 2026 « Tech for Her Safety » (Cotonou, 12 et 13 novembre 2026). Ayìdótɛ́ n’est pas un service officiel de l’État ni des organisateurs du hackathon."],
       ["Contact", "Par l’intermédiaire des organisateurs du hackathon HACK4HER 2026."],
       ["Hébergement", "GitHub Pages, service de GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis."],
       ["Statut", "Prototype en phase de test. Toute utilisation réelle nécessitera des vérifications techniques, juridiques et de sécurité, et l’accord des institutions compétentes."],
@@ -4811,7 +5696,7 @@ const legalSections: { title: string; intro: string; body: (string | [string, st
   },
   {
     title: "Crédits et licences",
-    intro: "Les outils et contenus libres utilisés par Ayidote.",
+    intro: "Les outils et contenus libres utilisés par Ayìdótɛ́.",
     body: [
       ["Voix françaises", "Générées avec Piper. Voix « siwis » (jeu de données SIWIS, licence CC BY 4.0) et voix « tom » (jeu de données sous licence AGPL v3)."],
       ["Voix en fon et en yoruba", "Générées avec les modèles MMS de Meta (facebook/mms-tts-fon et facebook/mms-tts-yor), licence CC BY-NC 4.0 : usage non commercial uniquement."],
@@ -4867,10 +5752,10 @@ const installSteps: Record<"android" | "ios" | "other", { name: string; steps: [
   android: {
     name: "Android (Chrome)",
     steps: [
-      ["Ouvre le lien dans Chrome", "Le lien d’Ayidote, partagé par l’animatrice ou une amie."],
+      ["Ouvre le lien dans Chrome", "Le lien d’Ayìdótɛ́, partagé par l’animatrice ou une amie."],
       ["Touche les trois points ⋮", "En haut à droite de l’écran."],
       ["Choisis « Installer l’application »", "Ou « Ajouter à l’écran d’accueil », selon ton téléphone."],
-      ["Confirme avec « Installer »", "L’icône Ayidote apparaît avec tes autres applications."],
+      ["Confirme avec « Installer »", "L’icône Ayìdótɛ́ apparaît avec tes autres applications."],
     ],
   },
   ios: {
@@ -4879,7 +5764,7 @@ const installSteps: Record<"android" | "ios" | "other", { name: string; steps: [
       ["Ouvre le lien dans Safari", "L’installation ne marche qu’avec Safari sur iPhone."],
       ["Touche le bouton Partager", "Le carré avec une flèche vers le haut, en bas de l’écran."],
       ["Choisis « Sur l’écran d’accueil »", "Fais défiler la liste si tu ne le vois pas."],
-      ["Touche « Ajouter »", "L’icône Ayidote apparaît sur ton écran d’accueil."],
+      ["Touche « Ajouter »", "L’icône Ayìdótɛ́ apparaît sur ton écran d’accueil."],
     ],
   },
   other: {
@@ -4915,13 +5800,13 @@ function Install({
   const order = [platform, ...(["android", "ios", "other"] as const).filter((p) => p !== platform)];
   return (
     <section className="screen resources">
-      <TopBar title="Installer Ayidote" onBack={onBack} />
+      <TopBar title="Installer Ayìdótɛ́" onBack={onBack} />
       <div className="page-content">
         <div className="resource-title">
           <span>
             <Icon name="download" size={30} />
           </span>
-          <h1>{installed ? "Ayidote est installée." : "Garde Ayidote sur ton téléphone."}</h1>
+          <h1>{installed ? "Ayìdótɛ́ est installée." : "Garde Ayìdótɛ́ sur ton téléphone."}</h1>
           <p>
             {installed
               ? "Tu peux l’ouvrir depuis son icône, même sans réseau."
@@ -4995,7 +5880,7 @@ function Install({
             <p>
               <strong>Le raccourci « Mon carnet »</strong>
               <br />
-              Sur Android, garde le doigt sur l’icône d’Ayidote : « Mon carnet » apparaît. Tu peux le
+              Sur Android, garde le doigt sur l’icône d’Ayìdótɛ́ : « Mon carnet » apparaît. Tu peux le
               glisser sur ton écran.
             </p>
           </li>
@@ -5183,7 +6068,7 @@ function AlertSetup({
               <strong>Touche « Mon carnet »</strong>
               <br />
               L’icône du carnet en haut de l’accueil, ou le raccourci « Mon carnet » (appui long sur
-              l’icône d’Ayidote, à glisser sur l’écran du téléphone).
+              l’icône d’Ayìdótɛ́, à glisser sur l’écran du téléphone).
             </p>
           </li>
           <li>
